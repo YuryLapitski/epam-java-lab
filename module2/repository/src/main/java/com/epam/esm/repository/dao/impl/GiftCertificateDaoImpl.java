@@ -32,7 +32,6 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     private static final String DELETE_GIFT_CERTIFICATE_BY_ID = "DELETE FROM gift_certificate WHERE id = ?";
     private static final String FIND_ALL_GIFT_CERTIFICATES = "SELECT id, name, description, price, duration, " +
             "create_date, last_update_date FROM gift_certificate";
-
     private static final int FIRST_INDEX = 1;
     private static final int SECOND_INDEX = 2;
     private static final int THIRD_INDEX = 3;

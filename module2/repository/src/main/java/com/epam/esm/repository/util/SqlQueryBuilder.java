@@ -10,6 +10,7 @@ public class SqlQueryBuilder {
     private static final String QUESTION_MARK = "=? ";
     private static final String COMMA = ", ";
     private static final String WHERE_ID = "WHERE id = ?";
+    private static final String SPACE = " ";
 
     public String buildQueryForUpdate(Map<String, Object> paramMap) {
         StringBuilder stringBuilder = new StringBuilder(FIRST_PART_OF_UPDATE_GIFT_CERTIFICATE_STRING);
@@ -31,6 +32,6 @@ public class SqlQueryBuilder {
     }
 
     public String buildFindAndSortQuery(String columnName, String orderType) {
-        return FIRST_PART_OF_FIND_AND_SORT_GIFT_CERTIFICATES_STRING + columnName + " " + orderType;
+        return FIRST_PART_OF_FIND_AND_SORT_GIFT_CERTIFICATES_STRING + columnName + SPACE + orderType;
     }
 }
