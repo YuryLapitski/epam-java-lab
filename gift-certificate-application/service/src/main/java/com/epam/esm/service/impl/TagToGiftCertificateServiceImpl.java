@@ -65,7 +65,7 @@ public class TagToGiftCertificateServiceImpl implements TagToGiftCertificateServ
     }
 
     private GiftCertificateDto createGiftCertificateDto(GiftCertificate giftCertificate) {
-        List<Tag> tags = new ArrayList<>(tagToGiftCertificateDao.findByGiftCertificateId(giftCertificate.getId()));
+        List<Tag> tags = new ArrayList<>(tagToGiftCertificateDao.findTagsByGiftCertificateId(giftCertificate.getId()));
         GiftCertificateDto giftCertificateDto = new GiftCertificateDto();
         giftCertificateDto.setGiftCertificate(giftCertificate);
         giftCertificateDto.setTags(tags);

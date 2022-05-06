@@ -32,6 +32,7 @@ public class TagServiceImpl implements TagService {
         this.tagValidator = tagValidator;
     }
 
+    @Transactional
     @Override
     public Tag create(Tag tag) {
         if (!tagValidator.isNameValid(tag.getName())) {

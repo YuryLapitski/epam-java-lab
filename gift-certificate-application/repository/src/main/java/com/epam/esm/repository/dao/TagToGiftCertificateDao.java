@@ -46,7 +46,7 @@ public interface TagToGiftCertificateDao {
      * @param giftCertificateId id of the gift certificate to find tags
      * @return founded list of tags
      */
-    List<Tag> findByGiftCertificateId(Long giftCertificateId);
+    List<Tag> findTagsByGiftCertificateId(Long giftCertificateId);
 
     /**
      * Deletes tag to gift certificate relations by gift certificate ID

@@ -48,11 +48,10 @@ public interface GiftCertificateDao {
     /**
      * Updates existing gift certificate
      *
-     * @param id id of the gift certificate for update
-     * @param paramForUpdate parameters of gift certificate for update
-     * @return updated GiftCertificateDto
+     * @param giftCertificate gift certificate for update
+     * @return updated gift certificate
      */
-    Optional<GiftCertificate> update(Long id, Map<String, Object> paramForUpdate);
+    GiftCertificate update(GiftCertificate giftCertificate);
 
     /**
      * Searches for gift certificate by name

@@ -102,7 +102,7 @@ public class TagToGiftCertificateServiceImplTest {
     void testFindGiftCertificatesByTagName() {
         List<GiftCertificateDto> expectedResult = giftCertificateDtoList;
         when(tagToGiftCertificateDao.findGiftCertificatesByTagName(anyString())).thenReturn(giftCertificateList);
-        when(tagToGiftCertificateDao.findByGiftCertificateId(anyLong())).thenReturn(tagList);
+        when(tagToGiftCertificateDao.findTagsByGiftCertificateId(anyLong())).thenReturn(tagList);
         List<GiftCertificateDto> actualResult = tagToGiftCertificateService
                 .findGiftCertificatesByTagName(TAG_NAME);
         assertEquals(expectedResult, actualResult);

@@ -5,14 +5,26 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
 @ToString
+@Entity
+@Table(name = "tag")
 public class Tag {
+    @Id
+    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "name", unique = true, nullable = false)
     private String name;
 
     @Override

@@ -3,13 +3,11 @@ package com.epam.esm.repository.dao.impl;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.TagToGiftCertificateRelation;
-import com.epam.esm.repository.config.SpringJdbcConfig;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.util.List;
 
@@ -17,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {SpringJdbcConfig.class})
 @ActiveProfiles("dev")
 public class TagToGiftCertificateDaoImplTest {
     private static final Long NEW_TAG_ID = 4L;
@@ -66,7 +63,7 @@ public class TagToGiftCertificateDaoImplTest {
 
     @Test
     void findByGiftCertificateId() {
-        List<Tag> tagToGiftCertificate = tagToGiftCertificateDao.findByGiftCertificateId(GIFT_CERTIFICATE_ID);
+        List<Tag> tagToGiftCertificate = tagToGiftCertificateDao.findTagsByGiftCertificateId(GIFT_CERTIFICATE_ID);
         assertEquals(EXPECTED_LIST_SIZE, tagToGiftCertificate.size());
     }
 

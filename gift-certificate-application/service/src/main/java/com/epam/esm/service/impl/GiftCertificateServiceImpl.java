@@ -208,11 +208,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new GiftCertificateNotFoundException(msg);
         }
 
-        Map<String, Object> paramMap = fillMap(giftCertificateDto.getGiftCertificate());
-        GiftCertificate giftCertificate = giftCertificateDao.update(giftCertificateId, paramMap).orElseThrow(() ->
-                new CannotUpdateException(CANNOT_UPDATE_GIFT_CERTIFICATE_MSG));
+//        Map<String, Object> paramMap = fillMap(giftCertificateDto.getGiftCertificate());
+//        GiftCertificate giftCertificate = giftCertificateDao.update(giftCertificateId, paramMap).orElseThrow(() ->
+//                new CannotUpdateException(CANNOT_UPDATE_GIFT_CERTIFICATE_MSG));
 
+        GiftCertificate giftCertificate = giftCertificateDto.getGiftCertificate();
         giftCertificate.setId(giftCertificateId);
+        giftCertificate = giftCertificateDao.update(giftCertificate);
+
         giftCertificateDto.setGiftCertificate(giftCertificate);
 
         tagToGiftCertificateDao.deleteByGiftCertificateId(giftCertificateId);
@@ -283,7 +286,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     private GiftCertificateDto createGiftCertificateDto(GiftCertificate giftCertificate) {
-        List<Tag> tags = new ArrayList<>(tagToGiftCertificateDao.findByGiftCertificateId(giftCertificate.getId()));
+        List<Tag> tags = new ArrayList<>(tagToGiftCertificateDao.findTagsByGiftCertificateId(giftCertificate.getId()));
         GiftCertificateDto giftCertificateDto = new GiftCertificateDto();
         giftCertificateDto.setGiftCertificate(giftCertificate);
         giftCertificateDto.setTags(tags);

@@ -4,11 +4,15 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.dao.TagToGiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.TagToGiftCertificateRelation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -26,49 +30,65 @@ public class TagToGiftCertificateDaoImpl implements TagToGiftCertificateDao {
     private static final String FIND_BY_GIFT_CERTIFICATE_ID = "SELECT tag.id, tag.name FROM tag " +
             "JOIN tag_gift_certificate tgc ON tag.id = tgc.tag_id WHERE gift_certificate_id = ?";
     private static final int NUMBER_OF_CHANGED_ROWS = 1;
-    private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<Tag> tagRowMapper;
-    private final RowMapper<GiftCertificate> giftCertificateRowMapper;
-    private final RowMapper<TagToGiftCertificateRelation> tagToGiftCertificateRelationRowMapper;
 
-    @Autowired
-    public TagToGiftCertificateDaoImpl(JdbcTemplate jdbcTemplate,
-                                       RowMapper<Tag> tagRowMapper,
-                                       RowMapper<GiftCertificate> giftCertificateRowMapper,
-                                       RowMapper<TagToGiftCertificateRelation> tagToGiftCertificateRelationRowMapper) {
-        this.jdbcTemplate = jdbcTemplate;
-        this.tagRowMapper = tagRowMapper;
-        this.giftCertificateRowMapper = giftCertificateRowMapper;
-        this.tagToGiftCertificateRelationRowMapper = tagToGiftCertificateRelationRowMapper;
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     public TagToGiftCertificateRelation createTagToGiftCertificateRelation(Long tagId, Long giftCertificateId) {
-        jdbcTemplate.update(CREATE_TAG_TO_GIFT_CERTIFICATE_RELATION, tagId, giftCertificateId);
-        TagToGiftCertificateRelation tagToGiftCertificate = new TagToGiftCertificateRelation();
-        tagToGiftCertificate.setTagId(tagId);
-        tagToGiftCertificate.setGiftCertificateId(giftCertificateId);
-        return tagToGiftCertificate;
+        TagToGiftCertificateRelation relation = new TagToGiftCertificateRelation();
+        relation.setTagId(tagId);
+        relation.setGiftCertificateId(giftCertificateId);
+        entityManager.persist(relation);
+        return relation;
     }
 
     @Override
     public List<GiftCertificate> findGiftCertificatesByTagName(String tagName) {
-        String resultString = String.format(FIND_GIFT_CERTIFICATE_BY_TAG_NAME, tagName);
-        return jdbcTemplate.query(resultString, giftCertificateRowMapper);
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
+        Root<GiftCertificate> root = criteriaQuery.from(GiftCertificate.class);
+        Join<GiftCertificate, Tag> joinRelation = root.join("tagList");
+        criteriaQuery.select(root);
+        criteriaQuery.where(criteriaBuilder.equal(joinRelation.get("name"), tagName));
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
-    public List<TagToGiftCertificateRelation> findByTagId(Long tagID) {
-        return jdbcTemplate.query(FIND_BY_TAG_ID, tagToGiftCertificateRelationRowMapper, tagID);
+    public List<TagToGiftCertificateRelation> findByTagId(Long tagId) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<TagToGiftCertificateRelation> criteriaQuery = criteriaBuilder
+                .createQuery(TagToGiftCertificateRelation.class);
+        Root<TagToGiftCertificateRelation> root = criteriaQuery.from(TagToGiftCertificateRelation.class);
+        criteriaQuery.select(root);
+        criteriaQuery.where(criteriaBuilder.equal(root.get("tagId"), tagId));
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
-    public List<Tag> findByGiftCertificateId(Long giftCertificateId) {
-        return jdbcTemplate.query(FIND_BY_GIFT_CERTIFICATE_ID, tagRowMapper, giftCertificateId);
+    public List<Tag> findTagsByGiftCertificateId(Long giftCertificateId) {
+        return Collections.emptyList();
+
+//        return jdbcTemplate.query(FIND_BY_GIFT_CERTIFICATE_ID, tagRowMapper, giftCertificateId);
     }
 
     @Override
     public boolean deleteByGiftCertificateId(Long giftCertificateId) {
-        return jdbcTemplate.update(DELETE_BY_GIFT_CERTIFICATE_ID, giftCertificateId) >= NUMBER_OF_CHANGED_ROWS;
+        for (TagToGiftCertificateRelation relation : findByGiftCertificateId(giftCertificateId)) {
+            entityManager.remove(relation);
+        }
+        return true;
+    }
+
+    private List<TagToGiftCertificateRelation> findByGiftCertificateId(Long giftCertificateId) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<TagToGiftCertificateRelation> criteriaQuery = criteriaBuilder
+                .createQuery(TagToGiftCertificateRelation.class);
+        Root<TagToGiftCertificateRelation> root = criteriaQuery.from(TagToGiftCertificateRelation.class);
+        criteriaQuery.select(root);
+        criteriaQuery.where(criteriaBuilder.equal(root.get("giftCertificateId"), giftCertificateId));
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 }

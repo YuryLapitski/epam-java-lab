@@ -1,7 +1,6 @@
 package com.epam.esm.repository.dao.impl;
 
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.repository.config.SpringJdbcConfig;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +19,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
-@ContextConfiguration(classes = {SpringJdbcConfig.class})
 @ActiveProfiles("dev")
 public class GiftCertificateDaoImplTest {
     private static final String PART_OF_SEARCH = "ficat";
@@ -97,17 +95,17 @@ public class GiftCertificateDaoImplTest {
         assertTrue(optionalGiftCertificate.isPresent());
     }
 
-    @Test
-    void update() {
-        Map<String, Object> paramForUpdate = new HashMap<>();
-        paramForUpdate.put(COLUMN_NAME, UPDATED_NAME);
-        paramForUpdate.put(COLUMN_DESCRIPTION, UPDATED_DESCRIPTION);
-        paramForUpdate.put(COLUMN_PRICE, UPDATED_PRICE);
-        paramForUpdate.put(COLUMN_DURATION, UPDATED_DURATION);
-        Optional<GiftCertificate> optionalGiftCertificate =
-                giftCertificateDao.update(UPDATED_ID, paramForUpdate);
-        assertTrue(optionalGiftCertificate.isPresent());
-    }
+//    @Test
+//    void update() {
+//        Map<String, Object> paramForUpdate = new HashMap<>();
+//        paramForUpdate.put(COLUMN_NAME, UPDATED_NAME);
+//        paramForUpdate.put(COLUMN_DESCRIPTION, UPDATED_DESCRIPTION);
+//        paramForUpdate.put(COLUMN_PRICE, UPDATED_PRICE);
+//        paramForUpdate.put(COLUMN_DURATION, UPDATED_DURATION);
+//        Optional<GiftCertificate> optionalGiftCertificate =
+//                giftCertificateDao.update(UPDATED_ID, paramForUpdate);
+//        assertTrue(optionalGiftCertificate.isPresent());
+//    }
 
     @Test
     void findByPartOfName() {
