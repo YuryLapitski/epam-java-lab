@@ -1,5 +1,6 @@
 package com.epam.esm.repository.dao.impl;
 
+import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.stereotype.Repository;
@@ -8,6 +9,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
@@ -49,9 +51,6 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         criteriaQuery.where(criteriaBuilder.equal(giftCertificateRoot.get("name"), name));
 
         return entityManager.createQuery(criteriaQuery).getResultList();
-
-//        String resultString = String.format(FIND_GIFT_CERTIFICATE_BY_PART_OF_NAME, name);
-//        return jdbcTemplate.query(resultString, rowMapper);
     }
 
     @Override
@@ -82,33 +81,24 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         criteriaQuery.select(giftCertificateRoot);
         criteriaQuery.where(criteriaBuilder.equal(giftCertificateRoot.get("name"), name));
         return entityManager.createQuery(criteriaQuery).getResultStream().findFirst();
-
-//        Optional<GiftCertificate> optionalGiftCertificate;
-//
-//        try {
-//            optionalGiftCertificate = Optional.ofNullable(jdbcTemplate.
-//                    queryForObject(FIND_GIFT_CERTIFICATE_BY_NAME, rowMapper, name));
-//        } catch (DataAccessException e) {
-//            optionalGiftCertificate = Optional.empty();
-//        }
-//
-//        return optionalGiftCertificate;
     }
 
     @Override
-//    public Optional<GiftCertificate> update(Long id, Map<String, Object> paramForUpdate) {
+    public List<GiftCertificate> findGiftCertificatesByTagName(String tagName) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
+        Root<GiftCertificate> root = criteriaQuery.from(GiftCertificate.class);
+        Join<GiftCertificate, Tag> joinRelation = root.join("tagList");
+        criteriaQuery.select(root);
+        criteriaQuery.where(criteriaBuilder.equal(joinRelation.get("name"), tagName));
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
+    }
+
+    @Override
     public GiftCertificate update(GiftCertificate giftCertificate) {
         entityManager.merge(giftCertificate);
         return giftCertificate;
-
-
-//        SqlQueryBuilder sqlQueryBuilder = new SqlQueryBuilder();
-//        String updateQuery = sqlQueryBuilder.buildQueryForUpdate(paramForUpdate);
-//        List<Object> values = new ArrayList<>(paramForUpdate.values());
-//        values.add(id);
-//        jdbcTemplate.update(updateQuery, values.toArray());
-//
-//        return findById(id);
     }
 
     @Override

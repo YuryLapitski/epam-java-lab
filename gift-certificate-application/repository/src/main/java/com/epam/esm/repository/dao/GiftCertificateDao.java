@@ -62,6 +62,14 @@ public interface GiftCertificateDao {
     Optional<GiftCertificate> findByName(String name);
 
     /**
+     * Searches for gift certificate by tag name
+     *
+     * @param tagName tag name to find gift certificate
+     * @return founded list of gift certificate
+     */
+    List<GiftCertificate> findGiftCertificatesByTagName(String tagName);
+
+    /**
      * Searches for gift certificate by name. It can be part of name
      *
      * @param name name (part of name) of the gift certificate to find

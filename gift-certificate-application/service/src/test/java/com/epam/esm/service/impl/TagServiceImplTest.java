@@ -1,9 +1,10 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.TagToGiftCertificateRelation;
+import com.epam.esm.repository.dao.GiftCertificateDao;
 import com.epam.esm.repository.dao.TagDao;
-import com.epam.esm.repository.dao.TagToGiftCertificateDao;
 import com.epam.esm.repository.dao.impl.TagDaoImpl;
 import com.epam.esm.service.exception.FieldValidationException;
 import com.epam.esm.service.exception.TagNotFoundException;
@@ -13,6 +14,8 @@ import com.epam.esm.service.validator.impl.TagValidatorImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -30,32 +33,42 @@ import static org.mockito.Mockito.when;
 public class TagServiceImplTest {
     private static final long ID = 10L;
     private static final String NAME = "Some tag";
-    private static final long GIFT_CERTIFICATE_ID = 1L;
+    private static final String GIFT_CERTIFICATE_NAME = "Gift certificate";
+    private static final String DESCRIPTION = "description";
+    private static final BigDecimal PRICE = BigDecimal.valueOf(99.99);
+    private static final short DURATION = 100;
+    private static final Long GIFT_CERTIFICATE_ID = 1L;
     private static final long TAG_ID = 1L;
     private Tag tag;
     private TagDao tagDao;
-    private TagToGiftCertificateDao tagToGiftCertificateDao;
+    private GiftCertificateDao giftCertificateDao;
     private TagValidator tagValidator;
     private TagServiceImpl tagService;
     private List<Tag> tagList;
-    private List<TagToGiftCertificateRelation> tagToGiftCertificateRelationList;
+    private List<GiftCertificate> giftCertificateList;
 
     @BeforeAll
     void beforeAll() {
         tag = new Tag();
         tag.setId(ID);
         tag.setName(NAME);
+        GiftCertificate giftCertificate = new GiftCertificate();
+        giftCertificate.setId(GIFT_CERTIFICATE_ID);
+        giftCertificate.setName(GIFT_CERTIFICATE_NAME);
+        giftCertificate.setDescription(DESCRIPTION);
+        giftCertificate.setPrice(PRICE);
+        giftCertificate.setDuration(DURATION);
         TagToGiftCertificateRelation tagToGiftCertificateRelation = new TagToGiftCertificateRelation();
         tagToGiftCertificateRelation.setGiftCertificateId(GIFT_CERTIFICATE_ID);
         tagToGiftCertificateRelation.setTagId(TAG_ID);
         tagDao = mock(TagDaoImpl.class);
-        tagToGiftCertificateDao = mock(TagToGiftCertificateDao.class);
+        giftCertificateDao = mock(GiftCertificateDao.class);
         tagValidator = mock(TagValidatorImpl.class);
-        tagService = new TagServiceImpl(tagDao, tagToGiftCertificateDao, tagValidator);
+        tagService = new TagServiceImpl(tagDao, giftCertificateDao, tagValidator);
         tagList = new ArrayList<>();
         tagList.add(tag);
-        tagToGiftCertificateRelationList = new ArrayList<>();
-        tagToGiftCertificateRelationList.add(tagToGiftCertificateRelation);
+        giftCertificateList = new ArrayList<>();
+        giftCertificateList.add(giftCertificate);
     }
 
     @Test
@@ -98,7 +111,7 @@ public class TagServiceImplTest {
     @Test
     void testDelete() {
         when(tagDao.findById(anyLong())).thenReturn(Optional.ofNullable(tag));
-        when(tagToGiftCertificateDao.findByTagId(anyLong())).thenReturn(Collections.emptyList());
+        when(giftCertificateDao.findGiftCertificatesByTagName(tag.getName())).thenReturn(Collections.emptyList());
         when(tagDao.delete(anyLong())).thenReturn(true);
         assertTrue(tagService.delete(tag.getId()));
     }
@@ -112,8 +125,8 @@ public class TagServiceImplTest {
     @Test
     void testDeleteShouldThrowTagToGiftCertificateReferenceException() {
         when(tagDao.findById(anyLong())).thenReturn(Optional.ofNullable(tag));
-        when(tagToGiftCertificateDao.findByTagId(anyLong()))
-                .thenReturn(tagToGiftCertificateRelationList);
+        when(giftCertificateDao.findGiftCertificatesByTagName(tag.getName()))
+                .thenReturn(giftCertificateList);
         assertThrows(TagToGiftCertificateReferenceException.class, () -> tagService.delete(tag.getId()));
     }
 }

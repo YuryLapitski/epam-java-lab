@@ -7,6 +7,7 @@ import com.epam.esm.service.exception.GiftCertificateNotFoundException;
 import com.epam.esm.service.exception.GiftCertificatesNotFoundException;
 import com.epam.esm.service.exception.InvalidColumnNameException;
 import com.epam.esm.service.exception.InvalidSortTypeException;
+import com.epam.esm.service.exception.TagAlreadyExistException;
 import com.epam.esm.service.exception.TagNotFoundException;
 import com.epam.esm.service.exception.TagToGiftCertificateReferenceException;
 import org.springframework.http.HttpStatus;
@@ -75,6 +76,18 @@ public class AppExceptionHandler {
                 .build();
     }
 
+    @ExceptionHandler(TagAlreadyExistException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleTagAlreadyExistException(
+            TagAlreadyExistException alreadyExistException) {
+        return ErrorResponse.builder()
+                .errorMessage(alreadyExistException.getMessage())
+                .errorStatus(HttpStatus.BAD_REQUEST)
+                .timestamp(now())
+                .errorCode(40003)
+                .build();
+    }
+
     @ExceptionHandler(TagToGiftCertificateReferenceException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleTagToGiftCertificateReferenceException(
@@ -83,7 +96,7 @@ public class AppExceptionHandler {
                 .errorMessage(tagToGiftCertificateReferenceException.getMessage())
                 .errorStatus(HttpStatus.BAD_REQUEST)
                 .timestamp(now())
-                .errorCode(40003)
+                .errorCode(40004)
                 .build();
     }
 
@@ -105,7 +118,7 @@ public class AppExceptionHandler {
                 .errorMessage(columnNameException.getMessage())
                 .errorStatus(HttpStatus.BAD_REQUEST)
                 .timestamp(now())
-                .errorCode(40004)
+                .errorCode(40005)
                 .build();
     }
 
@@ -116,7 +129,7 @@ public class AppExceptionHandler {
                 .errorMessage(sortTypeException.getMessage())
                 .errorStatus(HttpStatus.BAD_REQUEST)
                 .timestamp(now())
-                .errorCode(40005)
+                .errorCode(40006)
                 .build();
     }
 }

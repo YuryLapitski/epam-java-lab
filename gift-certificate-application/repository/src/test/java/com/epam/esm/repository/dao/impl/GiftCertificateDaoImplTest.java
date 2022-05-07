@@ -32,6 +32,7 @@ public class GiftCertificateDaoImplTest {
     private static final String NEW_CERTIFICATE_DESCRIPTION = "newDescription";
     private static final BigDecimal NEW_CERTIFICATE_PRICE = BigDecimal.valueOf(99.99);
     private static final short NEW_CERTIFICATE_DURATION = 60;
+    private static final String TAG_NAME = "first";
     private static final Long UPDATED_ID = 2L;
     private static final String UPDATED_NAME = "updatedName";
     private static final String UPDATED_DESCRIPTION = "updatedDescription";
@@ -118,5 +119,12 @@ public class GiftCertificateDaoImplTest {
         List<GiftCertificate> giftCertificates = giftCertificateDao
                 .findAllWithSort(COLUMN_NAME, SORT_DESCENDING);
         assertEquals(EXPECTED_LIST_SIZE, giftCertificates.size());
+    }
+
+    @Test
+    void findGiftCertificatesByTagName() {
+        List<GiftCertificate> giftCertificates = giftCertificateDao.findGiftCertificatesByTagName(TAG_NAME);
+        assertEquals(EXPECTED_LIST_SIZE, giftCertificates.size());
+
     }
 }

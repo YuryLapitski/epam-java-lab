@@ -1,5 +1,6 @@
 package com.epam.esm.entity;
 
+import com.epam.esm.listener.GiftCertificateListener;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @ToString
 @Entity
+@EntityListeners(GiftCertificateListener.class)
 @Table(name = "gift_certificate")
 public class GiftCertificate {
     @Id
@@ -31,7 +33,7 @@ public class GiftCertificate {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
     @Column(name = "duration", nullable = false)
-    private short duration;
+    private Short duration;
     @Column(name = "create_date", nullable = false, updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private LocalDateTime createDate;
@@ -56,17 +58,19 @@ public class GiftCertificate {
         }
 
         GiftCertificate that = (GiftCertificate) o;
-        return duration == that.duration &&
-                Objects.equals(id, that.id) &&
+
+        return Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(price, that.price) &&
+                Objects.equals(duration, that.duration) &&
                 Objects.equals(createDate, that.createDate) &&
-                Objects.equals(lastUpdateDate, that.lastUpdateDate);
+                Objects.equals(lastUpdateDate, that.lastUpdateDate) &&
+                Objects.equals(tagList, that.tagList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price, duration, createDate, lastUpdateDate);
+        return Objects.hash(id, name, description, price, duration, createDate, lastUpdateDate, tagList);
     }
 }

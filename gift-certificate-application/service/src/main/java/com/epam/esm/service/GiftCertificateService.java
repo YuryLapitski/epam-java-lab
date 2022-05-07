@@ -1,6 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.service.dto.GiftCertificateDto;
+import com.epam.esm.entity.GiftCertificate;
 import java.util.List;
 
 /**
@@ -16,59 +16,67 @@ public interface GiftCertificateService {
      * Creates new certificate
      * If certificateDto contain new tags, they will be created as well
      *
-     * @param giftCertificateDto certificate to create
-     * @return GiftCertificateDto
+     * @param giftCertificate certificate to create
+     * @return GiftCertificate
      */
-    GiftCertificateDto create(GiftCertificateDto giftCertificateDto);
+    GiftCertificate create(GiftCertificate giftCertificate);
 
     /**
      * Searches for all gift certificates
      *
-     * @return founded list of GiftCertificateDto
+     * @return founded list of GiftCertificate
      */
-    List<GiftCertificateDto> findAll();
+    List<GiftCertificate> findAll();
 
     /**
      * Searches for gift certificate by gift certificate id
      *
      * @param id id of the gift certificate to find
-     * @return founded GiftCertificateDto
+     * @return founded gift certificate
      */
-    GiftCertificateDto findByGiftCertificateId(Long id);
+    GiftCertificate findByGiftCertificateId(Long id);
 
     /**
      * Searches for gift certificate by name
      *
      * @param name name of the gift certificate to find (it can be part of name)
-     * @return founded list of GiftCertificateDto
+     * @return founded list of GiftCertificate
      */
-    List<GiftCertificateDto> findByPartOfName(String name);
+    List<GiftCertificate> findByPartOfName(String name);
 
     /**
      * Searches for gift certificates with sorting
      *
      * @param columnName column name to sorting by
      * @param sortType sorting type. Can be ASC or DESC.
-     * @return founded list of GiftCertificateDto
+     * @return founded list of GiftCertificate
      */
-    List<GiftCertificateDto> findAllWithSort(String columnName, String sortType);
+    List<GiftCertificate> findAllWithSort(String columnName, String sortType);
 
     /**
      * Deletes gift certificate
      *
      * @param id id of the gift certificate to delete
      */
-    boolean delete(Long id);
+    void delete(Long id);
 
     /**
      * Updates existing gift certificate
      * If certificateDto contain new tags, they will be created as well
      *
      * @param giftCertificateId id of the gift certificate to update
-     * @param giftCertificateDto gift certificate for update
+     * @param giftCertificate gift certificate for update
      * @return updated GiftCertificateDto
      */
-    GiftCertificateDto update(Long giftCertificateId, GiftCertificateDto giftCertificateDto);
+    GiftCertificate update(Long giftCertificateId, GiftCertificate giftCertificate);
+
+    /**
+     * Searches for gift certificates by tag name
+     *
+     * @param tagName name of the tag to find gift certificates
+     * @return founded list of gift certificates
+     */
+    List<GiftCertificate> findGiftCertificatesByTagName(String tagName);
 
     /**
      * Searches for certificates by attributes
@@ -77,8 +85,8 @@ public interface GiftCertificateService {
      * @param tagName name of the certificate tag to contain (it can be part of name)
      * @param columnName column name to sorting by
      * @param sortType sorting type. Can be ASC or DESC
-     * @return list of founded lis of GiftCertificateDto
+     * @return list of founded list of GiftCertificate
      */
-    List<GiftCertificateDto> findByAttributes(String name, String tagName,
-                                              String columnName, String sortType);
+    List<GiftCertificate> findByAttributes(String name, String tagName,
+                                           String columnName, String sortType);
 }

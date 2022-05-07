@@ -75,7 +75,7 @@ public class GiftCertificateServiceImplTest {
         giftCertificateValidator = mock(GiftCertificateValidatorImpl.class);
         tagValidator = mock(TagValidatorImpl.class);
         giftCertificateService = new GiftCertificateServiceImpl(giftCertificateDao, tagDao,
-                tagToGiftCertificateDao, tagToGiftCertificateService, giftCertificateValidator, tagValidator);
+                giftCertificateValidator, tagValidator);
         giftCertificateList = new ArrayList<>();
         giftCertificateList.add(giftCertificate);
     }
@@ -96,13 +96,13 @@ public class GiftCertificateServiceImplTest {
 
     @Test
     void testCreate() {
-        GiftCertificateDto expectedResult = giftCertificateDto;
+        GiftCertificate expectedResult = giftCertificate;
         when(tagDao.findByName(anyString())).thenReturn(Optional.ofNullable(tag));
         when(tagDao.create(any())).thenReturn(tag);
         when(tagValidator.isNameValid(anyString())).thenReturn(true);
         when(giftCertificateValidator.validateAll(anyString(), anyString(), any(), anyShort())).thenReturn(true);
         when(giftCertificateDao.findByName(anyString())).thenReturn(Optional.empty());
-        GiftCertificateDto actualResult = giftCertificateService.create(giftCertificateDto);
+        GiftCertificate actualResult = giftCertificateService.create(giftCertificate);
         assertEquals(expectedResult, actualResult);
     }
 
@@ -110,14 +110,14 @@ public class GiftCertificateServiceImplTest {
     void testCreateShouldThrowFieldValidationExceptionWhenTagInvalid() {
         when(tagValidator.isNameValid(anyString())).thenReturn(false);
         when(giftCertificateValidator.validateAll(anyString(), anyString(), any(), anyShort())).thenReturn(true);
-        assertThrows(FieldValidationException.class, () -> giftCertificateService.create(giftCertificateDto));
+        assertThrows(FieldValidationException.class, () -> giftCertificateService.create(giftCertificate));
     }
 
     @Test
     void testCreateShouldThrowFieldValidationExceptionWhenGiftCertificateInvalid() {
         when(tagValidator.isNameValid(anyString())).thenReturn(true);
         when(giftCertificateValidator.validateAll(anyString(), anyString(), any(), anyShort())).thenReturn(false);
-        assertThrows(FieldValidationException.class, () -> giftCertificateService.create(giftCertificateDto));
+        assertThrows(FieldValidationException.class, () -> giftCertificateService.create(giftCertificate));
     }
 
     @Test
@@ -126,24 +126,24 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateValidator.validateAll(anyString(), anyString(), any(), anyShort())).thenReturn(true);
         when(giftCertificateDao.findByName(anyString())).thenReturn(Optional.of(giftCertificate));
         assertThrows(GiftCertificateAlreadyExistException.class,
-                () -> giftCertificateService.create(giftCertificateDto));
+                () -> giftCertificateService.create(giftCertificate));
     }
 
     @Test
     void testFindAll() {
-        List<GiftCertificateDto> expectedResult = giftCertificateDtoList;
+        List<GiftCertificate> expectedResult = giftCertificateList;
         when(giftCertificateDao.findAll()).thenReturn(giftCertificateList);
         when(tagToGiftCertificateDao.findTagsByGiftCertificateId(anyLong())).thenReturn(tagList);
-        List<GiftCertificateDto> actualResult = giftCertificateService.findAll();
+        List<GiftCertificate> actualResult = giftCertificateService.findAll();
         assertEquals(expectedResult, actualResult);
     }
 
     @Test
     void testFindById() {
-        GiftCertificateDto expectedResult = giftCertificateDto;
+        GiftCertificate expectedResult = giftCertificate;
         when(giftCertificateDao.findById(anyLong())).thenReturn(Optional.ofNullable(giftCertificate));
         when(tagToGiftCertificateDao.findTagsByGiftCertificateId(anyLong())).thenReturn(tagList);
-        GiftCertificateDto actualResult = giftCertificateService
+        GiftCertificate actualResult = giftCertificateService
                 .findByGiftCertificateId(GIFT_CERTIFICATE_ID);
         assertEquals(expectedResult, actualResult);
     }
@@ -157,9 +157,9 @@ public class GiftCertificateServiceImplTest {
 
     @Test
     void testFindByPartOfName() {
-        List<GiftCertificateDto> expectedResult = giftCertificateDtoList;
+        List<GiftCertificate> expectedResult = giftCertificateList;
         when(giftCertificateDao.findByPartOfName(anyString())).thenReturn(giftCertificateList);
-        List<GiftCertificateDto> actualResult = giftCertificateService.findByPartOfName(giftCertificate.getName());
+        List<GiftCertificate> actualResult = giftCertificateService.findByPartOfName(giftCertificate.getName());
         assertEquals(expectedResult, actualResult);
     }
 
@@ -172,11 +172,11 @@ public class GiftCertificateServiceImplTest {
 
     @Test
     void testFindAllWithSort() {
-        List<GiftCertificateDto> expectedResult = giftCertificateDtoList;
+        List<GiftCertificate> expectedResult = giftCertificateList;
         when(giftCertificateValidator.isColumnNameValid(anyString())).thenReturn(true);
         when(giftCertificateValidator.isSortTypeValid(anyString())).thenReturn(true);
         when(giftCertificateDao.findAllWithSort(anyString(), anyString())).thenReturn(giftCertificateList);
-        List<GiftCertificateDto> actualResult = giftCertificateService
+        List<GiftCertificate> actualResult = giftCertificateService
                 .findAllWithSort(ANY_STRING, ANY_STRING);
         assertEquals(expectedResult, actualResult);
     }
@@ -197,12 +197,12 @@ public class GiftCertificateServiceImplTest {
                 () -> giftCertificateService.findAllWithSort(ANY_STRING, ANY_STRING));
     }
 
-    @Test
-    void testDelete() {
-        when(giftCertificateDao.findById(anyLong())).thenReturn(Optional.ofNullable(giftCertificate));
-        when(giftCertificateDao.delete(anyLong())).thenReturn(true);
-        assertTrue(giftCertificateService.delete(giftCertificate.getId()));
-    }
+//    @Test
+//    void testDelete() {
+//        when(giftCertificateDao.findById(anyLong())).thenReturn(Optional.ofNullable(giftCertificate));
+//        when(giftCertificateDao.delete(anyLong())).thenReturn(true);
+//        assertTrue(giftCertificateService.delete(giftCertificate.getId()));
+//    }
 
     @Test
     void testDeleteShouldTrowGiftCertificateNotFoundException() {
@@ -240,6 +240,23 @@ public class GiftCertificateServiceImplTest {
     void testUpdateShouldThrowGiftCertificateNotFoundException() {
         when(giftCertificateDao.findById(anyLong())).thenReturn(Optional.empty());
         assertThrows(GiftCertificateNotFoundException.class, () -> giftCertificateService.update(GIFT_CERTIFICATE_ID,
-                giftCertificateDto));
+                giftCertificate));
+    }
+
+    @Test
+    void testFindGiftCertificatesByTagName() {
+        List<GiftCertificateDto> expectedResult = giftCertificateDtoList;
+        when(tagToGiftCertificateDao.findGiftCertificatesByTagName(anyString())).thenReturn(giftCertificateList);
+        when(tagToGiftCertificateDao.findTagsByGiftCertificateId(anyLong())).thenReturn(tagList);
+        List<GiftCertificateDto> actualResult = tagToGiftCertificateService
+                .findGiftCertificatesByTagName(TAG_NAME);
+        assertEquals(expectedResult, actualResult);
+    }
+
+    @Test
+    void testFindGiftCertificatesByTagNameShouldThrowGiftCertificatesNotFoundException() {
+        when(tagToGiftCertificateDao.findGiftCertificatesByTagName(anyString())).thenReturn(Collections.emptyList());
+        assertThrows(GiftCertificatesNotFoundException.class, () -> tagToGiftCertificateService
+                .findGiftCertificatesByTagName(TAG_NAME));
     }
 }

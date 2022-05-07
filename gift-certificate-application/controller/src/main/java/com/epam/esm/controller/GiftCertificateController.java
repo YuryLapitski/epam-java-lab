@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,22 +30,22 @@ public class GiftCertificateController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public GiftCertificateDto create(@RequestBody (required = false) GiftCertificateDto giftCertificateDto) {
-        return giftCertificateService.create(giftCertificateDto);
+    public GiftCertificate create(@RequestBody (required = false) GiftCertificate giftCertificate) {
+        return giftCertificateService.create(giftCertificate);
     }
 
     @PutMapping("/{id}")
-    public GiftCertificateDto update(@PathVariable long id, @RequestBody GiftCertificateDto giftCertificateDto) {
-        return giftCertificateService.update(id, giftCertificateDto);
+    public GiftCertificate update(@PathVariable long id, @RequestBody GiftCertificate giftCertificate) {
+        return giftCertificateService.update(id, giftCertificate);
     }
 
     @GetMapping("/{id}")
-    public GiftCertificateDto findById(@PathVariable long id) {
+    public GiftCertificate findById(@PathVariable long id) {
         return giftCertificateService.findByGiftCertificateId(id);
     }
 
     @GetMapping
-    public List<GiftCertificateDto> findByAttributes(
+    public List<GiftCertificate> findByAttributes(
             @RequestParam(required = false, name = "name") String name,
             @RequestParam(required = false, name = "tagName") String tagName,
             @RequestParam(required = false, name = "columnName") String columnName,
