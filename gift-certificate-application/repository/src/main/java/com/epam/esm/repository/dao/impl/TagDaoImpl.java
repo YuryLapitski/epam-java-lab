@@ -2,8 +2,8 @@ package com.epam.esm.repository.dao.impl;
 
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.dao.TagDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -11,14 +11,21 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Repository
 public class TagDaoImpl implements TagDao {
+    private static final String NAME_FIELD = "name";
 
     @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
+    private final CriteriaBuilder criteriaBuilder;
+
+    @Autowired
+    public TagDaoImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
+        this.criteriaBuilder = entityManager.getCriteriaBuilder();
+    }
 
     @Override
     public Tag create(Tag tag) {
@@ -28,7 +35,6 @@ public class TagDaoImpl implements TagDao {
 
     @Override
     public List<Tag> findAll() {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tag> criteriaQuery = criteriaBuilder.createQuery(Tag.class);
         Root<Tag> tagRoot = criteriaQuery.from(Tag.class);
         criteriaQuery.select(tagRoot);
@@ -42,11 +48,10 @@ public class TagDaoImpl implements TagDao {
 
     @Override
     public Optional<Tag> findByName(String name) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tag> criteriaQuery = criteriaBuilder.createQuery(Tag.class);
         Root<Tag> tagRoot = criteriaQuery.from(Tag.class);
         criteriaQuery.select(tagRoot);
-        criteriaQuery.where(criteriaBuilder.equal(tagRoot.get("name"), name));
+        criteriaQuery.where(criteriaBuilder.equal(tagRoot.get(NAME_FIELD), name));
         return entityManager.createQuery(criteriaQuery).getResultStream().findFirst();
     }
 

@@ -3,6 +3,7 @@ package com.epam.esm.repository.dao.impl;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -18,9 +19,19 @@ import java.util.Optional;
 
 @Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
+    private static final String NAME_FIELD = "name";
+    private static final String SORT_TYPE_DESC = "desc";
+    private static final String TAG_LIST_FIELD = "tagList";
 
     @PersistenceContext
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
+    private final CriteriaBuilder criteriaBuilder;
+
+    @Autowired
+    public GiftCertificateDaoImpl(EntityManager entityManager) {
+        this.entityManager = entityManager;
+        this.criteriaBuilder = entityManager.getCriteriaBuilder();
+    }
 
     @Override
     public GiftCertificate create(GiftCertificate giftCertificate) {
@@ -30,7 +41,6 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
     @Override
     public List<GiftCertificate> findAll() {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> giftCertificateRoot = criteriaQuery.from(GiftCertificate.class);
         criteriaQuery.select(giftCertificateRoot);
@@ -44,28 +54,26 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
     @Override
     public List<GiftCertificate> findByPartOfName(String name) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> giftCertificateRoot = criteriaQuery.from(GiftCertificate.class);
         criteriaQuery.select(giftCertificateRoot);
-        criteriaQuery.where(criteriaBuilder.equal(giftCertificateRoot.get("name"), name));
+        criteriaQuery.where(criteriaBuilder.equal(giftCertificateRoot.get(NAME_FIELD), name));
 
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
     public List<GiftCertificate> findAllWithSort(String columnName, String sortType) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> root = criteriaQuery.from(GiftCertificate.class);
 
         Order order;
         Path<String> path = root.get(columnName);
 
-        if (sortType.equalsIgnoreCase("asc")) {
-            order = criteriaBuilder.asc(path);
-        } else {
+        if (sortType.equalsIgnoreCase(SORT_TYPE_DESC)) {
             order = criteriaBuilder.desc(path);
+        } else {
+            order = criteriaBuilder.asc(path);
         }
 
         criteriaQuery.orderBy(order).select(root);
@@ -75,22 +83,20 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
     @Override
     public Optional<GiftCertificate> findByName(String name) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> giftCertificateRoot = criteriaQuery.from(GiftCertificate.class);
         criteriaQuery.select(giftCertificateRoot);
-        criteriaQuery.where(criteriaBuilder.equal(giftCertificateRoot.get("name"), name));
+        criteriaQuery.where(criteriaBuilder.equal(giftCertificateRoot.get(NAME_FIELD), name));
         return entityManager.createQuery(criteriaQuery).getResultStream().findFirst();
     }
 
     @Override
     public List<GiftCertificate> findGiftCertificatesByTagName(String tagName) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> root = criteriaQuery.from(GiftCertificate.class);
-        Join<GiftCertificate, Tag> joinRelation = root.join("tagList");
+        Join<GiftCertificate, Tag> joinRelation = root.join(TAG_LIST_FIELD);
         criteriaQuery.select(root);
-        criteriaQuery.where(criteriaBuilder.equal(joinRelation.get("name"), tagName));
+        criteriaQuery.where(criteriaBuilder.equal(joinRelation.get(NAME_FIELD), tagName));
 
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
