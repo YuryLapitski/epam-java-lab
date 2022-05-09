@@ -1,15 +1,6 @@
 package com.epam.esm.controller.exception;
 
-import com.epam.esm.service.exception.CannotUpdateException;
-import com.epam.esm.service.exception.FieldValidationException;
-import com.epam.esm.service.exception.GiftCertificateAlreadyExistException;
-import com.epam.esm.service.exception.GiftCertificateNotFoundException;
-import com.epam.esm.service.exception.GiftCertificatesNotFoundException;
-import com.epam.esm.service.exception.InvalidColumnNameException;
-import com.epam.esm.service.exception.InvalidSortTypeException;
-import com.epam.esm.service.exception.TagAlreadyExistException;
-import com.epam.esm.service.exception.TagNotFoundException;
-import com.epam.esm.service.exception.TagToGiftCertificateReferenceException;
+import com.epam.esm.service.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -113,7 +104,7 @@ public class AppExceptionHandler {
 
     @ExceptionHandler(InvalidColumnNameException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleCannotUpdateException(InvalidColumnNameException columnNameException) {
+    public ErrorResponse InvalidColumnNameException(InvalidColumnNameException columnNameException) {
         return ErrorResponse.builder()
                 .errorMessage(columnNameException.getMessage())
                 .errorStatus(HttpStatus.BAD_REQUEST)
@@ -124,12 +115,34 @@ public class AppExceptionHandler {
 
     @ExceptionHandler(InvalidSortTypeException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleCannotUpdateException(InvalidSortTypeException sortTypeException) {
+    public ErrorResponse handleInvalidSortTypeException(InvalidSortTypeException sortTypeException) {
         return ErrorResponse.builder()
                 .errorMessage(sortTypeException.getMessage())
                 .errorStatus(HttpStatus.BAD_REQUEST)
                 .timestamp(now())
                 .errorCode(40006)
+                .build();
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleUserNotFoundException(UserNotFoundException notFoundException) {
+        return ErrorResponse.builder()
+                .errorMessage(notFoundException.getMessage())
+                .errorStatus(HttpStatus.NOT_FOUND)
+                .timestamp(now())
+                .errorCode(40405)
+                .build();
+    }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleOrderNotFoundException(OrderNotFoundException notFoundException) {
+        return ErrorResponse.builder()
+                .errorMessage(notFoundException.getMessage())
+                .errorStatus(HttpStatus.NOT_FOUND)
+                .timestamp(now())
+                .errorCode(40406)
                 .build();
     }
 }
