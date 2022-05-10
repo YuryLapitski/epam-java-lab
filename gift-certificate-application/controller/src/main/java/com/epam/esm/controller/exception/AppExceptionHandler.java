@@ -145,4 +145,16 @@ public class AppExceptionHandler {
                 .errorCode(40406)
                 .build();
     }
+
+    @ExceptionHandler(UserAlreadyExistException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleUserAlreadyExistException(
+            UserAlreadyExistException alreadyExistException) {
+        return ErrorResponse.builder()
+                .errorMessage(alreadyExistException.getMessage())
+                .errorStatus(HttpStatus.BAD_REQUEST)
+                .timestamp(now())
+                .errorCode(40007)
+                .build();
+    }
 }

@@ -37,6 +37,14 @@ public interface OrderDao {
     Optional<Order> findById(Long id);
 
     /**
+     * Searches for order by user ID
+     *
+     * @param userId id of the user to find orders
+     * @return founded list of orders
+     */
+    List<Order> findByUserId(Long userId);
+
+    /**
      * Deletes order
      *
      * @param id id of the order to delete

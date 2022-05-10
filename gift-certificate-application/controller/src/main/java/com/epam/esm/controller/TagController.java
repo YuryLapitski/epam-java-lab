@@ -26,7 +26,7 @@ public class TagController {
     }
 
     @GetMapping("/{id}")
-    public Tag findById(@PathVariable long id) {
+    public Tag findById(@PathVariable Long id) {
         return tagService.findById(id);
     }
 
@@ -38,7 +38,7 @@ public class TagController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteTag(@PathVariable long id) {
+    public void deleteTag(@PathVariable Long id) {
         tagService.delete(id);
     }
 

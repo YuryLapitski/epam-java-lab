@@ -34,12 +34,12 @@ public class GiftCertificateController {
     }
 
     @PutMapping("/{id}")
-    public GiftCertificate update(@PathVariable long id, @RequestBody GiftCertificate giftCertificate) {
+    public GiftCertificate update(@PathVariable Long id, @RequestBody GiftCertificate giftCertificate) {
         return giftCertificateService.update(id, giftCertificate);
     }
 
     @GetMapping("/{id}")
-    public GiftCertificate findById(@PathVariable long id) {
+    public GiftCertificate findById(@PathVariable Long id) {
         return giftCertificateService.findByGiftCertificateId(id);
     }
 

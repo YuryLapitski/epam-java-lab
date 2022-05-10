@@ -1,6 +1,8 @@
 package com.epam.esm.service;
 
 import com.epam.esm.entity.Order;
+import com.epam.esm.entity.User;
+import com.epam.esm.service.dto.OrderDto;
 
 import java.util.List;
 
@@ -15,10 +17,10 @@ public interface OrderService {
     /**
      * Creates new order
      *
-     * @param order order to create
+     * @param orderDto orderDto to create
      * @return Order
      */
-    Order create(Order order);
+    Order create(OrderDto orderDto);
 
     /**
      * Searches for all orders
@@ -34,6 +36,22 @@ public interface OrderService {
      * @return founded order
      */
     Order findById(Long id);
+
+    /**
+     * Searches for order by user ID
+     *
+     * @param userId id of the user to find orders
+     * @return founded list of orders
+     */
+    List<Order> findByUserId(Long userId);
+
+    /**
+     * Searches for orders by attributes
+     *
+     * @param userId user id to find orders
+     * @return founded list of orders
+     */
+    List<Order> findByAttributes(Long userId);
 
     /**
      * Deletes order

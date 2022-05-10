@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @Repository
 public class OrderDaoImpl implements OrderDao {
+    private static final String USER_FIELD = "user";
 
     @PersistenceContext
     private final EntityManager entityManager;
@@ -43,6 +44,15 @@ public class OrderDaoImpl implements OrderDao {
     @Override
     public Optional<Order> findById(Long id) {
         return Optional.ofNullable(entityManager.find(Order.class, id));
+    }
+
+    @Override
+    public List<Order> findByUserId(Long userId) {
+        CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(Order.class);
+        Root<Order> orderRoot = criteriaQuery.from(Order.class);
+        criteriaQuery.select(orderRoot);
+        criteriaQuery.where(criteriaBuilder.equal(orderRoot.get(USER_FIELD), userId));
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
