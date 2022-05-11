@@ -1,5 +1,6 @@
 package com.epam.esm.repository.dao.impl;
 
+import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.dao.TagDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +35,18 @@ public class TagDaoImpl implements TagDao {
     }
 
     @Override
-    public List<Tag> findAll() {
+    public List<Tag> findAll(CustomPagination pagination) {
         CriteriaQuery<Tag> criteriaQuery = criteriaBuilder.createQuery(Tag.class);
         Root<Tag> tagRoot = criteriaQuery.from(Tag.class);
         criteriaQuery.select(tagRoot);
-        return entityManager.createQuery(criteriaQuery).getResultList();
+
+        int pageSize = pagination.getSize();
+        int pagesCount = pagination.getPage() * pageSize;
+
+        return entityManager.createQuery(criteriaQuery)
+                .setFirstResult(pagesCount)
+                .setMaxResults(pageSize)
+                .getResultList();
     }
 
     @Override
@@ -59,6 +67,14 @@ public class TagDaoImpl implements TagDao {
     public boolean delete(Long id) {
         entityManager.remove(entityManager.find(Tag.class, id));
         return true;
+    }
+
+    @Override
+    public Long findTagsNumber() {
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        Root<Tag> orderRoot = criteriaQuery.from(Tag.class);
+        criteriaQuery.select(criteriaBuilder.count(orderRoot));
+        return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 }
 

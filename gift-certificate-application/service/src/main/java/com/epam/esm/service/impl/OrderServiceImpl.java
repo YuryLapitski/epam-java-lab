@@ -1,5 +1,6 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
@@ -9,6 +10,7 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.OrderNotFoundException;
+import com.epam.esm.service.validator.PaginationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,14 +23,17 @@ public class OrderServiceImpl implements OrderService {
     private final OrderDao orderDao;
     private final UserService userService;
     private final GiftCertificateService giftCertificateService;
+    private final PaginationValidator paginationValidator;
 
     @Autowired
     public OrderServiceImpl(OrderDao orderDao,
                             UserService userService,
-                            GiftCertificateService giftCertificateService) {
+                            GiftCertificateService giftCertificateService,
+                            PaginationValidator paginationValidator) {
         this.orderDao = orderDao;
         this.userService = userService;
         this.giftCertificateService = giftCertificateService;
+        this.paginationValidator = paginationValidator;
     }
 
     @Transactional
@@ -45,8 +50,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findAll() {
-        return orderDao.findAll();
+    public List<Order> findAll(CustomPagination pagination) {
+        Long ordersNumber = orderDao.findOrdersNumber();
+        pagination = paginationValidator.validatePagination(pagination, ordersNumber);
+
+        return orderDao.findAll(pagination);
     }
 
     @Override
@@ -56,17 +64,20 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<Order> findByUserId(Long userId) {
-        return orderDao.findByUserId(userId);
+    public List<Order> findByUserId(Long userId, CustomPagination pagination) {
+        Long ordersNumber = orderDao.findUserOrdersNumber(userId);
+        pagination = paginationValidator.validatePagination(pagination, ordersNumber);
+
+        return orderDao.findByUserId(userId, pagination);
     }
 
     @Override
-    public List<Order> findByAttributes(Long userId) {
+    public List<Order> findByAttributes(Long userId, CustomPagination pagination) {
         List<Order> orderList;
         if (userId == null) {
-            orderList = findAll();
+            orderList = findAll(pagination);
         } else {
-            orderList = findByUserId(userId);
+            orderList = findByUserId(userId, pagination);
         }
 
         return orderList;

@@ -1,5 +1,6 @@
 package com.epam.esm.repository.dao;
 
+import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.Order;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public interface OrderDao {
      *
      * @return founded list of orders
      */
-    List<Order> findAll();
+    List<Order> findAll(CustomPagination pagination);
 
     /**
      * Searches for order by ID
@@ -42,7 +43,7 @@ public interface OrderDao {
      * @param userId id of the user to find orders
      * @return founded list of orders
      */
-    List<Order> findByUserId(Long userId);
+    List<Order> findByUserId(Long userId, CustomPagination pagination);
 
     /**
      * Deletes order
@@ -50,4 +51,8 @@ public interface OrderDao {
      * @param id id of the order to delete
      */
     void delete(Long id);
+
+    Long findOrdersNumber();
+
+    Long findUserOrdersNumber(Long userId);
 }

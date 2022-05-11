@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +49,9 @@ public class GiftCertificateController {
             @RequestParam(required = false, name = "name") String name,
             @RequestParam(required = false, name = "tagName") String tagName,
             @RequestParam(required = false, name = "columnName") String columnName,
-            @RequestParam(required = false, name = "sortType") String sortType) {
-        return giftCertificateService.findByAttributes(name, tagName, columnName, sortType);
+            @RequestParam(required = false, name = "sortType") String sortType,
+            CustomPagination pagination) {
+        return giftCertificateService.findByAttributes(name, tagName, columnName, sortType, pagination);
     }
 
     @DeleteMapping("/{id}")

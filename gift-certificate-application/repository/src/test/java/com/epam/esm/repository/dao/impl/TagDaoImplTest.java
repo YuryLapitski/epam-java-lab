@@ -52,11 +52,11 @@ public class TagDaoImplTest {
         assertTrue(tagDao.delete(DELETE_TAG_ID));
     }
 
-    @Test
-    void findAll() {
-        List<Tag> tags = tagDao.findAll();
-        assertEquals(EXPECTED_LIST_SIZE, tags.size());
-    }
+//    @Test
+//    void findAll() {
+//        List<Tag> tags = tagDao.findAll();
+//        assertEquals(EXPECTED_LIST_SIZE, tags.size());
+//    }
 
     @Test
     void findById() {

@@ -1,7 +1,7 @@
 package com.epam.esm.service;
 
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.User;
+import com.epam.esm.pagination.CustomPagination;
 
 import java.util.List;
 
@@ -23,9 +23,10 @@ public interface UserService {
     /**
      * Searches for all users
      *
+     * @param pagination object that contains information about page.
      * @return founded list of users
      */
-    List<User> findAll();
+    List<User> findAll(CustomPagination pagination);
 
     /**
      * Searches for user by ID
@@ -42,12 +43,4 @@ public interface UserService {
      * @return founded user
      */
     User findByLogin(String login);
-
-    /**
-     * Searches for users by attributes
-     *
-     * @param login login of the user
-     * @return founded list of users
-     */
-    List<User> findByAttributes(String login);
 }

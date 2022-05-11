@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +44,7 @@ public class TagController {
     }
 
     @GetMapping
-    public List<Tag> findAll() {
-        return tagService.findAll();
+    public List<Tag> findAll(CustomPagination pagination) {
+        return tagService.findAll(pagination);
     }
 }

@@ -1,5 +1,6 @@
 package com.epam.esm.service;
 
+import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.GiftCertificate;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public interface GiftCertificateService {
      *
      * @return founded list of GiftCertificate
      */
-    List<GiftCertificate> findAll();
+    List<GiftCertificate> findAll(CustomPagination pagination);
 
     /**
      * Searches for gift certificate by gift certificate id
@@ -42,7 +43,7 @@ public interface GiftCertificateService {
      * @param name name of the gift certificate to find (it can be part of name)
      * @return founded list of GiftCertificate
      */
-    List<GiftCertificate> findByPartOfName(String name);
+    List<GiftCertificate> findByPartOfName(String name, CustomPagination pagination);
 
     /**
      * Searches for gift certificates with sorting
@@ -51,7 +52,7 @@ public interface GiftCertificateService {
      * @param sortType sorting type. Can be ASC or DESC.
      * @return founded list of GiftCertificate
      */
-    List<GiftCertificate> findAllWithSort(String columnName, String sortType);
+    List<GiftCertificate> findAllWithSort(String columnName, String sortType, CustomPagination pagination);
 
     /**
      * Deletes gift certificate
@@ -76,7 +77,7 @@ public interface GiftCertificateService {
      * @param tagName name of the tag to find gift certificates
      * @return founded list of gift certificates
      */
-    List<GiftCertificate> findGiftCertificatesByTagName(String tagName);
+    List<GiftCertificate> findGiftCertificatesByTagName(String tagName, CustomPagination pagination);
 
     /**
      * Searches for certificates by attributes
@@ -88,5 +89,6 @@ public interface GiftCertificateService {
      * @return list of founded list of GiftCertificate
      */
     List<GiftCertificate> findByAttributes(String name, String tagName,
-                                           String columnName, String sortType);
+                                           String columnName, String sortType,
+                                           CustomPagination pagination);
 }

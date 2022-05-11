@@ -1,5 +1,6 @@
 package com.epam.esm.service;
 
+import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.Tag;
 import java.util.List;
 
@@ -25,7 +26,7 @@ public interface TagService {
      *
      * @return founded list of tags
      */
-    List<Tag> findAll();
+    List<Tag> findAll(CustomPagination pagination);
 
     /**
      * Searches for tag by tag ID

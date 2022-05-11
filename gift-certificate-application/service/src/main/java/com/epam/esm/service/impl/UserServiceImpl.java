@@ -2,16 +2,17 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.entity.User;
 import com.epam.esm.repository.dao.UserDao;
+import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.exception.FieldValidationException;
 import com.epam.esm.service.exception.UserAlreadyExistException;
 import com.epam.esm.service.exception.UserNotFoundException;
+import com.epam.esm.service.validator.PaginationValidator;
 import com.epam.esm.service.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,11 +25,13 @@ public class UserServiceImpl implements UserService {
     private static final String USER_ALREADY_EXIST_MSG = "User with the login '%s' already exists";
     private final UserDao userDao;
     private final UserValidator userValidator;
+    private final PaginationValidator paginationValidator;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, UserValidator userValidator) {
+    public UserServiceImpl(UserDao userDao, UserValidator userValidator, PaginationValidator paginationValidator) {
         this.userDao = userDao;
         this.userValidator = userValidator;
+        this.paginationValidator = paginationValidator;
     }
 
     @Transactional
@@ -55,8 +58,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findAll() {
-        return userDao.findAll();
+    public List<User> findAll(CustomPagination pagination) {
+        Long usersNumber = userDao.findUsersNumber();
+        pagination = paginationValidator.validatePagination(pagination, usersNumber);
+
+        return userDao.findAll(pagination);
     }
 
     @Override
@@ -69,17 +75,5 @@ public class UserServiceImpl implements UserService {
     public User findByLogin(String login) {
         return userDao.findByLogin(login).orElseThrow(() ->
                 new UserNotFoundException(String.format(USER_LOGIN_NOT_FOUND_MSG, login)));
-    }
-
-    @Override
-    public List<User> findByAttributes(String login) {
-        List<User> userList = new ArrayList<>();
-        if (login == null) {
-            userList = findAll();
-        } else {
-            userList.add(findByLogin(login));
-        }
-
-        return userList;
     }
 }

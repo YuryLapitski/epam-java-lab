@@ -1,5 +1,6 @@
 package com.epam.esm.repository.dao;
 
+import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.Tag;
 
 import java.util.List;
@@ -27,7 +28,7 @@ public interface TagDao {
      *
      * @return founded list of tags
      */
-    List<Tag> findAll();
+    List<Tag> findAll(CustomPagination pagination);
 
     /**
      * Searches for tag by tag ID
@@ -52,4 +53,6 @@ public interface TagDao {
      * @return true if the tag was created
      */
     boolean delete(Long id);
+
+    Long findTagsNumber();
 }

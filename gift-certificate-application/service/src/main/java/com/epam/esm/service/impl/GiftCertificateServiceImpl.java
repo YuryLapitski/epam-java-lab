@@ -1,5 +1,6 @@
 package com.epam.esm.service.impl;
 
+import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
@@ -7,6 +8,7 @@ import com.epam.esm.repository.dao.TagDao;
 import com.epam.esm.service.exception.*;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.validator.GiftCertificateValidator;
+import com.epam.esm.service.validator.PaginationValidator;
 import com.epam.esm.service.validator.TagValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,17 +40,18 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final TagDao tagDao;
     private final GiftCertificateValidator giftCertificateValidator;
     private final TagValidator tagValidator;
-
+    private final PaginationValidator paginationValidator;
 
     @Autowired
     public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao,
                                       TagDao tagDao,
                                       GiftCertificateValidator giftCertificateValidator,
-                                      TagValidator tagValidator) {
+                                      TagValidator tagValidator, PaginationValidator paginationValidator) {
         this.giftCertificateDao = giftCertificateDao;
         this.tagDao = tagDao;
         this.giftCertificateValidator = giftCertificateValidator;
         this.tagValidator = tagValidator;
+        this.paginationValidator = paginationValidator;
     }
 
     @Transactional
@@ -121,8 +124,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificate> findAll() {
-        return giftCertificateDao.findAll();
+    public List<GiftCertificate> findAll(CustomPagination pagination) {
+        Long gcNumber = giftCertificateDao.findGiftCertificatesNumber();
+        pagination = paginationValidator.validatePagination(pagination, gcNumber);
+
+        return giftCertificateDao.findAll(pagination);
     }
 
     @Override
@@ -133,8 +139,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificate> findByPartOfName(String name) {
-        List<GiftCertificate> giftCertificates = giftCertificateDao.findByPartOfName(name);
+    public List<GiftCertificate> findByPartOfName(String name, CustomPagination pagination) {
+        Long gcNumber = giftCertificateDao.findGiftCertificatesByNameNumber(name);
+        pagination = paginationValidator.validatePagination(pagination, gcNumber);
+
+        List<GiftCertificate> giftCertificates = giftCertificateDao.findByPartOfName(name, pagination);
 
         if (giftCertificates.isEmpty()) {
             throw new GiftCertificateNotFoundException(String.format(GIFT_CERTIFICATE_NAME_NOT_FOUND_MSG, name));
@@ -144,7 +153,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
-    public List<GiftCertificate> findAllWithSort(String columnName, String sortType) {
+    public List<GiftCertificate> findAllWithSort(String columnName, String sortType, CustomPagination pagination) {
+        Long gcNumber = giftCertificateDao.findGiftCertificatesNumber();
+        pagination = paginationValidator.validatePagination(pagination, gcNumber);
+
         if (!giftCertificateValidator.isColumnNameValid(columnName)) {
             throw new InvalidColumnNameException(INVALID_COLUMN_NAME_MSG);
         }
@@ -153,7 +165,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new InvalidSortTypeException(INVALID_SORT_TYPE_MSG);
         }
 
-        return giftCertificateDao.findAllWithSort(columnName, sortType);
+        return giftCertificateDao.findAllWithSort(columnName, sortType, pagination);
     }
 
     @Transactional
@@ -214,8 +226,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
 
     @Override
-    public List<GiftCertificate> findGiftCertificatesByTagName(String tagName) {
-        List<GiftCertificate> giftCertificates = giftCertificateDao.findGiftCertificatesByTagName(tagName);
+    public List<GiftCertificate> findGiftCertificatesByTagName(String tagName, CustomPagination pagination) {
+        Long gcNumber = giftCertificateDao.findGiftCertificatesByTagNameNumber(tagName);
+        pagination = paginationValidator.validatePagination(pagination, gcNumber);
+
+        List<GiftCertificate> giftCertificates = giftCertificateDao.findGiftCertificatesByTagName(tagName, pagination);
         if (giftCertificates.isEmpty()) {
             throw new GiftCertificatesNotFoundException(String.format(GIFT_CERTIFICATES_NOT_FOUND_MSG, tagName));
         }
@@ -225,20 +240,21 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public List<GiftCertificate> findByAttributes(String name, String tagName,
-                                                     String columnName, String sortType) {
+                                                  String columnName, String sortType,
+                                                  CustomPagination pagination) {
         List<GiftCertificate> giftCertificateList = new ArrayList<>();
 
         if (name != null) {
-            giftCertificateList = findByPartOfName(name);
+            giftCertificateList = findByPartOfName(name, pagination);
         }
         if (tagName != null) {
-            giftCertificateList = findGiftCertificatesByTagName(tagName);
+            giftCertificateList = findGiftCertificatesByTagName(tagName, pagination);
         }
         if (columnName != null && sortType != null) {
-            giftCertificateList = findAllWithSort(columnName, sortType);
+            giftCertificateList = findAllWithSort(columnName, sortType, pagination);
         }
         if (name == null && tagName == null && columnName == null && sortType == null) {
-            giftCertificateList = findAll();
+            giftCertificateList = findAll(pagination);
         }
 
         return giftCertificateList;

@@ -1,8 +1,8 @@
 package com.epam.esm.repository.dao;
 
+import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.GiftCertificate;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -27,7 +27,7 @@ public interface GiftCertificateDao {
      *
      * @return founded list of gift certificates
      */
-    List<GiftCertificate> findAll();
+    List<GiftCertificate> findAll(CustomPagination pagination);
 
     /**
      * Searches for gift certificate by ID
@@ -67,7 +67,7 @@ public interface GiftCertificateDao {
      * @param tagName tag name to find gift certificate
      * @return founded list of gift certificate
      */
-    List<GiftCertificate> findGiftCertificatesByTagName(String tagName);
+    List<GiftCertificate> findGiftCertificatesByTagName(String tagName, CustomPagination pagination);
 
     /**
      * Searches for gift certificate by name. It can be part of name
@@ -75,7 +75,7 @@ public interface GiftCertificateDao {
      * @param name name (part of name) of the gift certificate to find
      * @return founded list of gift certificate
      */
-    List<GiftCertificate> findByPartOfName(String name);
+    List<GiftCertificate> findByPartOfName(String name, CustomPagination pagination);
 
     /**
      * Searches for gift certificates with sorting
@@ -84,5 +84,11 @@ public interface GiftCertificateDao {
      * @param sortType sorting type. Can be ASC or DESC.
      * @return founded list of gift certificate
      */
-    List<GiftCertificate> findAllWithSort(String columnName, String sortType);
+    List<GiftCertificate> findAllWithSort(String columnName, String sortType, CustomPagination pagination);
+
+    Long findGiftCertificatesNumber();
+
+    Long findGiftCertificatesByNameNumber(String name);
+
+    Long findGiftCertificatesByTagNameNumber(String tagName);
 }

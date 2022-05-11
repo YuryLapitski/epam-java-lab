@@ -2,6 +2,7 @@ package com.epam.esm.repository.dao.impl;
 
 import com.epam.esm.entity.User;
 import com.epam.esm.repository.dao.UserDao;
+import com.epam.esm.pagination.CustomPagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -34,11 +35,18 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public List<User> findAll() {
+    public List<User> findAll(CustomPagination pagination) {
         CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
         Root<User> userRoot = criteriaQuery.from(User.class);
         criteriaQuery.select(userRoot);
-        return entityManager.createQuery(criteriaQuery).getResultList();
+
+        int pageSize = pagination.getSize();
+        int pagesCount = pagination.getPage() * pageSize;
+
+        return entityManager.createQuery(criteriaQuery)
+                .setFirstResult(pagesCount)
+                .setMaxResults(pageSize)
+                .getResultList();
     }
 
     @Override
@@ -53,5 +61,13 @@ public class UserDaoImpl implements UserDao {
         criteriaQuery.select(userRoot);
         criteriaQuery.where(criteriaBuilder.equal(userRoot.get(NAME_FIELD), login));
         return entityManager.createQuery(criteriaQuery).getResultStream().findFirst();
+    }
+
+    @Override
+    public Long findUsersNumber() {
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        Root<User> userRoot = criteriaQuery.from(User.class);
+        criteriaQuery.select(criteriaBuilder.count(userRoot));
+        return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 }
