@@ -2,14 +2,12 @@ package com.epam.esm.repository.dao.impl;
 
 import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.repository.dao.AbstractEntityDao;
 import com.epam.esm.repository.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
@@ -19,61 +17,20 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class GiftCertificateDaoImpl implements GiftCertificateDao {
+public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> implements GiftCertificateDao {
     private static final String NAME_FIELD = "name";
     private static final String SORT_TYPE_DESC = "desc";
     private static final String TAG_LIST_FIELD = "tagList";
 
-    @PersistenceContext
-    private final EntityManager entityManager;
-    private final CriteriaBuilder criteriaBuilder;
-
-    @Autowired
     public GiftCertificateDaoImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
-        this.criteriaBuilder = entityManager.getCriteriaBuilder();
-    }
-
-    @Override
-    public GiftCertificate create(GiftCertificate giftCertificate) {
-        entityManager.persist(giftCertificate);
-        return giftCertificate;
-    }
-
-    @Override
-    public List<GiftCertificate> findAll(CustomPagination pagination) {
-        CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
-        Root<GiftCertificate> giftCertificateRoot = criteriaQuery.from(GiftCertificate.class);
-        criteriaQuery.select(giftCertificateRoot);
-
-        int pageSize = pagination.getSize();
-        int pagesCount = pagination.getPage() * pageSize;
-
-        return entityManager.createQuery(criteriaQuery)
-                .setFirstResult(pagesCount)
-                .setMaxResults(pageSize)
-                .getResultList();
-    }
-
-    @Override
-    public Optional<GiftCertificate> findById(Long id) {
-        return Optional.ofNullable(entityManager.find(GiftCertificate.class, id));
+        super(entityManager);
     }
 
     @Override
     public List<GiftCertificate> findByPartOfName(String name, CustomPagination pagination) {
-        CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
-        Root<GiftCertificate> giftCertificateRoot = criteriaQuery.from(GiftCertificate.class);
-        criteriaQuery.select(giftCertificateRoot);
-        criteriaQuery.where(criteriaBuilder.equal(giftCertificateRoot.get(NAME_FIELD), name));
-
-        int pageSize = pagination.getSize();
-        int pagesCount = pagination.getPage() * pageSize;
-
-        return entityManager.createQuery(criteriaQuery)
-                .setFirstResult(pagesCount)
-                .setMaxResults(pageSize)
-                .getResultList();
+        CriteriaQuery<GiftCertificate> criteriaQuery =
+                prepareWhereCriteriaQuery(GiftCertificate.class, NAME_FIELD, name);
+        return prepareTypedQuery(criteriaQuery, pagination).getResultList();
     }
 
     @Override
@@ -92,21 +49,13 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
         criteriaQuery.orderBy(order).select(root);
 
-        int pageSize = pagination.getSize();
-        int pagesCount = pagination.getPage() * pageSize;
-
-        return entityManager.createQuery(criteriaQuery)
-                .setFirstResult(pagesCount)
-                .setMaxResults(pageSize)
-                .getResultList();
+        return prepareTypedQuery(criteriaQuery, pagination).getResultList();
     }
 
     @Override
     public Optional<GiftCertificate> findByName(String name) {
-        CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
-        Root<GiftCertificate> giftCertificateRoot = criteriaQuery.from(GiftCertificate.class);
-        criteriaQuery.select(giftCertificateRoot);
-        criteriaQuery.where(criteriaBuilder.equal(giftCertificateRoot.get(NAME_FIELD), name));
+        CriteriaQuery<GiftCertificate> criteriaQuery =
+                prepareWhereCriteriaQuery(GiftCertificate.class, NAME_FIELD, name);
         return entityManager.createQuery(criteriaQuery).getResultStream().findFirst();
     }
 
@@ -118,13 +67,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         criteriaQuery.select(root);
         criteriaQuery.where(criteriaBuilder.equal(joinRelation.get(NAME_FIELD), tagName));
 
-        int pageSize = pagination.getSize();
-        int pagesCount = pagination.getPage() * pageSize;
-
-        return entityManager.createQuery(criteriaQuery)
-                .setFirstResult(pagesCount)
-                .setMaxResults(pageSize)
-                .getResultList();
+        return prepareTypedQuery(criteriaQuery, pagination).getResultList();
     }
 
     @Override
@@ -134,25 +77,9 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
     @Override
-    public boolean delete(Long id) {
-        entityManager.remove(entityManager.find(GiftCertificate.class, id));
-        return true;
-    }
-
-    @Override
-    public Long findGiftCertificatesNumber() {
-        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
-        Root<GiftCertificate> giftCertificateRoot = criteriaQuery.from(GiftCertificate.class);
-        criteriaQuery.select(criteriaBuilder.count(giftCertificateRoot));
-        return entityManager.createQuery(criteriaQuery).getSingleResult();
-    }
-
-    @Override
     public Long findGiftCertificatesByNameNumber(String name) {
-        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
-        Root<GiftCertificate> giftCertificateRoot = criteriaQuery.from(GiftCertificate.class);
-        criteriaQuery.select(criteriaBuilder.count(giftCertificateRoot));
-        criteriaQuery.where(criteriaBuilder.equal(giftCertificateRoot.get(NAME_FIELD), name));
+        CriteriaQuery<Long> criteriaQuery = prepareWhereCriteriaQueryForCount(GiftCertificate.class,
+                NAME_FIELD, name);
         return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 

@@ -69,10 +69,10 @@ public class GiftCertificateDaoImplTest {
         assertEquals(giftCertificate, actual);
     }
 
-    @Test
-    void delete() {
-        assertTrue(giftCertificateDao.delete(NEW_CERTIFICATE_ID));
-    }
+//    @Test
+//    void delete() {
+//        assertTrue(giftCertificateDao.delete(NEW_CERTIFICATE_ID));
+//    }
 
 //    @Test
 //    void findAll() {
@@ -80,11 +80,11 @@ public class GiftCertificateDaoImplTest {
 //        assertEquals(EXPECTED_LIST_SIZE, giftCertificates.size());
 //    }
 
-    @Test
-    void findById() {
-        Optional<GiftCertificate> optionalTag = giftCertificateDao.findById(2L);
-        assertTrue(optionalTag.isPresent());
-    }
+//    @Test
+//    void findById() {
+//        Optional<GiftCertificate> optionalTag = giftCertificateDao.findById(2L);
+//        assertTrue(optionalTag.isPresent());
+//    }
 
     @Test
     void findByName() {

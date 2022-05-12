@@ -41,5 +41,5 @@ public interface TagService {
      *
      * @param id id of the tag to delete
      */
-    boolean delete(Long id);
+    void delete(Long id);
 }

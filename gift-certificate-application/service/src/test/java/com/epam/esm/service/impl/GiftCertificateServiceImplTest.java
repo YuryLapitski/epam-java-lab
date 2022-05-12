@@ -131,12 +131,12 @@ public class GiftCertificateServiceImplTest {
 //        assertEquals(expectedResult, actualResult);
 //    }
 
-    @Test
-    void testFindByIdShouldThrowGiftCertificateNotFoundException() {
-        when(giftCertificateDao.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(GiftCertificateNotFoundException.class, () -> giftCertificateService
-                .findByGiftCertificateId(tag.getId()));
-    }
+//    @Test
+//    void testFindByIdShouldThrowGiftCertificateNotFoundException() {
+//        when(giftCertificateDao.findById(anyLong())).thenReturn(Optional.empty());
+//        assertThrows(GiftCertificateNotFoundException.class, () -> giftCertificateService
+//                .findByGiftCertificateId(tag.getId()));
+//    }
 
 //    @Test
 //    void testFindByPartOfName() {
@@ -187,12 +187,12 @@ public class GiftCertificateServiceImplTest {
 //        assertTrue(giftCertificateService.delete(giftCertificate.getId()));
 //    }
 
-    @Test
-    void testDeleteShouldTrowGiftCertificateNotFoundException() {
-        when(giftCertificateDao.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(GiftCertificateNotFoundException.class,
-                () -> giftCertificateService.delete(giftCertificate.getId()));
-    }
+//    @Test
+//    void testDeleteShouldTrowGiftCertificateNotFoundException() {
+//        when(giftCertificateDao.findById(anyLong())).thenReturn(Optional.empty());
+//        assertThrows(GiftCertificateNotFoundException.class,
+//                () -> giftCertificateService.delete(giftCertificate.getId()));
+//    }
 
 //    @Test
 //    void testUpdate() {
@@ -219,12 +219,12 @@ public class GiftCertificateServiceImplTest {
 //                giftCertificateDto));
 //    }
 
-    @Test
-    void testUpdateShouldThrowGiftCertificateNotFoundException() {
-        when(giftCertificateDao.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(GiftCertificateNotFoundException.class, () -> giftCertificateService.update(GIFT_CERTIFICATE_ID,
-                giftCertificate));
-    }
+//    @Test
+//    void testUpdateShouldThrowGiftCertificateNotFoundException() {
+//        when(giftCertificateDao.findById(anyLong())).thenReturn(Optional.empty());
+//        assertThrows(GiftCertificateNotFoundException.class, () -> giftCertificateService.update(GIFT_CERTIFICATE_ID,
+//                giftCertificate));
+//    }
 
 //    @Test
 //    void testFindGiftCertificatesByTagName() {

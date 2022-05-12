@@ -53,21 +53,22 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<Tag> findAll(CustomPagination pagination) {
-        Long tagsNumber = tagDao.findTagsNumber();
+        Long tagsNumber = tagDao.findEntitiesNumber(Tag.class);
         pagination = paginationValidator.validatePagination(pagination, tagsNumber);
 
-        return tagDao.findAll(pagination);
+        return tagDao.findAll(pagination, Tag.class);
     }
 
     @Override
     public Tag findById(Long id) {
-        return tagDao.findById(id).orElseThrow(() -> new TagNotFoundException(String.format(TAG_NOT_FOUND_MSG, id)));
+        return tagDao.findById(id, Tag.class).orElseThrow(() ->
+                new TagNotFoundException(String.format(TAG_NOT_FOUND_MSG, id)));
     }
 
     @Transactional
     @Override
-    public boolean delete(Long id) {
-        Optional<Tag> optionalTag = tagDao.findById(id);
+    public void delete(Long id) {
+        Optional<Tag> optionalTag = tagDao.findById(id, Tag.class);
         if (!optionalTag.isPresent()) {
             throw new TagNotFoundException(String.format(TAG_NOT_FOUND_MSG, id));
         }
@@ -77,6 +78,6 @@ public class TagServiceImpl implements TagService {
             throw new TagToGiftCertificateReferenceException(CANNOT_BE_DELETED_TAG_MSG);
         }
 
-        return tagDao.delete(id);
+        tagDao.delete(id, Tag.class);
     }
 }

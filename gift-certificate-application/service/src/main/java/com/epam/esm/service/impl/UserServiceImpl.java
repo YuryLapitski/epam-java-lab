@@ -59,15 +59,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findAll(CustomPagination pagination) {
-        Long usersNumber = userDao.findUsersNumber();
+        Long usersNumber = userDao.findEntitiesNumber(User.class);
         pagination = paginationValidator.validatePagination(pagination, usersNumber);
 
-        return userDao.findAll(pagination);
+        return userDao.findAll(pagination, User.class);
     }
 
     @Override
     public User findById(Long id) {
-        return userDao.findById(id).orElseThrow(() ->
+        return userDao.findById(id, User.class).orElseThrow(() ->
                 new UserNotFoundException(String.format(USER_ID_NOT_FOUND_MSG, id)));
     }
 

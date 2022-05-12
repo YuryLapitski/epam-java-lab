@@ -125,15 +125,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public List<GiftCertificate> findAll(CustomPagination pagination) {
-        Long gcNumber = giftCertificateDao.findGiftCertificatesNumber();
+        Long gcNumber = giftCertificateDao.findEntitiesNumber(GiftCertificate.class);
         pagination = paginationValidator.validatePagination(pagination, gcNumber);
 
-        return giftCertificateDao.findAll(pagination);
+        return giftCertificateDao.findAll(pagination, GiftCertificate.class);
     }
 
     @Override
     public GiftCertificate findByGiftCertificateId(Long id) {
-        return giftCertificateDao.findById(id)
+        return giftCertificateDao.findById(id, GiftCertificate.class)
                 .orElseThrow(() -> new GiftCertificateNotFoundException(String
                 .format(GIFT_CERTIFICATE_ID_NOT_FOUND_MSG, id)));
     }
@@ -154,7 +154,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public List<GiftCertificate> findAllWithSort(String columnName, String sortType, CustomPagination pagination) {
-        Long gcNumber = giftCertificateDao.findGiftCertificatesNumber();
+        Long gcNumber = giftCertificateDao.findEntitiesNumber(GiftCertificate.class);
         pagination = paginationValidator.validatePagination(pagination, gcNumber);
 
         if (!giftCertificateValidator.isColumnNameValid(columnName)) {
@@ -171,14 +171,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     @Override
     public void delete(Long id) {
-        Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.findById(id);
+        Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.findById(id, GiftCertificate.class);
 
         if (!optionalGiftCertificate.isPresent()) {
             String msg = String.format(GIFT_CERTIFICATE_ID_NOT_FOUND_MSG, id);
             throw new GiftCertificateNotFoundException(msg);
         }
 
-        giftCertificateDao.delete(id);
+        giftCertificateDao.delete(id, GiftCertificate.class);
     }
 
     @Transactional

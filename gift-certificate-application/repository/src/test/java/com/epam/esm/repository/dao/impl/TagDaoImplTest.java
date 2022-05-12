@@ -47,10 +47,10 @@ public class TagDaoImplTest {
         assertEquals(CREATED_TAG_NAME, actual.getName());
     }
 
-    @Test
-    void delete() {
-        assertTrue(tagDao.delete(DELETE_TAG_ID));
-    }
+//    @Test
+//    void delete() {
+//        assertTrue(tagDao.delete(DELETE_TAG_ID));
+//    }
 
 //    @Test
 //    void findAll() {
@@ -58,11 +58,11 @@ public class TagDaoImplTest {
 //        assertEquals(EXPECTED_LIST_SIZE, tags.size());
 //    }
 
-    @Test
-    void findById() {
-        Optional<Tag> optionalTag = tagDao.findById(TAG_ID);
-        assertTrue(optionalTag.isPresent());
-    }
+//    @Test
+//    void findById() {
+//        Optional<Tag> optionalTag = tagDao.findById(TAG_ID);
+//        assertTrue(optionalTag.isPresent());
+//    }
 
     @Test
     void findByName() {

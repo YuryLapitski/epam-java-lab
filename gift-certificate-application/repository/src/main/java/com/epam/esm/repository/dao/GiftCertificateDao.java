@@ -12,38 +12,7 @@ import java.util.Optional;
  * @author Yury Lapitski
  * @version 1.0
  */
-public interface GiftCertificateDao {
-
-    /**
-     * Creates new gift certificate
-     *
-     * @param giftCertificate tag to create
-     * @return gift certificate
-     */
-    GiftCertificate create(GiftCertificate giftCertificate);
-
-    /**
-     * Searches for all gift certificates
-     *
-     * @return founded list of gift certificates
-     */
-    List<GiftCertificate> findAll(CustomPagination pagination);
-
-    /**
-     * Searches for gift certificate by ID
-     *
-     * @param id id of the gift certificate to find
-     * @return founded Optional of gift certificate
-     */
-    Optional<GiftCertificate> findById(Long id);
-
-    /**
-     * Deletes gift certificate
-     *
-     * @param id id of the gift certificate to delete
-     * @return true if the gift certificate was deleted
-     */
-    boolean delete(Long id);
+public interface GiftCertificateDao extends EntityDao<GiftCertificate> {
 
     /**
      * Updates existing gift certificate
@@ -85,8 +54,6 @@ public interface GiftCertificateDao {
      * @return founded list of gift certificate
      */
     List<GiftCertificate> findAllWithSort(String columnName, String sortType, CustomPagination pagination);
-
-    Long findGiftCertificatesNumber();
 
     Long findGiftCertificatesByNameNumber(String name);
 

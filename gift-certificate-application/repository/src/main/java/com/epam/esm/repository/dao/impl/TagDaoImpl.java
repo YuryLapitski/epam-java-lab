@@ -1,80 +1,26 @@
 package com.epam.esm.repository.dao.impl;
 
-import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.Tag;
+import com.epam.esm.repository.dao.AbstractEntityDao;
 import com.epam.esm.repository.dao.TagDao;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class TagDaoImpl implements TagDao {
+public class TagDaoImpl extends AbstractEntityDao<Tag> implements TagDao {
     private static final String NAME_FIELD = "name";
 
-    @PersistenceContext
-    private final EntityManager entityManager;
-    private final CriteriaBuilder criteriaBuilder;
-
-    @Autowired
     public TagDaoImpl(EntityManager entityManager) {
-        this.entityManager = entityManager;
-        this.criteriaBuilder = entityManager.getCriteriaBuilder();
-    }
-
-    @Override
-    public Tag create(Tag tag) {
-        entityManager.persist(tag);
-        return tag;
-    }
-
-    @Override
-    public List<Tag> findAll(CustomPagination pagination) {
-        CriteriaQuery<Tag> criteriaQuery = criteriaBuilder.createQuery(Tag.class);
-        Root<Tag> tagRoot = criteriaQuery.from(Tag.class);
-        criteriaQuery.select(tagRoot);
-
-        int pageSize = pagination.getSize();
-        int pagesCount = pagination.getPage() * pageSize;
-
-        return entityManager.createQuery(criteriaQuery)
-                .setFirstResult(pagesCount)
-                .setMaxResults(pageSize)
-                .getResultList();
-    }
-
-    @Override
-    public Optional<Tag> findById(Long id) {
-        return Optional.ofNullable(entityManager.find(Tag.class, id));
+        super(entityManager);
     }
 
     @Override
     public Optional<Tag> findByName(String name) {
-        CriteriaQuery<Tag> criteriaQuery = criteriaBuilder.createQuery(Tag.class);
-        Root<Tag> tagRoot = criteriaQuery.from(Tag.class);
-        criteriaQuery.select(tagRoot);
-        criteriaQuery.where(criteriaBuilder.equal(tagRoot.get(NAME_FIELD), name));
+        CriteriaQuery<Tag> criteriaQuery = prepareWhereCriteriaQuery(Tag.class, NAME_FIELD, name);
         return entityManager.createQuery(criteriaQuery).getResultStream().findFirst();
-    }
-
-    @Override
-    public boolean delete(Long id) {
-        entityManager.remove(entityManager.find(Tag.class, id));
-        return true;
-    }
-
-    @Override
-    public Long findTagsNumber() {
-        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
-        Root<Tag> orderRoot = criteriaQuery.from(Tag.class);
-        criteriaQuery.select(criteriaBuilder.count(orderRoot));
-        return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 }
 

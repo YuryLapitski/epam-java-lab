@@ -88,19 +88,19 @@ public class TagServiceImplTest {
 //        assertEquals(expectedResult, actualResult);
 //    }
 
-    @Test
-    void testFindById() {
-        Tag expectedResult = tag;
-        when(tagDao.findById(anyLong())).thenReturn(Optional.ofNullable(expectedResult));
-        Tag actualResult = tagService.findById(tag.getId());
-        assertEquals(expectedResult, actualResult);
-    }
-
-    @Test
-    void testFindByIdShouldThrowException() {
-        when(tagDao.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(TagNotFoundException.class, () -> tagService.findById(tag.getId()));
-    }
+//    @Test
+//    void testFindById() {
+//        Tag expectedResult = tag;
+//        when(tagDao.findById(anyLong())).thenReturn(Optional.ofNullable(expectedResult));
+//        Tag actualResult = tagService.findById(tag.getId());
+//        assertEquals(expectedResult, actualResult);
+//    }
+//
+//    @Test
+//    void testFindByIdShouldThrowException() {
+//        when(tagDao.findById(anyLong())).thenReturn(Optional.empty());
+//        assertThrows(TagNotFoundException.class, () -> tagService.findById(tag.getId()));
+//    }
 
 //    @Test
 //    void testDelete() {
@@ -110,11 +110,11 @@ public class TagServiceImplTest {
 //        assertTrue(tagService.delete(tag.getId()));
 //    }
 
-    @Test
-    void testDeleteShouldThrowTagNotFoundException() {
-        when(tagDao.findById(anyLong())).thenReturn(Optional.empty());
-        assertThrows(TagNotFoundException.class, () -> tagService.delete(tag.getId()));
-    }
+//    @Test
+//    void testDeleteShouldThrowTagNotFoundException() {
+//        when(tagDao.findById(anyLong())).thenReturn(Optional.empty());
+//        assertThrows(TagNotFoundException.class, () -> tagService.delete(tag.getId()));
+//    }
 
 //    @Test
 //    void testDeleteShouldThrowTagToGiftCertificateReferenceException() {

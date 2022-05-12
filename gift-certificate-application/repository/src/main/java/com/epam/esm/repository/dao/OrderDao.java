@@ -13,29 +13,7 @@ import java.util.Optional;
  * @author Yury Lapitski
  * @version 1.0
  */
-public interface OrderDao {
-    /**
-     * Creates new order
-     *
-     * @param order order to create
-     * @return Order
-     */
-    Order create(Order order);
-
-    /**
-     * Searches for all orders
-     *
-     * @return founded list of orders
-     */
-    List<Order> findAll(CustomPagination pagination);
-
-    /**
-     * Searches for order by ID
-     *
-     * @param id id of the order to find
-     * @return founded Optional of order
-     */
-    Optional<Order> findById(Long id);
+public interface OrderDao extends EntityDao<Order> {
 
     /**
      * Searches for order by user ID
@@ -44,15 +22,6 @@ public interface OrderDao {
      * @return founded list of orders
      */
     List<Order> findByUserId(Long userId, CustomPagination pagination);
-
-    /**
-     * Deletes order
-     *
-     * @param id id of the order to delete
-     */
-    void delete(Long id);
-
-    Long findOrdersNumber();
 
     Long findUserOrdersNumber(Long userId);
 }

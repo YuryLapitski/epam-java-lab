@@ -51,15 +51,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> findAll(CustomPagination pagination) {
-        Long ordersNumber = orderDao.findOrdersNumber();
+        Long ordersNumber = orderDao.findEntitiesNumber(Order.class);
         pagination = paginationValidator.validatePagination(pagination, ordersNumber);
 
-        return orderDao.findAll(pagination);
+        return orderDao.findAll(pagination, Order.class);
     }
 
     @Override
     public Order findById(Long id) {
-        return orderDao.findById(id).orElseThrow(() ->
+        return orderDao.findById(id, Order.class).orElseThrow(() ->
                 new OrderNotFoundException(String.format(ORDER_ID_NOT_FOUND_MSG, id)));
     }
 
@@ -87,6 +87,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void delete(Long id) {
         findById(id);
-        orderDao.delete(id);
+        orderDao.delete(id, Order.class);
     }
 }
