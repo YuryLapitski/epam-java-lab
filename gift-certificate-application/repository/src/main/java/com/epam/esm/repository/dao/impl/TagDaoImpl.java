@@ -20,7 +20,7 @@ public class TagDaoImpl extends AbstractEntityDao<Tag> implements TagDao {
     @Override
     public Optional<Tag> findByName(String name) {
         CriteriaQuery<Tag> criteriaQuery = prepareWhereCriteriaQuery(Tag.class, NAME_FIELD, name);
-        return entityManager.createQuery(criteriaQuery).getResultStream().findFirst();
+        return entityManager.createQuery(criteriaQuery).getResultStream().findAny();
     }
 }
 

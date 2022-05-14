@@ -23,5 +23,7 @@ public interface OrderDao extends EntityDao<Order> {
      */
     List<Order> findByUserId(Long userId, CustomPagination pagination);
 
+    List<Order> findByGiftCertificateId(Long giftCertificateId);
+
     Long findUserOrdersNumber(Long userId);
 }

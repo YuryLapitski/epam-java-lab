@@ -10,6 +10,8 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.OrderNotFoundException;
+import com.epam.esm.service.exception.TagToGiftCertificateReferenceException;
+import com.epam.esm.service.exception.UserHasNoOrdersException;
 import com.epam.esm.service.validator.PaginationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.util.List;
 @Service
 public class OrderServiceImpl implements OrderService {
     private static final String ORDER_ID_NOT_FOUND_MSG = "Order with id=%d not found.";
+    private static final String USER_HAS_NO_ORDERS_MSG = "User with id=%d has no orders.";
     private final OrderDao orderDao;
     private final UserService userService;
     private final GiftCertificateService giftCertificateService;
@@ -65,6 +68,13 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> findByUserId(Long userId, CustomPagination pagination) {
+        userService.findById(userId);
+
+        if (!hasUserOrders(userId, pagination)) {
+            String msg = String.format(USER_HAS_NO_ORDERS_MSG, userId);
+            throw new UserHasNoOrdersException(msg);
+        }
+
         Long ordersNumber = orderDao.findUserOrdersNumber(userId);
         pagination = paginationValidator.validatePagination(pagination, ordersNumber);
 
@@ -88,5 +98,10 @@ public class OrderServiceImpl implements OrderService {
     public void delete(Long id) {
         findById(id);
         orderDao.delete(id, Order.class);
+    }
+
+    private boolean hasUserOrders (Long userId, CustomPagination pagination) {
+        List<Order> orderList = orderDao.findByUserId(userId, pagination);
+        return !orderList.isEmpty();
     }
 }

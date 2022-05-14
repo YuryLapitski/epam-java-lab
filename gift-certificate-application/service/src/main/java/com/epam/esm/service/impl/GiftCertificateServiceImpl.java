@@ -4,6 +4,7 @@ import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
+import com.epam.esm.repository.dao.OrderDao;
 import com.epam.esm.repository.dao.TagDao;
 import com.epam.esm.service.exception.*;
 import com.epam.esm.service.GiftCertificateService;
@@ -35,9 +36,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private static final String INVALID_SORT_TYPE_MSG = "Invalid sort type. Sort type can be only 'asc' or 'desc'.";
     private static final String CANNOT_BE_EMPTY_FIELDS_MSG = "Fields 'Name', 'Description', 'Price', 'Duration' " +
             "cannot be empty";
-    private static final String GIFT_CERTIFICATES_NOT_FOUND_MSG = "Gift certificate with tag name '%s' not found.";
+    private static final String CANNOT_BE_DELETED_GIFT_CERTIFICATE_MSG =
+            "Cannot delete. There is an order for a gift certificate";
+    private static final String TAG_DOES_NOT_EXIST_MSG = "Tag with the name '%s' does not exist";
+    private static final String NO_GIFT_CERTIFICATE_MATCHING_MSG = "No gift certificate matching these tags";
     private final GiftCertificateDao giftCertificateDao;
     private final TagDao tagDao;
+    private final OrderDao orderDao;
     private final GiftCertificateValidator giftCertificateValidator;
     private final TagValidator tagValidator;
     private final PaginationValidator paginationValidator;
@@ -45,10 +50,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Autowired
     public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao,
                                       TagDao tagDao,
+                                      OrderDao orderDao,
                                       GiftCertificateValidator giftCertificateValidator,
-                                      TagValidator tagValidator, PaginationValidator paginationValidator) {
+                                      TagValidator tagValidator,
+                                      PaginationValidator paginationValidator) {
         this.giftCertificateDao = giftCertificateDao;
         this.tagDao = tagDao;
+        this.orderDao = orderDao;
         this.giftCertificateValidator = giftCertificateValidator;
         this.tagValidator = tagValidator;
         this.paginationValidator = paginationValidator;
@@ -148,6 +156,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             throw new GiftCertificateNotFoundException(msg);
         }
 
+        if (!orderDao.findByGiftCertificateId(id).isEmpty()) {
+            throw new HasOrderToGiftCertificateException(CANNOT_BE_DELETED_GIFT_CERTIFICATE_MSG);
+        }
+
         giftCertificateDao.delete(id, GiftCertificate.class);
     }
 
@@ -194,50 +206,55 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return giftCertificateDao.update(newGiftCertificate);
     }
 
+    @Transactional
     @Override
-    public List<GiftCertificate> findByAttributes(String name, List<String> tagNames,
-                                                  List<String> columnNames, String sortType,
-                                                  CustomPagination pagination) {
+    public List<GiftCertificate> findByAttributes(String name, List<String> tagNames, List<String> columnNames,
+                                                  String sortType, CustomPagination pagination) {
+        checkGiftCertificateByName(name);
+        checkTagsByName(tagNames);
+        checkColumnNames(columnNames);
+        checkSortType(sortType);
+
         Long gcNumber = giftCertificateDao.findByAttributesNumber(name, tagNames);
         pagination = paginationValidator.validatePagination(pagination, gcNumber);
-
-        List<GiftCertificate> giftCertificates = giftCertificateDao.findByPartOfName(name);
-        if (giftCertificates.isEmpty()) {
-            throw new GiftCertificateNotFoundException(String.format(GIFT_CERTIFICATE_NAME_NOT_FOUND_MSG, name));
-        }
-
-        for (String columnName : columnNames) {
-            if (!giftCertificateValidator.isColumnNameValid(columnName)) {
-                throw new InvalidColumnNameException(INVALID_COLUMN_NAME_MSG);
-            }
-        }
-
-        if (!giftCertificateValidator.isSortTypeValid(sortType)) {
-            throw new InvalidSortTypeException(INVALID_SORT_TYPE_MSG);
-        }
 
         return giftCertificateDao.findByAttributes(name, tagNames, columnNames, sortType, pagination);
     }
 
-//    @Override
-//    public List<GiftCertificate> findByAttributes(String name, String tagName,
-//                                                  String columnName, String sortType,
-//                                                  CustomPagination pagination) {
-//        List<GiftCertificate> giftCertificateList = new ArrayList<>();
-//
-//        if (name != null) {
-//            giftCertificateList = findByPartOfName(name, pagination);
-//        }
-//        if (tagName != null) {
-//            giftCertificateList = findGiftCertificatesByTagName(tagName, pagination);
-//        }
-//        if (columnName != null && sortType != null) {
-//            giftCertificateList = findAllWithSort(columnName, sortType, pagination);
-//        }
-//        if (name == null && tagName == null && columnName == null && sortType == null) {
-//            giftCertificateList = findAll(pagination);
-//        }
-//
-//        return giftCertificateList;
-//    }
+    private void checkGiftCertificateByName(String name) {
+        if (name != null) {
+            if (giftCertificateDao.findByPartOfName(name).isEmpty()) {
+                throw new GiftCertificateNotFoundException(String.format(GIFT_CERTIFICATE_NAME_NOT_FOUND_MSG, name));
+            }
+        }
+    }
+
+    private void checkTagsByName(List<String> tagNames) {
+        if (tagNames != null) {
+            tagNames.forEach(tagName -> tagDao.findByName(tagName)
+                    .orElseThrow(() -> new TagDoesNotExistException(String.format(TAG_DOES_NOT_EXIST_MSG, tagName))));
+            if (giftCertificateDao.findGiftCertificatesByTagNames(tagNames).isEmpty()) {
+                throw new NoMatchingGiftCertificateException(NO_GIFT_CERTIFICATE_MATCHING_MSG);
+            }
+        }
+    }
+
+    private void checkColumnNames(List<String> columnNames) {
+        if (columnNames != null) {
+            for (String columnName : columnNames) {
+                if (!giftCertificateValidator.isColumnNameValid(columnName)) {
+                    throw new InvalidColumnNameException(INVALID_COLUMN_NAME_MSG);
+                }
+            }
+        }
+    }
+
+    private void checkSortType(String sortType) {
+        if (sortType != null) {
+            if (!giftCertificateValidator.isSortTypeValid(sortType)) {
+                throw new InvalidSortTypeException(INVALID_SORT_TYPE_MSG);
+            }
+        }
+    }
 }
+

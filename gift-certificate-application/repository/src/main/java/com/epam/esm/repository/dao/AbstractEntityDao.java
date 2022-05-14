@@ -52,6 +52,7 @@ public abstract class AbstractEntityDao<T> implements EntityDao<T> {
         CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
         Root<T> orderRoot = criteriaQuery.from(entityClass);
         criteriaQuery.select(criteriaBuilder.count(orderRoot));
+
         return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 
@@ -68,6 +69,7 @@ public abstract class AbstractEntityDao<T> implements EntityDao<T> {
     protected CriteriaQuery<T> prepareSelectCriteriaQuery(Class<T> entityClass) {
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<T> root = criteriaQuery.from(entityClass);
+
         return criteriaQuery.select(root);
     }
 
@@ -77,6 +79,7 @@ public abstract class AbstractEntityDao<T> implements EntityDao<T> {
         CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(entityClass);
         Root<T> root = criteriaQuery.from(entityClass);
         criteriaQuery.select(root);
+
         return criteriaQuery.where(criteriaBuilder.equal(root.get(field), object));
     }
 }

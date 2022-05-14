@@ -14,6 +14,7 @@ import java.util.List;
 @Repository
 public class OrderDaoImpl extends AbstractEntityDao<Order> implements OrderDao {
     private static final String USER_FIELD = "user";
+    private static final String GIFT_CERTIFICATE_FIELD = "giftCertificate";
 
     public OrderDaoImpl(EntityManager entityManager) {
         super(entityManager);
@@ -23,6 +24,13 @@ public class OrderDaoImpl extends AbstractEntityDao<Order> implements OrderDao {
     public List<Order> findByUserId(Long userId, CustomPagination pagination) {
         CriteriaQuery<Order> criteriaQuery = prepareWhereCriteriaQuery(Order.class, USER_FIELD, userId);
         return prepareTypedQuery(criteriaQuery, pagination).getResultList();
+    }
+
+    @Override
+    public List<Order> findByGiftCertificateId(Long giftCertificateId) {
+        CriteriaQuery<Order> criteriaQuery = prepareWhereCriteriaQuery(Order.class,
+                GIFT_CERTIFICATE_FIELD, giftCertificateId);
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
