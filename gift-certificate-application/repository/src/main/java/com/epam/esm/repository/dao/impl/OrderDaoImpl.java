@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Repository
@@ -18,7 +19,6 @@ public class OrderDaoImpl extends AbstractEntityDao<Order> implements OrderDao {
         super(entityManager);
     }
 
-
     @Override
     public List<Order> findByUserId(Long userId, CustomPagination pagination) {
         CriteriaQuery<Order> criteriaQuery = prepareWhereCriteriaQuery(Order.class, USER_FIELD, userId);
@@ -27,8 +27,10 @@ public class OrderDaoImpl extends AbstractEntityDao<Order> implements OrderDao {
 
     @Override
     public Long findUserOrdersNumber(Long userId) {
-        CriteriaQuery<Long> criteriaQuery = prepareWhereCriteriaQueryForCount(Order.class, USER_FIELD, userId);
-
+        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+        Root<Order> root = criteriaQuery.from(Order.class);
+        criteriaQuery.select(criteriaBuilder.count(root));
+        criteriaQuery.where(criteriaBuilder.equal(root.get(USER_FIELD), userId));
         return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 }

@@ -4,8 +4,11 @@ import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.repository.dao.GiftCertificateDao;
 import com.epam.esm.repository.dao.TagDao;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.service.exception.*;
 import com.epam.esm.service.TagService;
+import com.epam.esm.service.exception.FieldValidationException;
+import com.epam.esm.service.exception.TagAlreadyExistException;
+import com.epam.esm.service.exception.TagNotFoundException;
+import com.epam.esm.service.exception.TagToGiftCertificateReferenceException;
 import com.epam.esm.service.validator.PaginationValidator;
 import com.epam.esm.service.validator.TagValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +76,7 @@ public class TagServiceImpl implements TagService {
             throw new TagNotFoundException(String.format(TAG_NOT_FOUND_MSG, id));
         }
 
-        CustomPagination pagination = new CustomPagination();
-        if (!giftCertificateDao.findGiftCertificatesByTagName(optionalTag.get().getName(), pagination).isEmpty()) {
+        if (!giftCertificateDao.findGiftCertificatesByTagName(optionalTag.get().getName()).isEmpty()) {
             throw new TagToGiftCertificateReferenceException(CANNOT_BE_DELETED_TAG_MSG);
         }
 

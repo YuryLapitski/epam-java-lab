@@ -79,12 +79,4 @@ public abstract class AbstractEntityDao<T> implements EntityDao<T> {
         criteriaQuery.select(root);
         return criteriaQuery.where(criteriaBuilder.equal(root.get(field), object));
     }
-
-    protected CriteriaQuery<Long> prepareWhereCriteriaQueryForCount(Class<T> entityClass,
-                                                         String field,
-                                                         Object object) {
-        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
-        Root<T> root = criteriaQuery.from(entityClass);
-        return criteriaQuery.select(criteriaBuilder.count(root));
-    }
 }

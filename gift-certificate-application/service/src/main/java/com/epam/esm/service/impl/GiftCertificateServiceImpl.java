@@ -138,36 +138,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 .format(GIFT_CERTIFICATE_ID_NOT_FOUND_MSG, id)));
     }
 
-    @Override
-    public List<GiftCertificate> findByPartOfName(String name, CustomPagination pagination) {
-        Long gcNumber = giftCertificateDao.findGiftCertificatesByNameNumber(name);
-        pagination = paginationValidator.validatePagination(pagination, gcNumber);
-
-        List<GiftCertificate> giftCertificates = giftCertificateDao.findByPartOfName(name, pagination);
-
-        if (giftCertificates.isEmpty()) {
-            throw new GiftCertificateNotFoundException(String.format(GIFT_CERTIFICATE_NAME_NOT_FOUND_MSG, name));
-        }
-
-        return giftCertificates;
-    }
-
-    @Override
-    public List<GiftCertificate> findAllWithSort(String columnName, String sortType, CustomPagination pagination) {
-        Long gcNumber = giftCertificateDao.findEntitiesNumber(GiftCertificate.class);
-        pagination = paginationValidator.validatePagination(pagination, gcNumber);
-
-        if (!giftCertificateValidator.isColumnNameValid(columnName)) {
-            throw new InvalidColumnNameException(INVALID_COLUMN_NAME_MSG);
-        }
-
-        if (!giftCertificateValidator.isSortTypeValid(sortType)) {
-            throw new InvalidSortTypeException(INVALID_SORT_TYPE_MSG);
-        }
-
-        return giftCertificateDao.findAllWithSort(columnName, sortType, pagination);
-    }
-
     @Transactional
     @Override
     public void delete(Long id) {
@@ -224,39 +194,50 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return giftCertificateDao.update(newGiftCertificate);
     }
 
-
     @Override
-    public List<GiftCertificate> findGiftCertificatesByTagName(String tagName, CustomPagination pagination) {
-        Long gcNumber = giftCertificateDao.findGiftCertificatesByTagNameNumber(tagName);
+    public List<GiftCertificate> findByAttributes(String name, List<String> tagNames,
+                                                  List<String> columnNames, String sortType,
+                                                  CustomPagination pagination) {
+        Long gcNumber = giftCertificateDao.findByAttributesNumber(name, tagNames);
         pagination = paginationValidator.validatePagination(pagination, gcNumber);
 
-        List<GiftCertificate> giftCertificates = giftCertificateDao.findGiftCertificatesByTagName(tagName, pagination);
+        List<GiftCertificate> giftCertificates = giftCertificateDao.findByPartOfName(name);
         if (giftCertificates.isEmpty()) {
-            throw new GiftCertificatesNotFoundException(String.format(GIFT_CERTIFICATES_NOT_FOUND_MSG, tagName));
+            throw new GiftCertificateNotFoundException(String.format(GIFT_CERTIFICATE_NAME_NOT_FOUND_MSG, name));
         }
 
-        return giftCertificates;
+        for (String columnName : columnNames) {
+            if (!giftCertificateValidator.isColumnNameValid(columnName)) {
+                throw new InvalidColumnNameException(INVALID_COLUMN_NAME_MSG);
+            }
+        }
+
+        if (!giftCertificateValidator.isSortTypeValid(sortType)) {
+            throw new InvalidSortTypeException(INVALID_SORT_TYPE_MSG);
+        }
+
+        return giftCertificateDao.findByAttributes(name, tagNames, columnNames, sortType, pagination);
     }
 
-    @Override
-    public List<GiftCertificate> findByAttributes(String name, String tagName,
-                                                  String columnName, String sortType,
-                                                  CustomPagination pagination) {
-        List<GiftCertificate> giftCertificateList = new ArrayList<>();
-
-        if (name != null) {
-            giftCertificateList = findByPartOfName(name, pagination);
-        }
-        if (tagName != null) {
-            giftCertificateList = findGiftCertificatesByTagName(tagName, pagination);
-        }
-        if (columnName != null && sortType != null) {
-            giftCertificateList = findAllWithSort(columnName, sortType, pagination);
-        }
-        if (name == null && tagName == null && columnName == null && sortType == null) {
-            giftCertificateList = findAll(pagination);
-        }
-
-        return giftCertificateList;
-    }
+//    @Override
+//    public List<GiftCertificate> findByAttributes(String name, String tagName,
+//                                                  String columnName, String sortType,
+//                                                  CustomPagination pagination) {
+//        List<GiftCertificate> giftCertificateList = new ArrayList<>();
+//
+//        if (name != null) {
+//            giftCertificateList = findByPartOfName(name, pagination);
+//        }
+//        if (tagName != null) {
+//            giftCertificateList = findGiftCertificatesByTagName(tagName, pagination);
+//        }
+//        if (columnName != null && sortType != null) {
+//            giftCertificateList = findAllWithSort(columnName, sortType, pagination);
+//        }
+//        if (name == null && tagName == null && columnName == null && sortType == null) {
+//            giftCertificateList = findAll(pagination);
+//        }
+//
+//        return giftCertificateList;
+//    }
 }

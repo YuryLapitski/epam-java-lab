@@ -36,7 +36,7 @@ public interface GiftCertificateDao extends EntityDao<GiftCertificate> {
      * @param tagName tag name to find gift certificate
      * @return founded list of gift certificate
      */
-    List<GiftCertificate> findGiftCertificatesByTagName(String tagName, CustomPagination pagination);
+    List<GiftCertificate> findGiftCertificatesByTagName(String tagName);
 
     /**
      * Searches for gift certificate by name. It can be part of name
@@ -44,18 +44,17 @@ public interface GiftCertificateDao extends EntityDao<GiftCertificate> {
      * @param name name (part of name) of the gift certificate to find
      * @return founded list of gift certificate
      */
-    List<GiftCertificate> findByPartOfName(String name, CustomPagination pagination);
+    List<GiftCertificate> findByPartOfName(String name);
 
     /**
      * Searches for gift certificates with sorting
      *
-     * @param columnName column name to sorting by
+     * @param columnNames column names to sorting by
      * @param sortType sorting type. Can be ASC or DESC.
      * @return founded list of gift certificate
      */
-    List<GiftCertificate> findAllWithSort(String columnName, String sortType, CustomPagination pagination);
+    List<GiftCertificate> findByAttributes (String name, List<String> tagList, List<String> columnNames,
+                                            String sortType, CustomPagination pagination);
 
-    Long findGiftCertificatesByNameNumber(String name);
-
-    Long findGiftCertificatesByTagNameNumber(String tagName);
+    Long findByAttributesNumber(String name, List<String> tagList);
 }

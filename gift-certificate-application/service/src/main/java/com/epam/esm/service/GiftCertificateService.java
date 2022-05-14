@@ -38,23 +38,6 @@ public interface GiftCertificateService {
     GiftCertificate findByGiftCertificateId(Long id);
 
     /**
-     * Searches for gift certificate by name
-     *
-     * @param name name of the gift certificate to find (it can be part of name)
-     * @return founded list of GiftCertificate
-     */
-    List<GiftCertificate> findByPartOfName(String name, CustomPagination pagination);
-
-    /**
-     * Searches for gift certificates with sorting
-     *
-     * @param columnName column name to sorting by
-     * @param sortType sorting type. Can be ASC or DESC.
-     * @return founded list of GiftCertificate
-     */
-    List<GiftCertificate> findAllWithSort(String columnName, String sortType, CustomPagination pagination);
-
-    /**
      * Deletes gift certificate
      *
      * @param id id of the gift certificate to delete
@@ -72,23 +55,16 @@ public interface GiftCertificateService {
     GiftCertificate update(Long giftCertificateId, GiftCertificate giftCertificate);
 
     /**
-     * Searches for gift certificates by tag name
-     *
-     * @param tagName name of the tag to find gift certificates
-     * @return founded list of gift certificates
-     */
-    List<GiftCertificate> findGiftCertificatesByTagName(String tagName, CustomPagination pagination);
-
-    /**
      * Searches for certificates by attributes
      *
      * @param name name of the certificate (it can be part of name)
-     * @param tagName name of the certificate tag to contain (it can be part of name)
-     * @param columnName column name to sorting by
+     * @param tagNames names of the certificate tags to contain (it can be part of name)
+     * @param columnNames column names to sorting by
      * @param sortType sorting type. Can be ASC or DESC
-     * @return list of founded list of GiftCertificate
+     * @param pagination pagination parameters
+     * @return list of founded GiftCertificate
      */
-    List<GiftCertificate> findByAttributes(String name, String tagName,
-                                           String columnName, String sortType,
+    List<GiftCertificate> findByAttributes(String name, List<String> tagNames,
+                                           List<String> columnNames, String sortType,
                                            CustomPagination pagination);
 }

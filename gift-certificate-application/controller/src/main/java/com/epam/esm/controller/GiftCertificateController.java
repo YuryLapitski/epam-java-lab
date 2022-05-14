@@ -47,11 +47,11 @@ public class GiftCertificateController {
     @GetMapping
     public List<GiftCertificate> findByAttributes(
             @RequestParam(required = false, name = "name") String name,
-            @RequestParam(required = false, name = "tagName") String tagName,
-            @RequestParam(required = false, name = "columnName") String columnName,
+            @RequestParam(required = false, name = "tagName") List<String> tagNames,
+            @RequestParam(required = false, name = "columnName") List<String> columnNames,
             @RequestParam(required = false, name = "sortType") String sortType,
             CustomPagination pagination) {
-        return giftCertificateService.findByAttributes(name, tagName, columnName, sortType, pagination);
+        return giftCertificateService.findByAttributes(name, tagNames, columnNames, sortType, pagination);
     }
 
     @DeleteMapping("/{id}")
