@@ -24,6 +24,7 @@ public interface TagService {
     /**
      * Searches for all tags
      *
+     * @param pagination pagination parameters
      * @return founded list of tags
      */
     List<Tag> findAll(CustomPagination pagination);

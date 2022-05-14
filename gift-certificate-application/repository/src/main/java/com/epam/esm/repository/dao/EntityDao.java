@@ -18,8 +18,9 @@ public interface EntityDao<T> {
     /**
      * Searches for all entities
      *
-     * @return founded list of entities
+     * @param pagination pagination parameters
      * @param entityClass class of the entity
+     * @return founded list of entities
      */
     List<T> findAll(CustomPagination pagination, Class<T> entityClass);
 

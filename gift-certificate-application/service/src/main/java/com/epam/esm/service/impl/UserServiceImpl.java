@@ -70,10 +70,4 @@ public class UserServiceImpl implements UserService {
         return userDao.findById(id, User.class).orElseThrow(() ->
                 new UserNotFoundException(String.format(USER_ID_NOT_FOUND_MSG, id)));
     }
-
-    @Override
-    public User findByLogin(String login) {
-        return userDao.findByLogin(login).orElseThrow(() ->
-                new UserNotFoundException(String.format(USER_LOGIN_NOT_FOUND_MSG, login)));
-    }
 }

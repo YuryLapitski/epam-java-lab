@@ -25,6 +25,7 @@ public interface OrderService {
     /**
      * Searches for all orders
      *
+     * @param pagination pagination parameters
      * @return founded list of orders
      */
     List<Order> findAll(CustomPagination pagination);
@@ -41,6 +42,7 @@ public interface OrderService {
      * Searches for order by user ID
      *
      * @param userId id of the user to find orders
+     * @param pagination pagination parameters
      * @return founded list of orders
      */
     List<Order> findByUserId(Long userId, CustomPagination pagination);
@@ -49,6 +51,7 @@ public interface OrderService {
      * Searches for orders by attributes
      *
      * @param userId user id to find orders
+     * @param pagination pagination parameters
      * @return founded list of orders
      */
     List<Order> findByAttributes(Long userId, CustomPagination pagination);

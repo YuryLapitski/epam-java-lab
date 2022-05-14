@@ -25,6 +25,7 @@ public interface GiftCertificateService {
     /**
      * Searches for all gift certificates
      *
+     * @param pagination pagination parameters
      * @return founded list of GiftCertificate
      */
     List<GiftCertificate> findAll(CustomPagination pagination);

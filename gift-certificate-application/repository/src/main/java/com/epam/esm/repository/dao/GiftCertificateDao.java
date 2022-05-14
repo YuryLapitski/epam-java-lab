@@ -47,10 +47,13 @@ public interface GiftCertificateDao extends EntityDao<GiftCertificate> {
     List<GiftCertificate> findByPartOfName(String name);
 
     /**
-     * Searches for gift certificates with sorting
+     * Searches for gift certificates by attributes
      *
+     * @param name gift certificate name
+     * @param tagList list of tags
      * @param columnNames column names to sorting by
      * @param sortType sorting type. Can be ASC or DESC.
+     * @param pagination pagination parameters
      * @return founded list of gift certificates
      */
     List<GiftCertificate> findByAttributes (String name, List<String> tagList, List<String> columnNames,
