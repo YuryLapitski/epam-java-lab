@@ -16,24 +16,23 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/tags")
 public class TagController {
     private final TagService tagService;
-    private final LinkBuilder<Tag> linkBuilder;
+    private final LinkBuilder<Tag> tagLinkBuilder;
 
     @Autowired
     public TagController(TagService tagService, LinkBuilder<Tag> linkBuilder) {
         this.tagService = tagService;
-        this.linkBuilder = linkBuilder;
+        this.tagLinkBuilder = linkBuilder;
     }
 
     @GetMapping("/{id}")
     public Tag findById(@PathVariable Long id) {
         Tag tag = tagService.findById(id);
-        linkBuilder.setLinks(tag);
+        tagLinkBuilder.setLinks(tag);
         return tag;
     }
 
@@ -41,7 +40,7 @@ public class TagController {
     @ResponseStatus(HttpStatus.CREATED)
     public Tag create(@RequestBody Tag tag) {
         Tag createdTag = tagService.create(tag);
-        linkBuilder.setLinks(createdTag);
+        tagLinkBuilder.setLinks(createdTag);
         return createdTag;
     }
 
@@ -53,16 +52,15 @@ public class TagController {
 
     @GetMapping
     public List<Tag> findAll(CustomPagination pagination) {
-        return tagService.findAll(pagination)
-                .stream()
-                .peek(linkBuilder::setLinks)
-                .collect(Collectors.toList());
+        List<Tag> tagList = tagService.findAll(pagination);
+        tagLinkBuilder.setLinks(tagList);
+        return tagList;
     }
 
     @GetMapping("/most-popular-tag-with-highest-order-cost")
     public Tag getWidelyUsedTagWithHighestOrderCost() {
         Tag tag = tagService.findMostPopularTagWithHighestOrderCost();
-        linkBuilder.setLinks(tag);
+        tagLinkBuilder.setLinks(tag);
         return tag;
     }
 }

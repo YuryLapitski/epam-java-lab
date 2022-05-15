@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/gift-certificates")
@@ -61,10 +60,10 @@ public class GiftCertificateController {
             @RequestParam(required = false, name = "columnName") List<String> columnNames,
             @RequestParam(required = false, name = "sortType") String sortType,
             CustomPagination pagination) {
-        return giftCertificateService
-                .findByAttributes(name, tagNames, columnNames, sortType, pagination)
-                .stream().peek(giftCertificateLinkBuilder::setLinks)
-                .collect(Collectors.toList());
+        List<GiftCertificate> giftCertificates =
+                giftCertificateService.findByAttributes(name, tagNames, columnNames, sortType, pagination);
+        giftCertificateLinkBuilder.setLinks(giftCertificates);
+        return giftCertificates;
     }
 
     @DeleteMapping("/{id}")

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/orders")
@@ -56,9 +55,8 @@ public class OrderController {
     @GetMapping
     public List<Order> findByAttributes(@RequestParam(required = false, name = "user-id") Long userId,
                                     CustomPagination pagination) {
-        return orderService.findByAttributes(userId, pagination)
-                .stream()
-                .peek(orderLinkBuilder::setLinks)
-                .collect(Collectors.toList());
+        List<Order> orderList = orderService.findByAttributes(userId, pagination);
+        orderLinkBuilder.setLinks(orderList);
+        return orderList;
     }
 }

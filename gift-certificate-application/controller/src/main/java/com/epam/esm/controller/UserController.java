@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/users")
@@ -38,10 +37,9 @@ public class UserController {
 
     @GetMapping
     public List<User> findAll(CustomPagination pagination) {
-        return userService.findAll(pagination)
-                .stream()
-                .peek(userLinkBuilder::setLinks)
-                .collect(Collectors.toList());
+        List<User> userList = userService.findAll(pagination);
+        userLinkBuilder.setLinks(userList);
+        return userList;
     }
 
     @PostMapping
