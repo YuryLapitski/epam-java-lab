@@ -28,6 +28,7 @@ public class TagServiceImpl implements TagService {
             "a gift certificate reference exists.";
     private static final String TAG_ALREADY_EXIST_MSG = "Tag with the name '%s' " +
             "already exists";
+    private static final String MOST_POPULAR_TAG_NOT_FOUND_MSG = "Tag not found";
     private final TagDao tagDao;
     private final GiftCertificateDao giftCertificateDao;
     private final TagValidator tagValidator;
@@ -85,5 +86,11 @@ public class TagServiceImpl implements TagService {
         }
 
         tagDao.delete(id, Tag.class);
+    }
+
+    @Override
+    public Tag findMostPopularTagWithHighestOrderCost() {
+        return tagDao.findMostPopularTagWithHighestOrderCost()
+                .orElseThrow(() -> new TagNotFoundException(MOST_POPULAR_TAG_NOT_FOUND_MSG));
     }
 }

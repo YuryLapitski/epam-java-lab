@@ -47,4 +47,9 @@ public class TagController {
     public List<Tag> findAll(CustomPagination pagination) {
         return tagService.findAll(pagination);
     }
+
+    @GetMapping("/most-popular-tag-with-highest-order-cost")
+    public Tag getWidelyUsedTagWithHighestOrderCost() {
+        return tagService.findMostPopularTagWithHighestOrderCost();
+    }
 }

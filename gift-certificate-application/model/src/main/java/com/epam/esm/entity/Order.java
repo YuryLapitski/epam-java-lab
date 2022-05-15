@@ -17,7 +17,7 @@ import java.util.Objects;
 @ToString
 @Entity
 @EntityListeners(OrderListener.class)
-@Table(name = "`order`")
+@Table(name = "orders")
 public class Order {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)

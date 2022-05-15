@@ -20,4 +20,11 @@ public interface TagDao extends EntityDao<Tag> {
      * @return founded Optional of tag
      */
     Optional<Tag> findByName(String name);
+
+    /**
+     * Searches for the most widely used tag of a user with the highest cost of all orders.
+     *
+     * @return founded Optional of tag
+     */
+    Optional<Tag> findMostPopularTagWithHighestOrderCost();
 }

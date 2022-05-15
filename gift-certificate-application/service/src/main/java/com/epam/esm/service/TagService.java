@@ -3,6 +3,7 @@ package com.epam.esm.service;
 import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.Tag;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * The TagService interface provides methods for creating, reading,
@@ -43,4 +44,11 @@ public interface TagService {
      * @param id id of the tag to delete
      */
     void delete(Long id);
+
+    /**
+     * Searches for the most widely used tag of a user with the highest cost of all orders.
+     *
+     * @return founded tag
+     */
+    Tag findMostPopularTagWithHighestOrderCost();
 }
