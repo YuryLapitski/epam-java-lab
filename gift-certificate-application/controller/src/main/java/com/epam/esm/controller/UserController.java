@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.controller.hateoas.LinkBuilder;
 import com.epam.esm.entity.User;
 import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.service.UserService;
@@ -14,30 +15,40 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/users")
 public class UserController {
     private final UserService userService;
+    private final LinkBuilder<User> userLinkBuilder;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, LinkBuilder<User> userLinkBuilder) {
         this.userService = userService;
+        this.userLinkBuilder = userLinkBuilder;
     }
 
     @GetMapping("/{id}")
     public User findById(@PathVariable Long id) {
-        return userService.findById(id);
+        User user = userService.findById(id);
+        userLinkBuilder.setLinks(user);
+        return user;
     }
 
     @GetMapping
     public List<User> findAll(CustomPagination pagination) {
-        return userService.findAll(pagination);
+        return userService.findAll(pagination)
+                .stream()
+                .peek(userLinkBuilder::setLinks)
+                .collect(Collectors.toList());
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public User create(@RequestBody User user) {
-        return userService.create(user);
+        User createdUser = userService.create(user);
+        userLinkBuilder.setLinks(createdUser);
+        return createdUser;
     }
 }

@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.controller.hateoas.LinkBuilder;
 import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.service.TagService;
@@ -15,26 +16,33 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/tags")
 public class TagController {
     private final TagService tagService;
+    private final LinkBuilder<Tag> linkBuilder;
 
     @Autowired
-    public TagController(TagService tagService) {
+    public TagController(TagService tagService, LinkBuilder<Tag> linkBuilder) {
         this.tagService = tagService;
+        this.linkBuilder = linkBuilder;
     }
 
     @GetMapping("/{id}")
     public Tag findById(@PathVariable Long id) {
-        return tagService.findById(id);
+        Tag tag = tagService.findById(id);
+        linkBuilder.setLinks(tag);
+        return tag;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Tag create(@RequestBody Tag tag) {
-        return tagService.create(tag);
+        Tag createdTag = tagService.create(tag);
+        linkBuilder.setLinks(createdTag);
+        return createdTag;
     }
 
     @DeleteMapping("/{id}")
@@ -45,11 +53,16 @@ public class TagController {
 
     @GetMapping
     public List<Tag> findAll(CustomPagination pagination) {
-        return tagService.findAll(pagination);
+        return tagService.findAll(pagination)
+                .stream()
+                .peek(linkBuilder::setLinks)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/most-popular-tag-with-highest-order-cost")
     public Tag getWidelyUsedTagWithHighestOrderCost() {
-        return tagService.findMostPopularTagWithHighestOrderCost();
+        Tag tag = tagService.findMostPopularTagWithHighestOrderCost();
+        linkBuilder.setLinks(tag);
+        return tag;
     }
 }

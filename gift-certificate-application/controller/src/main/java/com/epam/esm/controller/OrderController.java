@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.controller.hateoas.LinkBuilder;
 import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.Order;
 import com.epam.esm.service.OrderService;
@@ -17,26 +18,33 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/orders")
 public class OrderController {
     private final OrderService orderService;
+    private final LinkBuilder<Order> orderLinkBuilder;
 
     @Autowired
-    public OrderController(OrderService orderService) {
+    public OrderController(OrderService orderService, LinkBuilder<Order> orderLinkBuilder) {
         this.orderService = orderService;
+        this.orderLinkBuilder = orderLinkBuilder;
     }
 
     @GetMapping("/{id}")
     public Order findById(@PathVariable Long id) {
-        return orderService.findById(id);
+        Order order = orderService.findById(id);
+        orderLinkBuilder.setLinks(order);
+        return order;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Order create(@RequestBody OrderDto orderDto) {
-        return orderService.create(orderDto);
+        Order order = orderService.create(orderDto);
+        orderLinkBuilder.setLinks(order);
+        return order;
     }
 
     @DeleteMapping("/{id}")
@@ -48,6 +56,9 @@ public class OrderController {
     @GetMapping
     public List<Order> findByAttributes(@RequestParam(required = false, name = "user-id") Long userId,
                                     CustomPagination pagination) {
-        return orderService.findByAttributes(userId, pagination);
+        return orderService.findByAttributes(userId, pagination)
+                .stream()
+                .peek(orderLinkBuilder::setLinks)
+                .collect(Collectors.toList());
     }
 }
