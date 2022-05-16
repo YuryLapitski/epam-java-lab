@@ -1,8 +1,8 @@
 package com.epam.esm.repository.dao.impl;
 
+import com.epam.esm.entity.User;
 import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.repository.config.TestConfig;
-import com.epam.esm.entity.Tag;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -19,23 +19,25 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {TestConfig.class, TagDaoImpl.class})
+@SpringBootTest(classes = {TestConfig.class, UserDaoImpl.class})
 @ExtendWith(SpringExtension.class)
 @Transactional
 @ActiveProfiles("dev")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class TagDaoImplTest {
-    private static final int EXPECTED_LIST_SIZE = 4;
-    private static final String TAG_NAME = "second";
-    private static final Long TAG_ID = 2L;
-    private static final String CREATED_TAG_NAME = "newTag";
+public class UserDaoImplTest {
+    private static final String CREATED_USER_FIRST_NAME = "Ivan";
+    private static final String CREATED_USER_LAST_NAME = "Sidorov";
+    private static final String CREATED_LOGIN_NAME = "ISid";
+    private static final String LOGIN = "SmithT";
+    private static final Long USER_ID = 1L;
+    private static final int EXPECTED_LIST_SIZE = 3;
 
-    private final TagDaoImpl tagDaoImpl;
+    private final UserDaoImpl userDao;
     private CustomPagination pagination;
 
     @Autowired
-    public TagDaoImplTest(TagDaoImpl tagDaoImpl) {
-        this.tagDaoImpl = tagDaoImpl;
+    public UserDaoImplTest(UserDaoImpl userDao) {
+        this.userDao = userDao;
     }
 
     @BeforeAll
@@ -47,27 +49,31 @@ public class TagDaoImplTest {
 
     @Test
     void create() {
-        Tag tag = new Tag();
-        tag.setName(CREATED_TAG_NAME);
-        Tag actual = tagDaoImpl.create(tag);
-        assertEquals(CREATED_TAG_NAME, actual.getName());
+        User user = new User();
+        user.setFirstName(CREATED_USER_FIRST_NAME);
+        user.setLastName(CREATED_USER_LAST_NAME);
+        user.setLogin(CREATED_LOGIN_NAME);
+        User actual = userDao.create(user);
+        assertEquals(user, actual);
     }
 
     @Test
     void findAll() {
-        List<Tag> tags = tagDaoImpl.findAll(pagination, Tag.class);
-        assertEquals(EXPECTED_LIST_SIZE, tags.size());
+        List<User> users = userDao.findAll(pagination, User.class);
+        assertEquals(EXPECTED_LIST_SIZE, users.size());
     }
 
     @Test
     void findById() {
-        Optional<Tag> optionalTag = tagDaoImpl.findById(TAG_ID, Tag.class);
-        assertTrue(optionalTag.isPresent());
+        Optional<User> optionalUser = userDao.findById(USER_ID, User.class);
+        assertTrue(optionalUser.isPresent());
     }
 
     @Test
-    void findByName() {
-        Optional<Tag> optionalTag = tagDaoImpl.findByName(TAG_NAME);
-        assertTrue(optionalTag.isPresent());
+    void findByLogin() {
+        Optional<User> optionalUser = userDao.findByLogin(LOGIN);
+        assertTrue(optionalUser.isPresent());
     }
 }
+
+

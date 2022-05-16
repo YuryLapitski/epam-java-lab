@@ -18,9 +18,9 @@ public class TagDaoImpl extends AbstractEntityDao<Tag> implements TagDao {
             "JOIN tag_gift_certificate ON tag_gift_certificate.tag_id=tag.id " +
             "JOIN gift_certificate ON gift_certificate.id=tag_gift_certificate.gift_certificate_id " +
             "JOIN orders ON orders.gift_certificate_id=gift_certificate.id AND orders.user_id=" +
-            "(SELECT user.id FROM user " +
-            "JOIN orders ON orders.user_id=user.id " +
-            "GROUP BY user.id ORDER BY SUM(orders.price) DESC LIMIT 1) " +
+            "(SELECT users.id FROM users " +
+            "JOIN orders ON orders.user_id=users.id " +
+            "GROUP BY users.id ORDER BY SUM(orders.price) DESC LIMIT 1) " +
             "GROUP BY tag.id ORDER BY COUNT(tag.id) DESC LIMIT 1";
 
     public TagDaoImpl(EntityManager entityManager) {

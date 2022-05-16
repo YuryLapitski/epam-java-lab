@@ -19,7 +19,7 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @ToString
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 public class User extends RepresentationModel<User> {
     @Id
     @Column(name = "id", unique = true, nullable = false, updatable = false)

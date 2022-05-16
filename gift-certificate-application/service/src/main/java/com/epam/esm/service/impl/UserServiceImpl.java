@@ -1,6 +1,7 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.entity.User;
+import com.epam.esm.repository.dao.OrderDao;
 import com.epam.esm.repository.dao.UserDao;
 import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.service.UserService;
@@ -18,7 +19,6 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
     private static final String USER_ID_NOT_FOUND_MSG = "User with id=%d not found.";
-    private static final String USER_LOGIN_NOT_FOUND_MSG = "User with name '%s' not found.";
     private static final String INVALID_FIRST_NAME_MSG = "Invalid first name";
     private static final String INVALID_LAST_NAME_MSG = "Invalid last name";
     private static final String INVALID_LOGIN_MSG = "Invalid login name";
