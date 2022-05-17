@@ -10,7 +10,6 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.OrderNotFoundException;
-import com.epam.esm.service.exception.TagToGiftCertificateReferenceException;
 import com.epam.esm.service.exception.UserHasNoOrdersException;
 import com.epam.esm.service.validator.PaginationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
