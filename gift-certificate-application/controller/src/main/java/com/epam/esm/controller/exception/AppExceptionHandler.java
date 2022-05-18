@@ -1,12 +1,27 @@
 package com.epam.esm.controller.exception;
 
-import com.epam.esm.service.exception.*;
+import com.epam.esm.service.exception.CannotUpdateException;
+import com.epam.esm.service.exception.FieldValidationException;
+import com.epam.esm.service.exception.GiftCertificateAlreadyExistException;
+import com.epam.esm.service.exception.GiftCertificateNotFoundException;
+import com.epam.esm.service.exception.GiftCertificatesNotFoundException;
+import com.epam.esm.service.exception.HasOrderToGiftCertificateException;
+import com.epam.esm.service.exception.InvalidColumnNameException;
+import com.epam.esm.service.exception.InvalidSortTypeException;
+import com.epam.esm.service.exception.NoMatchingGiftCertificateException;
+import com.epam.esm.service.exception.OrderNotFoundException;
+import com.epam.esm.service.exception.TagAlreadyExistException;
+import com.epam.esm.service.exception.TagDoesNotExistException;
+import com.epam.esm.service.exception.TagNotFoundException;
+import com.epam.esm.service.exception.TagToGiftCertificateReferenceException;
+import com.epam.esm.service.exception.UserAlreadyExistException;
+import com.epam.esm.service.exception.UserHasNoOrdersException;
+import com.epam.esm.service.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import static java.time.LocalDateTime.now;
+import java.time.LocalDateTime;
 
 @RestControllerAdvice
 public class AppExceptionHandler {
@@ -27,15 +42,6 @@ public class AppExceptionHandler {
     private static final int ORDER_NOT_FOUND_ERROR_CODE = 40407;
     private static final int TAG_DOES_NOT_EXIST_ERROR_CODE = 40408;
     private static final int NO_GIFT_CERTIFICATE_MATCHING_ERROR_CODE = 40409;
-
-    public ErrorResponse handleCommonException(Exception exception, HttpStatus status, int errorCode) {
-        return ErrorResponse.builder()
-                .errorMessage(exception.getMessage())
-                .errorStatus(status)
-                .timestamp(now())
-                .errorCode(errorCode)
-                .build();
-    }
 
     @ExceptionHandler(TagNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -146,5 +152,14 @@ public class AppExceptionHandler {
             NoMatchingGiftCertificateException noMatchingGiftCertificateException) {
         return handleCommonException(noMatchingGiftCertificateException, HttpStatus.NOT_FOUND,
                 NO_GIFT_CERTIFICATE_MATCHING_ERROR_CODE);
+    }
+
+    private ErrorResponse handleCommonException(Exception exception, HttpStatus status, int errorCode) {
+        return ErrorResponse.builder()
+                .errorMessage(exception.getMessage())
+                .errorStatus(status)
+                .timestamp(LocalDateTime.now())
+                .errorCode(errorCode)
+                .build();
     }
 }

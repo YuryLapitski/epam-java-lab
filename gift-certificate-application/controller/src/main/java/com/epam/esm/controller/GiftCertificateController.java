@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
 
 @RestController
@@ -33,7 +32,7 @@ public class GiftCertificateController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public GiftCertificate create(@RequestBody (required = false) GiftCertificate giftCertificate) {
+    public GiftCertificate create(@RequestBody GiftCertificate giftCertificate) {
         GiftCertificate createdGiftCertificate = giftCertificateService.create(giftCertificate);
         giftCertificateLinkBuilder.setLinks(createdGiftCertificate);
         return createdGiftCertificate;

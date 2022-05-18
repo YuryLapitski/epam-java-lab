@@ -12,14 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {TestConfig.class, UserDaoImpl.class})
+@SpringBootTest(classes = {TestConfig.class})
 @ExtendWith(SpringExtension.class)
 @Transactional
 @ActiveProfiles("dev")
@@ -31,7 +30,6 @@ public class UserDaoImplTest {
     private static final String LOGIN = "SmithT";
     private static final Long USER_ID = 1L;
     private static final int EXPECTED_LIST_SIZE = 3;
-
     private final UserDaoImpl userDao;
     private CustomPagination pagination;
 

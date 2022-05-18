@@ -1,6 +1,5 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.repository.dao.GiftCertificateDao;
 import com.epam.esm.repository.dao.TagDao;
@@ -15,10 +14,8 @@ import com.epam.esm.service.validator.TagValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TagServiceImpl implements TagService {
@@ -74,13 +71,11 @@ public class TagServiceImpl implements TagService {
     @Transactional
     @Override
     public void delete(Long id) {
-        Optional<Tag> optionalTag = tagDao.findById(id, Tag.class);
-        if (!optionalTag.isPresent()) {
-            throw new TagNotFoundException(String.format(TAG_NOT_FOUND_MSG, id));
-        }
+        Tag tag = tagDao.findById(id, Tag.class).orElseThrow(() ->
+                new TagNotFoundException(String.format(TAG_NOT_FOUND_MSG, id)));
 
         List<String> tagNames = new ArrayList<>();
-        tagNames.add(optionalTag.get().getName());
+        tagNames.add(tag.getName());
         if (!giftCertificateDao.findGiftCertificatesByTagNames(tagNames).isEmpty()) {
             throw new TagToGiftCertificateReferenceException(CANNOT_BE_DELETED_TAG_MSG);
         }

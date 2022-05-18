@@ -6,8 +6,15 @@ import com.epam.esm.repository.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.repository.dao.OrderDao;
 import com.epam.esm.repository.dao.TagDao;
-import com.epam.esm.service.exception.*;
 import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.service.exception.FieldValidationException;
+import com.epam.esm.service.exception.GiftCertificateAlreadyExistException;
+import com.epam.esm.service.exception.GiftCertificateNotFoundException;
+import com.epam.esm.service.exception.HasOrderToGiftCertificateException;
+import com.epam.esm.service.exception.InvalidColumnNameException;
+import com.epam.esm.service.exception.InvalidSortTypeException;
+import com.epam.esm.service.exception.NoMatchingGiftCertificateException;
+import com.epam.esm.service.exception.TagDoesNotExistException;
 import com.epam.esm.service.validator.GiftCertificateValidator;
 import com.epam.esm.service.validator.PaginationValidator;
 import com.epam.esm.service.validator.TagValidator;
@@ -152,8 +159,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.findById(id, GiftCertificate.class);
 
         if (!optionalGiftCertificate.isPresent()) {
-            String msg = String.format(GIFT_CERTIFICATE_ID_NOT_FOUND_MSG, id);
-            throw new GiftCertificateNotFoundException(msg);
+            String message = String.format(GIFT_CERTIFICATE_ID_NOT_FOUND_MSG, id);
+            throw new GiftCertificateNotFoundException(message);
         }
 
         if (!orderDao.findByGiftCertificateId(id).isEmpty()) {
@@ -215,8 +222,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         checkColumnNames(columnNames);
         checkSortType(sortType);
 
-        Long gcNumber = giftCertificateDao.findByAttributesNumber(name, tagNames);
-        pagination = paginationValidator.validatePagination(pagination, gcNumber);
+        Long giftCertificatesNumber = giftCertificateDao.findByAttributesNumber(name, tagNames);
+        pagination = paginationValidator.validatePagination(pagination, giftCertificatesNumber);
 
         return giftCertificateDao.findByAttributes(name, tagNames, columnNames, sortType, pagination);
     }

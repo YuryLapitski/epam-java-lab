@@ -10,7 +10,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -19,7 +18,7 @@ import java.util.Properties;
 
 @SpringBootConfiguration
 @Profile("dev")
-@ComponentScan("com.epam.esm")
+@ComponentScan(value = "com.epam.esm", lazyInit = true)
 public class TestConfig {
     private static final String SQL_SETUP = "classpath:dbSetup.sql";
     private static final String SQL_INIT = "classpath:dbInitDev.sql";

@@ -7,7 +7,6 @@ import com.epam.esm.repository.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
-
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -22,10 +21,10 @@ import java.util.Optional;
 public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> implements GiftCertificateDao {
     private static final String NAME_FIELD = "name";
     private static final String TAG_LIST_FIELD = "tagList";
-    public static final String PART_OF_NAME = "%%%s%%";
-    public static final String DEFAULT_SORT = "asc";
-    public static final String ID = "id";
-    public static final String NAME = "name";
+    private static final String PART_OF_NAME = "%%%s%%";
+    private static final String DEFAULT_SORT = "asc";
+    private static final String ID = "id";
+    private static final String NAME = "name";
 
     public GiftCertificateDaoImpl(EntityManager entityManager) {
         super(entityManager);

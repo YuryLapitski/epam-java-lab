@@ -5,7 +5,6 @@ import com.epam.esm.entity.Order;
 import com.epam.esm.repository.dao.AbstractEntityDao;
 import com.epam.esm.repository.dao.OrderDao;
 import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;

@@ -96,7 +96,6 @@ public class GiftCertificateServiceImplTest {
 
     @Test
     void testCreate() {
-        GiftCertificate expectedResult = giftCertificate;
         when(tagDao.findByName(TAG_NAME)).thenReturn(Optional.ofNullable(tag));
         when(tagDao.create(tag)).thenReturn(tag);
         when(tagValidator.isNameValid(TAG_NAME)).thenReturn(true);
@@ -104,7 +103,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDao.findByName(NAME)).thenReturn(Optional.empty());
         when(giftCertificateDao.create(giftCertificate)).thenReturn(giftCertificate);
         GiftCertificate actualResult = giftCertificateService.create(giftCertificate);
-        assertEquals(expectedResult, actualResult);
+        assertEquals(giftCertificate, actualResult);
     }
 
     @Test
@@ -132,22 +131,21 @@ public class GiftCertificateServiceImplTest {
 
     @Test
     void testFindAll() {
-        List<GiftCertificate> expectedResult = giftCertificateList;
         when(giftCertificateDao.findAll(pagination, GiftCertificate.class)).thenReturn(giftCertificateList);
         when(giftCertificateDao.findEntitiesNumber(GiftCertificate.class)).thenReturn(ENTITIES_NUMBER);
         when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
         List<GiftCertificate> actualResult = giftCertificateService.findAll(pagination);
-        assertEquals(expectedResult, actualResult);
+        assertEquals(giftCertificateList, actualResult);
     }
 
     @Test
     void testFindById() {
-        GiftCertificate expectedResult = giftCertificate;
+
         when(giftCertificateDao.findById(GIFT_CERTIFICATE_ID, GiftCertificate.class))
                 .thenReturn(Optional.ofNullable(giftCertificate));
         GiftCertificate actualResult = giftCertificateService
                 .findByGiftCertificateId(GIFT_CERTIFICATE_ID);
-        assertEquals(expectedResult, actualResult);
+        assertEquals(giftCertificate, actualResult);
     }
 
     @Test
@@ -159,7 +157,6 @@ public class GiftCertificateServiceImplTest {
 
     @Test
     void testFindByAttributes() {
-        List<GiftCertificate> expectedResult = giftCertificateList;
         when(giftCertificateDao.findByPartOfName(NAME)).thenReturn(giftCertificateList);
         when(giftCertificateDao.findByAttributesNumber(NAME, tagNames)).thenReturn(ENTITIES_NUMBER);
         when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
@@ -171,7 +168,7 @@ public class GiftCertificateServiceImplTest {
                 .thenReturn(giftCertificateList);
         List<GiftCertificate> actualResult = giftCertificateService
                 .findByAttributes(giftCertificate.getName(), tagNames, columnNames, ANY_STRING, pagination);
-        assertEquals(expectedResult, actualResult);
+        assertEquals(giftCertificateList, actualResult);
     }
 
     @Test
@@ -238,7 +235,6 @@ public class GiftCertificateServiceImplTest {
 
     @Test
     void testUpdate() {
-        GiftCertificate expectedResult = giftCertificate;
         when(giftCertificateDao.findById(GIFT_CERTIFICATE_ID, GiftCertificate.class))
                 .thenReturn(Optional.ofNullable(giftCertificate));
         when((giftCertificateDao.update(giftCertificate))).thenReturn(giftCertificate);
@@ -247,7 +243,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateValidator.isPriceValid(any())).thenReturn(true);
         when(giftCertificateValidator.isDurationValid(anyShort())).thenReturn(true);
         GiftCertificate actualResult = giftCertificateService.update(GIFT_CERTIFICATE_ID, giftCertificate);
-        assertEquals(expectedResult, actualResult);
+        assertEquals(giftCertificate, actualResult);
     }
 
     @Test

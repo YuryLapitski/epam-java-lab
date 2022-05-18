@@ -18,7 +18,6 @@ import com.epam.esm.service.validator.impl.PaginationValidatorImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -111,20 +110,18 @@ public class OrderServiceImplTest {
 
     @Test
     void testFindAll() {
-        List<Order> expectedResult = orderList;
         when(orderDao.findAll(pagination, Order.class)).thenReturn(orderList);
         when(orderDao.findEntitiesNumber(Order.class)).thenReturn(ENTITIES_NUMBER);
         when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
         List<Order> actualResult = orderService.findAll(pagination);
-        assertEquals(expectedResult, actualResult);
+        assertEquals(orderList, actualResult);
     }
 
     @Test
     void testFindById() {
-        Order expectedResult = order;
         when(orderDao.findById(ID, Order.class)).thenReturn(Optional.ofNullable(order));
         Order actualResult = orderService.findById(ID);
-        assertEquals(expectedResult, actualResult);
+        assertEquals(order, actualResult);
     }
 
     @Test
@@ -135,14 +132,13 @@ public class OrderServiceImplTest {
 
     @Test
     void testFindByUserId() {
-        List<Order> expectedResult = orderList;
         when(userService.findById(USER_ID)).thenReturn(user);
         when(orderDao.findByUserId(USER_ID, pagination)).thenReturn(orderList);
         when(orderDao.findUserOrdersNumber(USER_ID)).thenReturn(ENTITIES_NUMBER);
         when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
         when(orderDao.findByUserId(USER_ID, pagination)).thenReturn(orderList);
         List<Order> actualResult = orderService.findByUserId(USER_ID, pagination);
-        assertEquals(expectedResult, actualResult);
+        assertEquals(orderList, actualResult);
     }
 
     @Test
@@ -153,7 +149,6 @@ public class OrderServiceImplTest {
 
     @Test
     void testFindByAttributes() {
-        List<Order> expectedResult = orderList;
         when(userService.findById(USER_ID)).thenReturn(user);
         when(orderDao.findEntitiesNumber(Order.class)).thenReturn(ENTITIES_NUMBER);
         when(orderDao.findUserOrdersNumber(USER_ID)).thenReturn(ENTITIES_NUMBER);
@@ -162,16 +157,15 @@ public class OrderServiceImplTest {
         when(orderService.findAll(pagination)).thenReturn(orderList);
         when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
         List<Order> actualResult = orderService.findByAttributes(USER_ID, pagination);
-        assertEquals(expectedResult, actualResult);
+        assertEquals(orderList, actualResult);
     }
 
     @Test
     void testCreate() {
-        Order expectedResult = order;
         when(userService.findById(orderDto.getUserId())).thenReturn(user);
         when(giftCertificateService.findByGiftCertificateId(orderDto.getGiftCertificateId())).thenReturn(giftCertificate);
         when(orderService.create(orderDto)).thenReturn(order);
         Order actualResult = orderService.create(orderDto);
-        assertEquals(expectedResult, actualResult);
+        assertEquals(order, actualResult);
     }
 }

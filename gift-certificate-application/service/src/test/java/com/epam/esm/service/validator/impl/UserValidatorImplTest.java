@@ -1,6 +1,5 @@
 package com.epam.esm.service.validator.impl;
 
-import com.epam.esm.service.validator.UserValidator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

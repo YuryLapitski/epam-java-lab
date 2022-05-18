@@ -1,7 +1,6 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.entity.User;
-import com.epam.esm.repository.dao.OrderDao;
 import com.epam.esm.repository.dao.UserDao;
 import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.service.UserService;
@@ -13,7 +12,6 @@ import com.epam.esm.service.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service

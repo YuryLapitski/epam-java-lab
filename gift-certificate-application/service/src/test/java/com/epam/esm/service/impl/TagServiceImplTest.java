@@ -16,7 +16,6 @@ import com.epam.esm.service.validator.impl.TagValidatorImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -80,11 +79,10 @@ public class TagServiceImplTest {
 
     @Test
     void testCreate() {
-        Tag expectedResult = tag;
         when(tagValidator.isNameValid(any())).thenReturn(true);
-        when(tagDao.create(any())).thenReturn(expectedResult);
+        when(tagDao.create(any())).thenReturn(tag);
         Tag actualResult = tagService.create(tag);
-        assertEquals(expectedResult, actualResult);
+        assertEquals(tag, actualResult);
     }
 
     @Test
@@ -95,20 +93,18 @@ public class TagServiceImplTest {
 
     @Test
     void testFindAll() {
-        List<Tag> expectedResult = tagList;
         when(tagDao.findAll(pagination, Tag.class)).thenReturn(tagList);
         when(tagDao.findEntitiesNumber(Tag.class)).thenReturn(ENTITIES_NUMBER);
         when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
         List<Tag> actualResult = tagService.findAll(pagination);
-        assertEquals(expectedResult, actualResult);
+        assertEquals(tagList, actualResult);
     }
 
     @Test
     void testFindById() {
-        Tag expectedResult = tag;
         when(tagDao.findById(ID, Tag.class)).thenReturn(Optional.ofNullable(tag));
         Tag actualResult = tagService.findById(tag.getId());
-        assertEquals(expectedResult, actualResult);
+        assertEquals(tag, actualResult);
     }
 
     @Test

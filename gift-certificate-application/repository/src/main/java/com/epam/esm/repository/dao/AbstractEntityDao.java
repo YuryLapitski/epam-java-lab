@@ -2,8 +2,6 @@ package com.epam.esm.repository.dao;
 
 import com.epam.esm.pagination.CustomPagination;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -13,7 +11,6 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Optional;
 
-@Repository
 public abstract class AbstractEntityDao<T> implements EntityDao<T> {
     @PersistenceContext
     protected final EntityManager entityManager;

@@ -4,7 +4,6 @@ import com.epam.esm.controller.OrderController;
 import com.epam.esm.controller.UserController;
 import com.epam.esm.entity.User;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 
 @Component

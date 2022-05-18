@@ -1,7 +1,6 @@
 package com.epam.esm.pagination;
 
 import lombok.Data;
-
 import java.util.Objects;
 
 @Data

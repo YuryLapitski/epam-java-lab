@@ -15,7 +15,6 @@ import com.epam.esm.service.validator.PaginationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
@@ -41,13 +40,16 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public Order create(OrderDto orderDto) {
-        Order order = new Order();
         User user = userService.findById(orderDto.getUserId());
+
         GiftCertificate giftCertificate = giftCertificateService
                 .findByGiftCertificateId(orderDto.getGiftCertificateId());
+
+        Order order = new Order();
         order.setUser(user);
         order.setGiftCertificate(giftCertificate);
         order.setPrice(giftCertificate.getPrice());
+
         return orderDao.create(order);
     }
 

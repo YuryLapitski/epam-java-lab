@@ -1,7 +1,6 @@
 package com.epam.esm.service.validator.impl;
 
 import com.epam.esm.pagination.CustomPagination;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 

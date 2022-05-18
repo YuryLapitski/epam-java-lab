@@ -2,7 +2,6 @@ package com.epam.esm.service.validator.impl;
 
 import com.epam.esm.service.validator.UserValidator;
 import org.springframework.stereotype.Component;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

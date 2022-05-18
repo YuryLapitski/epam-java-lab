@@ -2,7 +2,6 @@ package com.epam.esm.controller.hateoas.Impl;
 
 import com.epam.esm.controller.hateoas.LinkBuilder;
 import org.springframework.hateoas.RepresentationModel;
-
 import java.util.Arrays;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;

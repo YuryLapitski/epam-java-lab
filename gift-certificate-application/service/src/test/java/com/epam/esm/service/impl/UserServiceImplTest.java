@@ -4,7 +4,6 @@ import com.epam.esm.entity.User;
 import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.repository.dao.UserDao;
 import com.epam.esm.repository.dao.impl.UserDaoImpl;
-import com.epam.esm.service.UserService;
 import com.epam.esm.service.exception.FieldValidationException;
 import com.epam.esm.service.exception.UserAlreadyExistException;
 import com.epam.esm.service.exception.UserNotFoundException;
@@ -14,7 +13,6 @@ import com.epam.esm.service.validator.impl.PaginationValidatorImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -61,14 +59,13 @@ public class UserServiceImplTest {
 
     @Test
     void testCreate() {
-        User expectedResult = user;
         when(userValidator.isFirstNameValid(FIST_NAME)).thenReturn(true);
         when(userValidator.isLastNameValid(LAST_NAME)).thenReturn(true);
         when(userValidator.isLoginValid(LOGIN)).thenReturn(true);
         when(userDao.findByLogin(LOGIN)).thenReturn(Optional.empty());
         when(userDao.create(user)).thenReturn(user);
         User actualResult = userService.create(user);
-        assertEquals(expectedResult, actualResult);
+        assertEquals(user, actualResult);
     }
 
     @Test
@@ -107,20 +104,18 @@ public class UserServiceImplTest {
 
     @Test
     void testFindAll() {
-        List<User> expectedResult = userList;
         when(userDao.findAll(pagination, User.class)).thenReturn(userList);
         when(userDao.findEntitiesNumber(User.class)).thenReturn(ENTITIES_NUMBER);
         when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
         List<User> actualResult = userService.findAll(pagination);
-        assertEquals(expectedResult, actualResult);
+        assertEquals(userList, actualResult);
     }
 
     @Test
     void testFindById() {
-        User expectedResult = user;
         when(userDao.findById(ID, User.class)).thenReturn(Optional.ofNullable(user));
         User actualResult = userService.findById(ID);
-        assertEquals(expectedResult, actualResult);
+        assertEquals(user, actualResult);
     }
 
     @Test
