@@ -3,6 +3,7 @@ package com.epam.esm.repository.dao;
 import com.epam.esm.pagination.CustomPagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -36,21 +37,31 @@ public abstract class AbstractEntityDao<T> implements EntityDao<T> {
 
     @Override
     public Optional<T> findById(Long id, Class<T> entityClass) {
-        return Optional.ofNullable(entityManager.find(entityClass, id));
+        T entity = entityManager.find(entityClass, id);
+        return Optional.ofNullable(entity);
     }
 
     @Override
     public void delete(Long id, Class<T> entityClass) {
-        entityManager.remove(entityManager.find(entityClass, id));
+        entityManager.contains(id);
+        T entity = entityManager.find(entityClass, id);
+        entityManager.remove(entity);
     }
 
     @Override
-    public Long findEntitiesNumber(Class<T> entityClass) {
-        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
-        Root<T> orderRoot = criteriaQuery.from(entityClass);
-        criteriaQuery.select(criteriaBuilder.count(orderRoot));
+    public Long getEntitiesNumber(Class<T> entityClass) {
+        Long entitiesNumber;
+        try {
+            CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+            Root<T> orderRoot = criteriaQuery.from(entityClass);
+            criteriaQuery.select(criteriaBuilder.count(orderRoot));
 
-        return entityManager.createQuery(criteriaQuery).getSingleResult();
+            entitiesNumber = entityManager.createQuery(criteriaQuery).getSingleResult();
+        } catch (NoResultException e) {
+            entitiesNumber = 0L;
+        }
+
+        return entitiesNumber;
     }
 
     protected TypedQuery<T> prepareTypedQuery (CriteriaQuery<T> criteriaQuery,

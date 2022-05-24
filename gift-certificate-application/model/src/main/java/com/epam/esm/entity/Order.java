@@ -28,7 +28,7 @@ import java.util.Objects;
 @Table(name = "orders")
 public class Order extends RepresentationModel<Order> {
     @Id
-    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @Column(unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
@@ -37,9 +37,9 @@ public class Order extends RepresentationModel<Order> {
     @ManyToOne
     @JoinColumn(name = "gift_certificate_id")
     private GiftCertificate giftCertificate;
-    @Column(name = "price", nullable = false)
+    @Column(nullable = false)
     private BigDecimal price;
-    @Column(name = "create_date", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime createDate;
 
     @Override

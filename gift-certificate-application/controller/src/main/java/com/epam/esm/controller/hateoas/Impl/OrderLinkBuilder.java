@@ -35,11 +35,15 @@ public class OrderLinkBuilder extends AbstractLinkBuilder<Order> {
         orders.forEach(order -> setIdLinks(OrderController.class, order, order.getId(), SELF, DELETE));
 
         Set<User> userSet = new HashSet<>();
-        orders.stream().map(Order::getUser).forEachOrdered(userSet::add);
+        orders.stream()
+                .map(Order::getUser)
+                .forEachOrdered(userSet::add);
         userSet.forEach(userLinkBuilder::setLinks);
 
         List<GiftCertificate> giftCertificateList = new ArrayList<>();
-        orders.stream().map(Order::getGiftCertificate).forEachOrdered(giftCertificateList::add);
+        orders.stream()
+                .map(Order::getGiftCertificate)
+                .forEachOrdered(giftCertificateList::add);
         giftCertificateLinkBuilder.setLinks(giftCertificateList);
     }
 }

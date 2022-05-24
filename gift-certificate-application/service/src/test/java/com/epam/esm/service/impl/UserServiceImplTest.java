@@ -105,7 +105,7 @@ public class UserServiceImplTest {
     @Test
     void testFindAll() {
         when(userDao.findAll(pagination, User.class)).thenReturn(userList);
-        when(userDao.findEntitiesNumber(User.class)).thenReturn(ENTITIES_NUMBER);
+        when(userDao.getEntitiesNumber(User.class)).thenReturn(ENTITIES_NUMBER);
         when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
         List<User> actualResult = userService.findAll(pagination);
         assertEquals(userList, actualResult);

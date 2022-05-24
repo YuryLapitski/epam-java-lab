@@ -12,8 +12,8 @@ public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
     private static final Pattern DESCRIPTION_PATTERN = Pattern.compile("[a-zA-Z0-9.,!?$%&-]{2,100}");
     private static final BigDecimal MIN_PRICE = BigDecimal.valueOf(0.0);
     private static final BigDecimal MAX_PRICE = BigDecimal.valueOf(9999.99);
-    private static final short MIN_DURATION = 0;
-    private static final short MAX_DURATION = 365;
+    private static final Short MIN_DURATION = 0;
+    private static final Short MAX_DURATION = 365;
     private static final String SPACE_REGEX = "\\s+";
     private static final String EMPTY_STRING = "";
     private static final String SORT_ASCENDING = "asc";
@@ -43,11 +43,17 @@ public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
     }
 
     @Override
-    public boolean isDurationValid(short duration) {
+    public boolean isDurationValid(Short duration) {
         return duration >= MIN_DURATION && duration <= MAX_DURATION;
     }
 
-    public boolean validateAll(String name, String description, BigDecimal price, short duration){
+    @Override
+    public boolean isEmptyFields(String name, String description, BigDecimal price, Short duration) {
+        return name == null || description == null || price == null || duration == null;
+    }
+
+    @Override
+    public boolean validateAll(String name, String description, BigDecimal price, Short duration){
         return isNameValid(name)
                 && isDescriptionValid(description)
                 && isPriceValid(price)
@@ -61,8 +67,8 @@ public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
 
     @Override
     public boolean isColumnNameValid(String columnName) {
-        return columnName.equals(COLUMN_NAME) || columnName.equals(COLUMN_DESCRIPTION)
-                || columnName.equals(COLUMN_PRICE) || columnName.equals(COLUMN_DURATION)
-                || columnName.equals(COLUMN_CREATE_DATE) || columnName.equals(COLUMN_LAST_UPDATE_DATE);
+        return columnName.equals(COLUMN_NAME) || columnName.equalsIgnoreCase(COLUMN_DESCRIPTION)
+                || columnName.equals(COLUMN_PRICE) || columnName.equalsIgnoreCase(COLUMN_DURATION)
+                || columnName.equals(COLUMN_CREATE_DATE) || columnName.equalsIgnoreCase(COLUMN_LAST_UPDATE_DATE);
     }
 }

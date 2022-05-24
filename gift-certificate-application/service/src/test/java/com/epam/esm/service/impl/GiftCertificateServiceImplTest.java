@@ -132,7 +132,7 @@ public class GiftCertificateServiceImplTest {
     @Test
     void testFindAll() {
         when(giftCertificateDao.findAll(pagination, GiftCertificate.class)).thenReturn(giftCertificateList);
-        when(giftCertificateDao.findEntitiesNumber(GiftCertificate.class)).thenReturn(ENTITIES_NUMBER);
+        when(giftCertificateDao.getEntitiesNumber(GiftCertificate.class)).thenReturn(ENTITIES_NUMBER);
         when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
         List<GiftCertificate> actualResult = giftCertificateService.findAll(pagination);
         assertEquals(giftCertificateList, actualResult);

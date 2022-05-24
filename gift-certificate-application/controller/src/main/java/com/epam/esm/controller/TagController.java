@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/tags")
+@RequestMapping(value = "/v1/tags")
 public class TagController {
     private final TagService tagService;
     private final LinkBuilder<Tag> tagLinkBuilder;
@@ -32,6 +32,7 @@ public class TagController {
     public Tag findById(@PathVariable Long id) {
         Tag tag = tagService.findById(id);
         tagLinkBuilder.setLinks(tag);
+
         return tag;
     }
 
@@ -40,6 +41,7 @@ public class TagController {
     public Tag create(@RequestBody Tag tag) {
         Tag createdTag = tagService.create(tag);
         tagLinkBuilder.setLinks(createdTag);
+
         return createdTag;
     }
 
@@ -53,6 +55,7 @@ public class TagController {
     public List<Tag> findAll(CustomPagination pagination) {
         List<Tag> tagList = tagService.findAll(pagination);
         tagLinkBuilder.setLinks(tagList);
+
         return tagList;
     }
 
@@ -60,6 +63,7 @@ public class TagController {
     public Tag getWidelyUsedTagWithHighestOrderCost() {
         Tag tag = tagService.findMostPopularTagWithHighestOrderCost();
         tagLinkBuilder.setLinks(tag);
+
         return tag;
     }
 }

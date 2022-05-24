@@ -26,13 +26,8 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class AppExceptionHandler {
     private static final int FIELD_VALIDATION_ERROR_CODE = 40001;
-    private static final int GIFT_CERTIFICATE_ALREADY_EXIST_ERROR_CODE = 40002;
-    private static final int TAG_ALREADY_EXIST_ERROR_CODE = 40003;
-    private static final int TAG_TO_GIFT_CERTIFICATE_REFERENCE_ERROR_CODE = 40004;
-    private static final int INVALID_COLUMN_NAME_ERROR_CODE = 40005;
-    private static final int INVALID_SORT_TYPE_ERROR_CODE = 40006;
-    private static final int USER_ALREADY_EXIST_ERROR_CODE = 40007;
-    private static final int HAS_ORDER_TO_GIFT_CERTIFICATE_ERROR_CODE = 40008;
+    private static final int INVALID_COLUMN_NAME_ERROR_CODE = 40002;
+    private static final int INVALID_SORT_TYPE_ERROR_CODE = 40003;
     private static final int TAG_NOT_FOUND_ERROR_CODE = 40401;
     private static final int GIFT_CERTIFICATE_NOT_FOUND_ERROR_CODE = 40402;
     private static final int GIFT_CERTIFICATES_NOT_FOUND_ERROR_CODE = 40403;
@@ -42,6 +37,11 @@ public class AppExceptionHandler {
     private static final int ORDER_NOT_FOUND_ERROR_CODE = 40407;
     private static final int TAG_DOES_NOT_EXIST_ERROR_CODE = 40408;
     private static final int NO_GIFT_CERTIFICATE_MATCHING_ERROR_CODE = 40409;
+    private static final int GIFT_CERTIFICATE_ALREADY_EXIST_ERROR_CODE = 40901;
+    private static final int TAG_ALREADY_EXIST_ERROR_CODE = 40902;
+    private static final int TAG_TO_GIFT_CERTIFICATE_REFERENCE_ERROR_CODE = 40903;
+    private static final int USER_ALREADY_EXIST_ERROR_CODE = 40904;
+    private static final int HAS_ORDER_TO_GIFT_CERTIFICATE_ERROR_CODE = 40905;
 
     @ExceptionHandler(TagNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -68,24 +68,24 @@ public class AppExceptionHandler {
     }
 
     @ExceptionHandler(GiftCertificateAlreadyExistException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleGiftCertificateAlreadyExistException(
             GiftCertificateAlreadyExistException alreadyExistException) {
-        return handleCommonException(alreadyExistException, HttpStatus.BAD_REQUEST,
+        return handleCommonException(alreadyExistException, HttpStatus.CONFLICT,
                 GIFT_CERTIFICATE_ALREADY_EXIST_ERROR_CODE);
     }
 
     @ExceptionHandler(TagAlreadyExistException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleTagAlreadyExistException(TagAlreadyExistException alreadyExistException) {
-        return handleCommonException(alreadyExistException, HttpStatus.BAD_REQUEST, TAG_ALREADY_EXIST_ERROR_CODE);
+        return handleCommonException(alreadyExistException, HttpStatus.CONFLICT, TAG_ALREADY_EXIST_ERROR_CODE);
     }
 
     @ExceptionHandler(TagToGiftCertificateReferenceException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleTagToGiftCertificateReferenceException(
             TagToGiftCertificateReferenceException tagToGiftCertificateReferenceException) {
-        return handleCommonException(tagToGiftCertificateReferenceException, HttpStatus.BAD_REQUEST,
+        return handleCommonException(tagToGiftCertificateReferenceException, HttpStatus.CONFLICT,
                 TAG_TO_GIFT_CERTIFICATE_REFERENCE_ERROR_CODE);
     }
 
@@ -110,7 +110,7 @@ public class AppExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFoundException(UserNotFoundException notFoundException) {
-        return handleCommonException(notFoundException, HttpStatus.BAD_REQUEST, USER_NOT_FOUND_ERROR_CODE);
+        return handleCommonException(notFoundException, HttpStatus.NOT_FOUND, USER_NOT_FOUND_ERROR_CODE);
     }
 
     @ExceptionHandler(OrderNotFoundException.class)
@@ -120,9 +120,9 @@ public class AppExceptionHandler {
     }
 
     @ExceptionHandler(UserAlreadyExistException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleUserAlreadyExistException(UserAlreadyExistException alreadyExistException) {
-        return handleCommonException(alreadyExistException, HttpStatus.BAD_REQUEST, USER_ALREADY_EXIST_ERROR_CODE);
+        return handleCommonException(alreadyExistException, HttpStatus.CONFLICT, USER_ALREADY_EXIST_ERROR_CODE);
     }
 
     @ExceptionHandler(UserHasNoOrdersException.class)
@@ -132,10 +132,10 @@ public class AppExceptionHandler {
     }
 
     @ExceptionHandler(HasOrderToGiftCertificateException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleHasOrderToGiftCertificateException(
             HasOrderToGiftCertificateException hasOrderToGiftCertificateException) {
-        return handleCommonException(hasOrderToGiftCertificateException, HttpStatus.BAD_REQUEST,
+        return handleCommonException(hasOrderToGiftCertificateException, HttpStatus.CONFLICT,
                 HAS_ORDER_TO_GIFT_CERTIFICATE_ERROR_CODE);
     }
 

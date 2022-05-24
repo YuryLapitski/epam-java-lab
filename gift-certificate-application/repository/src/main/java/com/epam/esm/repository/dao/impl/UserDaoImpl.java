@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public class UserDaoImpl extends AbstractEntityDao<User> implements UserDao {
-    private static final String NAME_FIELD = "login";
+    private static final String LOGIN_FIELD_NAME = "login";
     private static final String UNSUPPORTED_OPERATION_EXCEPTION = "Unsupported operation exception. Cannot delete";
 
     public UserDaoImpl(EntityManager entityManager) {
@@ -19,8 +19,10 @@ public class UserDaoImpl extends AbstractEntityDao<User> implements UserDao {
 
     @Override
     public Optional<User> findByLogin(String login) {
-        CriteriaQuery<User> criteriaQuery = prepareWhereCriteriaQuery(User.class, NAME_FIELD, login);
-        return entityManager.createQuery(criteriaQuery).getResultStream().findFirst();
+        CriteriaQuery<User> criteriaQuery = prepareWhereCriteriaQuery(User.class, LOGIN_FIELD_NAME, login);
+        return entityManager.createQuery(criteriaQuery)
+                .getResultStream()
+                .findFirst();
     }
 
     @Override

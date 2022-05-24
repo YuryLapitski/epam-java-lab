@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/gift-certificates")
+@RequestMapping(value = "/v1/gift-certificates")
 public class GiftCertificateController {
     private final GiftCertificateService giftCertificateService;
     private final LinkBuilder<GiftCertificate> giftCertificateLinkBuilder;
@@ -35,6 +35,7 @@ public class GiftCertificateController {
     public GiftCertificate create(@RequestBody GiftCertificate giftCertificate) {
         GiftCertificate createdGiftCertificate = giftCertificateService.create(giftCertificate);
         giftCertificateLinkBuilder.setLinks(createdGiftCertificate);
+
         return createdGiftCertificate;
     }
 
@@ -42,6 +43,7 @@ public class GiftCertificateController {
     public GiftCertificate update(@PathVariable Long id, @RequestBody GiftCertificate giftCertificate) {
         GiftCertificate updatedGiftCertificate = giftCertificateService.update(id, giftCertificate);
         giftCertificateLinkBuilder.setLinks(updatedGiftCertificate);
+
         return updatedGiftCertificate;
     }
 
@@ -49,6 +51,7 @@ public class GiftCertificateController {
     public GiftCertificate findById(@PathVariable Long id) {
         GiftCertificate giftCertificate = giftCertificateService.findByGiftCertificateId(id);
         giftCertificateLinkBuilder.setLinks(giftCertificate);
+
         return giftCertificate;
     }
 
@@ -62,6 +65,7 @@ public class GiftCertificateController {
         List<GiftCertificate> giftCertificates =
                 giftCertificateService.findByAttributes(name, tagNames, columnNames, sortType, pagination);
         giftCertificateLinkBuilder.setLinks(giftCertificates);
+
         return giftCertificates;
     }
 

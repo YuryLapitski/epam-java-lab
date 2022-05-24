@@ -5,12 +5,15 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
 import com.epam.esm.repository.dao.OrderDao;
+import com.epam.esm.repository.dao.UserDao;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.OrderNotFoundException;
 import com.epam.esm.service.exception.UserHasNoOrdersException;
+import com.epam.esm.service.exception.UserNotFoundException;
+import com.epam.esm.service.util.Message;
 import com.epam.esm.service.validator.PaginationValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,19 +22,20 @@ import java.util.List;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-    private static final String ORDER_ID_NOT_FOUND_MSG = "Order with id=%d not found.";
-    private static final String USER_HAS_NO_ORDERS_MSG = "User with id=%d has no orders.";
     private final OrderDao orderDao;
+    private final UserDao userDao;
     private final UserService userService;
     private final GiftCertificateService giftCertificateService;
     private final PaginationValidator paginationValidator;
 
     @Autowired
     public OrderServiceImpl(OrderDao orderDao,
+                            UserDao userDao,
                             UserService userService,
                             GiftCertificateService giftCertificateService,
                             PaginationValidator paginationValidator) {
         this.orderDao = orderDao;
+        this.userDao = userDao;
         this.userService = userService;
         this.giftCertificateService = giftCertificateService;
         this.paginationValidator = paginationValidator;
@@ -55,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> findAll(CustomPagination pagination) {
-        Long ordersNumber = orderDao.findEntitiesNumber(Order.class);
+        Long ordersNumber = orderDao.getEntitiesNumber(Order.class);
         pagination = paginationValidator.validatePagination(pagination, ordersNumber);
 
         return orderDao.findAll(pagination, Order.class);
@@ -64,15 +68,17 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order findById(Long id) {
         return orderDao.findById(id, Order.class).orElseThrow(() ->
-                new OrderNotFoundException(String.format(ORDER_ID_NOT_FOUND_MSG, id)));
+                new OrderNotFoundException(String.format(Message.ORDER_ID_NOT_FOUND_MSG, id)));
     }
 
     @Override
     public List<Order> findByUserId(Long userId, CustomPagination pagination) {
-        userService.findById(userId);
+        if (!userDao.findById(userId, User.class).isPresent()) {
+            throw  new UserNotFoundException(String.format(Message.USER_ID_NOT_FOUND_MSG, userId));
+        }
 
         if (!hasUserOrders(userId, pagination)) {
-            String msg = String.format(USER_HAS_NO_ORDERS_MSG, userId);
+            String msg = String.format(Message.USER_HAS_NO_ORDERS_MSG, userId);
             throw new UserHasNoOrdersException(msg);
         }
 
@@ -97,7 +103,10 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public void delete(Long id) {
-        findById(id);
+        if (!orderDao.findById(id, Order.class).isPresent()) {
+            throw new OrderNotFoundException(String.format(Message.ORDER_ID_NOT_FOUND_MSG, id));
+        }
+
         orderDao.delete(id, Order.class);
     }
 

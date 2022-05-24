@@ -21,10 +21,10 @@ import java.util.Objects;
 @Table(name = "tag")
 public class Tag extends RepresentationModel<Tag> {
     @Id
-    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @Column(unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
     private String name;
 
     @Override

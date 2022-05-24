@@ -34,7 +34,9 @@ public class GiftCertificateLinkBuilder extends AbstractLinkBuilder<GiftCertific
                         giftCertificate.getId(), SELF, UPDATE, DELETE));
 
         Set<Tag> tagSet = new HashSet<>();
-        giftCertificates.stream().map(GiftCertificate::getTagList).forEachOrdered(tagSet::addAll);
+        giftCertificates.stream()
+                .map(GiftCertificate::getTagList)
+                .forEachOrdered(tagSet::addAll);
         tagSet.forEach(tagLinkBuilder::setLinks);
     }
 }

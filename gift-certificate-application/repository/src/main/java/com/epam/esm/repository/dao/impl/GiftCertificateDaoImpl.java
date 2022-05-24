@@ -8,9 +8,11 @@ import com.epam.esm.entity.GiftCertificate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.CollectionUtils;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
@@ -19,8 +21,8 @@ import java.util.Optional;
 
 @Repository
 public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> implements GiftCertificateDao {
-    private static final String NAME_FIELD = "name";
-    private static final String TAG_LIST_FIELD = "tagList";
+    private static final String NAME_FIELD_NAME = "name";
+    private static final String TAG_LIST_FIELD_NAME = "tagList";
     private static final String PART_OF_NAME = "%%%s%%";
     private static final String DEFAULT_SORT = "asc";
     private static final String ID = "id";
@@ -43,35 +45,53 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
 
     @Override
     public Optional<GiftCertificate> findByName(String name) {
-        CriteriaQuery<GiftCertificate> criteriaQuery =
-                prepareWhereCriteriaQuery(GiftCertificate.class, NAME_FIELD, name);
-        return entityManager.createQuery(criteriaQuery).getResultStream().findFirst();
+        Optional<GiftCertificate> optionalGiftCertificate;
+
+        try {
+            CriteriaQuery<GiftCertificate> criteriaQuery =
+                    prepareWhereCriteriaQuery(GiftCertificate.class, NAME_FIELD_NAME, name);
+
+            GiftCertificate giftCertificate = entityManager.createQuery(criteriaQuery).getSingleResult();
+
+            optionalGiftCertificate = Optional.of(giftCertificate);
+        } catch (NoResultException e) {
+            optionalGiftCertificate = Optional.empty();
+        }
+
+        return optionalGiftCertificate;
     }
 
     @Override
     public List<GiftCertificate> findGiftCertificatesByTagNames(List<String> tagNames) {
         CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> root = criteriaQuery.from(GiftCertificate.class);
-        criteriaQuery.select(root);
-        criteriaQuery.where(predicateFindByTagNames(root, tagNames));
+
+        criteriaQuery.select(root)
+                .where(predicateFindByTagNames(root, tagNames));
 
         return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
     public GiftCertificate update(GiftCertificate giftCertificate) {
-        entityManager.merge(giftCertificate);
-        return giftCertificate;
+        return entityManager.merge(giftCertificate);
     }
 
     @Override
     public Long findByAttributesNumber(String name, List<String> tagList) {
-        CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
-        Root<GiftCertificate> root = criteriaQuery.from(GiftCertificate.class);
-        criteriaQuery.select(criteriaBuilder.count(root));
-        criteriaQuery.where(predicateFindByAttributes(root, name, tagList));
+        Long entitiesNumber;
+        try {
+            CriteriaQuery<Long> criteriaQuery = criteriaBuilder.createQuery(Long.class);
+            Root<GiftCertificate> root = criteriaQuery.from(GiftCertificate.class);
+            criteriaQuery.select(criteriaBuilder.count(root));
+            criteriaQuery.where(predicateFindByAttributes(root, name, tagList));
 
-        return entityManager.createQuery(criteriaQuery).getSingleResult();
+            entitiesNumber = entityManager.createQuery(criteriaQuery).getSingleResult();
+        } catch (NoResultException e) {
+            entitiesNumber = 0L;
+        }
+
+        return entitiesNumber;
     }
 
     @Override
@@ -94,11 +114,13 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
     }
 
     private Predicate predicateFindByTagNames(Root<GiftCertificate> root, List<String> tagList) {
-            if (CollectionUtils.isEmpty(tagList)) return criteriaBuilder.conjunction();
-            return tagList.stream().map(tagName -> {
-                Join<GiftCertificate, Tag> tagJoin = root.join(TAG_LIST_FIELD);
-                return criteriaBuilder.equal(tagJoin.get(NAME), tagName);
-            }).reduce(criteriaBuilder.conjunction(), criteriaBuilder::and);
+        if (CollectionUtils.isEmpty(tagList)) {
+            return criteriaBuilder.conjunction();
+        }
+        return tagList.stream().map(tagName -> {
+            Join<GiftCertificate, Tag> tagJoin = root.join(TAG_LIST_FIELD_NAME);
+            return criteriaBuilder.equal(tagJoin.get(NAME), tagName);
+        }).reduce(criteriaBuilder.conjunction(), criteriaBuilder::and);
     }
 
 
@@ -116,17 +138,15 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
         if (CollectionUtils.isEmpty(columnNames)) {
             orderList.add(createOrderByField(root, ID, orderSort));
         } else {
-            for (String columnName : columnNames) {
-                orderList.add(createOrderByField(root, columnName, orderSort));
-            }
+            columnNames.forEach(columnName -> orderList.add(createOrderByField(root, columnName, orderSort)));
         }
 
         return orderList;
     }
 
     private Order createOrderByField(Root<GiftCertificate> root, String columnName, String sortType) {
-        return sortType.equals(DEFAULT_SORT) ?
-                criteriaBuilder.asc(root.get(columnName)) :
-                criteriaBuilder.desc(root.get(columnName));
+        Path<String> name = root.get(columnName);
+
+        return sortType.equals(DEFAULT_SORT) ? criteriaBuilder.asc(name) : criteriaBuilder.desc(name);
     }
 }

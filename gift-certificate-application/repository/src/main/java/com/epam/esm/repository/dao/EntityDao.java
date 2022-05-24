@@ -46,5 +46,5 @@ public interface EntityDao<T> {
      * @param entityClass class of the entity to find number of entities
      * @return number of entities
      */
-    Long findEntitiesNumber(Class<T> entityClass);
+    Long getEntitiesNumber(Class<T> entityClass);
 }

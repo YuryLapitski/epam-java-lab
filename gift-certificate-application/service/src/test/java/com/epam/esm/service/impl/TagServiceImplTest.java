@@ -94,7 +94,7 @@ public class TagServiceImplTest {
     @Test
     void testFindAll() {
         when(tagDao.findAll(pagination, Tag.class)).thenReturn(tagList);
-        when(tagDao.findEntitiesNumber(Tag.class)).thenReturn(ENTITIES_NUMBER);
+        when(tagDao.getEntitiesNumber(Tag.class)).thenReturn(ENTITIES_NUMBER);
         when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
         List<Tag> actualResult = tagService.findAll(pagination);
         assertEquals(tagList, actualResult);

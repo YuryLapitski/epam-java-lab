@@ -33,21 +33,21 @@ import java.util.Objects;
 @Table(name = "gift_certificate")
 public class GiftCertificate extends RepresentationModel<GiftCertificate> {
     @Id
-    @Column(name = "id", unique = true, nullable = false, updatable = false)
+    @Column(unique = true, nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "name", unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
     private String name;
-    @Column(name = "description", nullable = false)
+    @Column(nullable = false)
     private String description;
-    @Column(name = "price", nullable = false)
+    @Column(nullable = false)
     private BigDecimal price;
-    @Column(name = "duration", nullable = false)
+    @Column(nullable = false)
     private Short duration;
-    @Column(name = "create_date", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private LocalDateTime createDate;
-    @Column(name = "last_update_date", nullable = false)
+    @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private LocalDateTime lastUpdateDate;
 

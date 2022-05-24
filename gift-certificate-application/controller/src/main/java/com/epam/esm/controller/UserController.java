@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/v1/users")
 public class UserController {
     private final UserService userService;
     private final LinkBuilder<User> userLinkBuilder;
@@ -31,6 +31,7 @@ public class UserController {
     public User findById(@PathVariable Long id) {
         User user = userService.findById(id);
         userLinkBuilder.setLinks(user);
+
         return user;
     }
 
@@ -38,6 +39,7 @@ public class UserController {
     public List<User> findAll(CustomPagination pagination) {
         List<User> userList = userService.findAll(pagination);
         userLinkBuilder.setLinks(userList);
+
         return userList;
     }
 
@@ -46,6 +48,7 @@ public class UserController {
     public User create(@RequestBody User user) {
         User createdUser = userService.create(user);
         userLinkBuilder.setLinks(createdUser);
+
         return createdUser;
     }
 }

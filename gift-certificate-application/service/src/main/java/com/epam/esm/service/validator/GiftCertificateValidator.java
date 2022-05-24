@@ -1,5 +1,7 @@
 package com.epam.esm.service.validator;
 
+import com.epam.esm.entity.GiftCertificate;
+
 import java.math.BigDecimal;
 
 /**
@@ -42,7 +44,18 @@ public interface GiftCertificateValidator {
      * @param duration gift certificate duration to validate
      * @return true if the gift certificate duration is valid
      */
-    boolean isDurationValid(short duration);
+    boolean isDurationValid(Short duration);
+
+    /**
+     * Validates entered all of the gift certificate parameters for null
+     *
+     * @param name gift certificate name to validate
+     * @param description gift certificate description to validate
+     * @param price gift certificate price to validate
+     * @param duration gift certificate duration to validate
+     * @return true if all of the gift certificate parameters are null
+     */
+    boolean isEmptyFields(String name, String description, BigDecimal price, Short duration);
 
     /**
      * Validates entered all of the gift certificate parameters
@@ -53,7 +66,7 @@ public interface GiftCertificateValidator {
      * @param duration gift certificate duration to validate
      * @return true if all of the gift certificate parameters is valid
      */
-    boolean validateAll(String name, String description, BigDecimal price, short duration);
+    boolean validateAll(String name, String description, BigDecimal price, Short duration);
 
     /**
      * Validates entered type of sorting

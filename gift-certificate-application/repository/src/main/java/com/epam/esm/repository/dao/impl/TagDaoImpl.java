@@ -4,6 +4,7 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.repository.dao.AbstractEntityDao;
 import com.epam.esm.repository.dao.TagDao;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.CollectionUtils;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaQuery;
@@ -12,7 +13,7 @@ import java.util.Optional;
 
 @Repository
 public class TagDaoImpl extends AbstractEntityDao<Tag> implements TagDao {
-    private static final String NAME_FIELD = "name";
+    private static final String NAME_FIELD_NAME = "name";
     private static final String FIND_MOST_POPULAR_TAG_OF_RICHEST_USER = "SELECT tag.id, tag.name FROM tag " +
             "JOIN tag_gift_certificate ON tag_gift_certificate.tag_id=tag.id " +
             "JOIN gift_certificate ON gift_certificate.id=tag_gift_certificate.gift_certificate_id " +
@@ -28,7 +29,7 @@ public class TagDaoImpl extends AbstractEntityDao<Tag> implements TagDao {
 
     @Override
     public Optional<Tag> findByName(String name) {
-        CriteriaQuery<Tag> criteriaQuery = prepareWhereCriteriaQuery(Tag.class, NAME_FIELD, name);
+        CriteriaQuery<Tag> criteriaQuery = prepareWhereCriteriaQuery(Tag.class, NAME_FIELD_NAME, name);
         return entityManager.createQuery(criteriaQuery).getResultStream().findAny();
     }
 
@@ -36,8 +37,12 @@ public class TagDaoImpl extends AbstractEntityDao<Tag> implements TagDao {
     @SuppressWarnings("unchecked")
     public Optional<Tag> findMostPopularTagWithHighestOrderCost() {
         Query query = entityManager.createNativeQuery(FIND_MOST_POPULAR_TAG_OF_RICHEST_USER, Tag.class);
-        List<Tag> tag = query.getResultList();
-        return Optional.ofNullable(tag.get(0));
+        List<Tag> tags = query.getResultList();
+        if (CollectionUtils.isEmpty(tags)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(tags.get(0));
     }
 }
 

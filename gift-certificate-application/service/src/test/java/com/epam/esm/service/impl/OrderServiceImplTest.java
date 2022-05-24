@@ -6,7 +6,9 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.repository.dao.OrderDao;
+import com.epam.esm.repository.dao.UserDao;
 import com.epam.esm.repository.dao.impl.OrderDaoImpl;
+import com.epam.esm.repository.dao.impl.UserDaoImpl;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
@@ -48,6 +50,7 @@ public class OrderServiceImplTest {
     private static final int SIZE = 10;
     private static final Long ENTITIES_NUMBER = 1L;
     private OrderDao orderDao;
+    private UserDao userDao;
     private OrderService orderService;
     private Order order;
     private User user;
@@ -62,6 +65,7 @@ public class OrderServiceImplTest {
     @BeforeAll
     void beforeAll() {
         orderDao = mock(OrderDaoImpl.class);
+        userDao = mock(UserDaoImpl.class);
         paginationValidator = mock(PaginationValidatorImpl.class);
         userService = mock(UserServiceImpl.class);
         giftCertificateService = mock(GiftCertificateServiceImpl.class);
@@ -105,13 +109,13 @@ public class OrderServiceImplTest {
         pagination.setPage(PAGE);
         pagination.setSize(SIZE);
 
-        orderService = new OrderServiceImpl(orderDao, userService, giftCertificateService, paginationValidator);
+        orderService = new OrderServiceImpl(orderDao, userDao, userService, giftCertificateService, paginationValidator);
     }
 
     @Test
     void testFindAll() {
         when(orderDao.findAll(pagination, Order.class)).thenReturn(orderList);
-        when(orderDao.findEntitiesNumber(Order.class)).thenReturn(ENTITIES_NUMBER);
+        when(orderDao.getEntitiesNumber(Order.class)).thenReturn(ENTITIES_NUMBER);
         when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
         List<Order> actualResult = orderService.findAll(pagination);
         assertEquals(orderList, actualResult);
@@ -132,7 +136,7 @@ public class OrderServiceImplTest {
 
     @Test
     void testFindByUserId() {
-        when(userService.findById(USER_ID)).thenReturn(user);
+        when(userDao.findById(USER_ID, User.class)).thenReturn(Optional.ofNullable(user));
         when(orderDao.findByUserId(USER_ID, pagination)).thenReturn(orderList);
         when(orderDao.findUserOrdersNumber(USER_ID)).thenReturn(ENTITIES_NUMBER);
         when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
@@ -143,14 +147,14 @@ public class OrderServiceImplTest {
 
     @Test
     void testFindByUserIdShouldTrowUserHasNoOrdersException() {
-        when(orderDao.findByUserId(USER_ID, pagination)).thenReturn(Collections.emptyList());
+        when(userDao.findById(USER_ID, User.class)).thenReturn(Optional.ofNullable(user));
         assertThrows(UserHasNoOrdersException.class, () -> orderService.findByUserId(USER_ID, pagination));
     }
 
     @Test
     void testFindByAttributes() {
-        when(userService.findById(USER_ID)).thenReturn(user);
-        when(orderDao.findEntitiesNumber(Order.class)).thenReturn(ENTITIES_NUMBER);
+        when(userDao.findById(USER_ID, User.class)).thenReturn(Optional.ofNullable(user));
+        when(orderDao.getEntitiesNumber(Order.class)).thenReturn(ENTITIES_NUMBER);
         when(orderDao.findUserOrdersNumber(USER_ID)).thenReturn(ENTITIES_NUMBER);
         when(orderDao.findByUserId(USER_ID, pagination)).thenReturn(orderList);
         when(orderService.findByUserId(USER_ID, pagination)).thenReturn(orderList);

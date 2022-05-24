@@ -15,38 +15,20 @@ import com.epam.esm.service.exception.InvalidColumnNameException;
 import com.epam.esm.service.exception.InvalidSortTypeException;
 import com.epam.esm.service.exception.NoMatchingGiftCertificateException;
 import com.epam.esm.service.exception.TagDoesNotExistException;
+import com.epam.esm.service.util.Message;
 import com.epam.esm.service.validator.GiftCertificateValidator;
 import com.epam.esm.service.validator.PaginationValidator;
 import com.epam.esm.service.validator.TagValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.LocalDateTime;
+import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService {
-    private static final String GIFT_CERTIFICATE_ID_NOT_FOUND_MSG = "Gift certificate with id=%d not found.";
-    private static final String GIFT_CERTIFICATE_NAME_NOT_FOUND_MSG = "Gift certificate with name '%s' not found.";
-    private static final String GIFT_CERTIFICATE_ALREADY_EXIST_MSG = "Gift certificate with the name '%s' " +
-            "already exists";
-    private static final String INVALID_FIELDS_MSG = "Invalid fields";
-    private static final String INVALID_NAME_MSG = "Invalid name";
-    private static final String INVALID_DESCRIPTION_MSG = "Invalid description";
-    private static final String INVALID_PRICE_MSG = "Invalid price";
-    private static final String INVALID_DURATION_MSG = "Invalid duration";
-    private static final String INVALID_COLUMN_NAME_MSG = "Invalid column name. Please choose 'name', " +
-            "'description', 'price', 'duration', 'create_date', 'last_update_date' columns";
-    private static final String INVALID_SORT_TYPE_MSG = "Invalid sort type. Sort type can be only 'asc' or 'desc'.";
-    private static final String CANNOT_BE_EMPTY_FIELDS_MSG = "Fields 'Name', 'Description', 'Price', 'Duration' " +
-            "cannot be empty";
-    private static final String CANNOT_BE_DELETED_GIFT_CERTIFICATE_MSG =
-            "Cannot delete. There is an order for a gift certificate";
-    private static final String TAG_DOES_NOT_EXIST_MSG = "Tag with the name '%s' does not exist";
-    private static final String NO_GIFT_CERTIFICATE_MATCHING_MSG = "No gift certificate matching these tags";
     private final GiftCertificateDao giftCertificateDao;
     private final TagDao tagDao;
     private final OrderDao orderDao;
@@ -72,46 +54,28 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     @Override
     public GiftCertificate create(GiftCertificate giftCertificate) {
-        if (giftCertificate.getName() == null
-                || giftCertificate.getDescription() == null
-                || giftCertificate.getPrice() == null
-                || giftCertificate.getDuration() == null) {
-            throw new FieldValidationException(CANNOT_BE_EMPTY_FIELDS_MSG);
+        String name = giftCertificate.getName();
+        String description = giftCertificate.getDescription();
+        BigDecimal price = giftCertificate.getPrice();
+        Short duration = giftCertificate.getDuration();
+
+        if (giftCertificateValidator.isEmptyFields(name, description, price, duration)) {
+            throw new FieldValidationException(Message.CANNOT_BE_EMPTY_FIELDS_MSG);
         }
 
-        if (giftCertificate.getTagList() == null) {
-            giftCertificate.setTagList(new ArrayList<>());
+        if (!giftCertificateValidator.validateAll(name, description, price, duration)) {
+            throw new FieldValidationException(Message.INVALID_FIELDS_MSG);
         }
 
-        if (!isValidGiftCertificate(giftCertificate)
-                || !isValidTags(giftCertificate.getTagList()) && giftCertificate.getTagList() != null) {
-            throw new FieldValidationException(INVALID_FIELDS_MSG);
-        }
-
+        List<Tag> createdTagList = createTagsList(giftCertificate);
+        giftCertificate.setTagList(createdTagList);
 
         if (isGiftCertificateExist(giftCertificate)) {
             throw new GiftCertificateAlreadyExistException(String
-                    .format(GIFT_CERTIFICATE_ALREADY_EXIST_MSG, giftCertificate.getName()));
+                    .format(Message.GIFT_CERTIFICATE_ALREADY_EXIST_MSG, giftCertificate.getName()));
         }
-
-        List<Tag> tagList = createTagsList(giftCertificate);
-        giftCertificate.setTagList(tagList);
 
         return giftCertificateDao.create(giftCertificate);
-    }
-
-    private boolean isValidTags(List<Tag> tags) {
-        if (tags == null) {
-            return true;
-        }
-        return tags.stream().allMatch(tag -> tagValidator.isNameValid(tag.getName()));
-    }
-
-    private boolean isValidGiftCertificate(GiftCertificate giftCertificate) {
-        return giftCertificateValidator.validateAll(giftCertificate.getName(),
-                giftCertificate.getDescription(),
-                giftCertificate.getPrice(),
-                giftCertificate.getDuration());
     }
 
     private boolean isGiftCertificateExist(GiftCertificate giftCertificate) {
@@ -120,28 +84,28 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     private List<Tag> createTagsList(GiftCertificate giftCertificate) {
-        if (giftCertificate.getTagList() == null) {
-            return Collections.emptyList();
-        }
-
-        List<Tag> tagList = new ArrayList<>();
+        List<Tag> createdTagList = new ArrayList<>();
         for (Tag tag : giftCertificate.getTagList()) {
-            Optional<Tag> optionalTag = tagDao.findByName(tag.getName());
+            String name = tag.getName();
+            if (!tagValidator.isNameValid(name)) {
+                throw new FieldValidationException(Message.INVALID_TAG_NAME_MSG);
+            }
+            Optional<Tag> optionalTag = tagDao.findByName(name);
             if (optionalTag.isPresent()) {
                 tag = optionalTag.get();
             } else {
                 tag = tagDao.create(tag);
             }
-            tagList.add(tag);
+            createdTagList.add(tag);
         }
 
-        return tagList;
+        return createdTagList;
     }
 
     @Override
     public List<GiftCertificate> findAll(CustomPagination pagination) {
-        Long gcNumber = giftCertificateDao.findEntitiesNumber(GiftCertificate.class);
-        pagination = paginationValidator.validatePagination(pagination, gcNumber);
+        Long giftCertificatesNumber = giftCertificateDao.getEntitiesNumber(GiftCertificate.class);
+        pagination = paginationValidator.validatePagination(pagination, giftCertificatesNumber);
 
         return giftCertificateDao.findAll(pagination, GiftCertificate.class);
     }
@@ -150,7 +114,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public GiftCertificate findByGiftCertificateId(Long id) {
         return giftCertificateDao.findById(id, GiftCertificate.class)
                 .orElseThrow(() -> new GiftCertificateNotFoundException(String
-                .format(GIFT_CERTIFICATE_ID_NOT_FOUND_MSG, id)));
+                .format(Message.GIFT_CERTIFICATE_ID_NOT_FOUND_MSG, id)));
     }
 
     @Transactional
@@ -159,12 +123,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Optional<GiftCertificate> optionalGiftCertificate = giftCertificateDao.findById(id, GiftCertificate.class);
 
         if (!optionalGiftCertificate.isPresent()) {
-            String message = String.format(GIFT_CERTIFICATE_ID_NOT_FOUND_MSG, id);
+            String message = String.format(Message.GIFT_CERTIFICATE_ID_NOT_FOUND_MSG, id);
             throw new GiftCertificateNotFoundException(message);
         }
 
         if (!orderDao.findByGiftCertificateId(id).isEmpty()) {
-            throw new HasOrderToGiftCertificateException(CANNOT_BE_DELETED_GIFT_CERTIFICATE_MSG);
+            throw new HasOrderToGiftCertificateException(Message.CANNOT_BE_DELETED_GIFT_CERTIFICATE_MSG);
         }
 
         giftCertificateDao.delete(id, GiftCertificate.class);
@@ -173,51 +137,48 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     @Override
     public GiftCertificate update(Long giftCertificateId, GiftCertificate giftCertificate) {
-        GiftCertificate newGiftCertificate = findByGiftCertificateId(giftCertificateId);
-        if (giftCertificate.getName() != null) {
-            if (!giftCertificateValidator.isNameValid(giftCertificate.getName())) {
-                throw new FieldValidationException(INVALID_NAME_MSG);
+        String name = giftCertificate.getName();
+        String description = giftCertificate.getDescription();
+        BigDecimal price = giftCertificate.getPrice();
+        Short duration = giftCertificate.getDuration();
+
+        GiftCertificate updatedGiftCertificate = findByGiftCertificateId(giftCertificateId);
+        if (name != null) {
+            if (!giftCertificateValidator.isNameValid(name)) {
+                throw new FieldValidationException(Message.INVALID_NAME_MSG);
             }
-            newGiftCertificate.setName(giftCertificate.getName());
+            updatedGiftCertificate.setName(name);
         }
-        if (giftCertificate.getDescription() != null) {
-            if (!giftCertificateValidator.isDescriptionValid(giftCertificate.getDescription())) {
-                throw new FieldValidationException(INVALID_DESCRIPTION_MSG);
+        if (description != null) {
+            if (!giftCertificateValidator.isDescriptionValid(description)) {
+                throw new FieldValidationException(Message.INVALID_DESCRIPTION_MSG);
             }
-            newGiftCertificate.setDescription(giftCertificate.getDescription());
+            updatedGiftCertificate.setDescription(description);
         }
-        if (giftCertificate.getPrice() != null) {
-            if (!giftCertificateValidator.isPriceValid(giftCertificate.getPrice())) {
-                throw new FieldValidationException(INVALID_PRICE_MSG);
+        if (price != null) {
+            if (!giftCertificateValidator.isPriceValid(price)) {
+                throw new FieldValidationException(Message.INVALID_PRICE_MSG);
             }
-            newGiftCertificate.setPrice(giftCertificate.getPrice());
+            updatedGiftCertificate.setPrice(price);
         }
-        if (giftCertificate.getDuration() != null) {
-            if (!giftCertificateValidator.isDurationValid(giftCertificate.getDuration())) {
-                throw new FieldValidationException(INVALID_DURATION_MSG);
+        if (duration != null) {
+            if (!giftCertificateValidator.isDurationValid(duration)) {
+                throw new FieldValidationException(Message.INVALID_DURATION_MSG);
             }
-            newGiftCertificate.setDuration(giftCertificate.getDuration());
+            updatedGiftCertificate.setDuration(duration);
         }
 
-        List<Tag> tagList;
-        if (giftCertificate.getTagList() == null) {
-            tagList = Collections.emptyList();
-        } else {
-            tagList = createTagsList(giftCertificate);
-        }
-        newGiftCertificate.setTagList(tagList);
+        List<Tag> createdTagList = createTagsList(giftCertificate);
+        updatedGiftCertificate.setTagList(createdTagList);
 
-        LocalDateTime lastUpdateDate = LocalDateTime.now();
-        newGiftCertificate.setLastUpdateDate(lastUpdateDate);
-
-        return giftCertificateDao.update(newGiftCertificate);
+        return giftCertificateDao.update(updatedGiftCertificate);
     }
 
     @Transactional
     @Override
     public List<GiftCertificate> findByAttributes(String name, List<String> tagNames, List<String> columnNames,
                                                   String sortType, CustomPagination pagination) {
-        checkGiftCertificateByName(name);
+        checkIfExistsGiftCertificateByName(name);
         checkTagsByName(tagNames);
         checkColumnNames(columnNames);
         checkSortType(sortType);
@@ -228,10 +189,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return giftCertificateDao.findByAttributes(name, tagNames, columnNames, sortType, pagination);
     }
 
-    private void checkGiftCertificateByName(String name) {
+    private void checkIfExistsGiftCertificateByName(String name) {
         if (name != null) {
             if (giftCertificateDao.findByPartOfName(name).isEmpty()) {
-                throw new GiftCertificateNotFoundException(String.format(GIFT_CERTIFICATE_NAME_NOT_FOUND_MSG, name));
+                throw new GiftCertificateNotFoundException(String.format(Message.GIFT_CERTIFICATE_NAME_NOT_FOUND_MSG, name));
             }
         }
     }
@@ -239,9 +200,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private void checkTagsByName(List<String> tagNames) {
         if (tagNames != null) {
             tagNames.forEach(tagName -> tagDao.findByName(tagName)
-                    .orElseThrow(() -> new TagDoesNotExistException(String.format(TAG_DOES_NOT_EXIST_MSG, tagName))));
+                    .orElseThrow(() -> new TagDoesNotExistException(String
+                            .format(Message.TAG_DOES_NOT_EXIST_MSG, tagName))));
             if (giftCertificateDao.findGiftCertificatesByTagNames(tagNames).isEmpty()) {
-                throw new NoMatchingGiftCertificateException(NO_GIFT_CERTIFICATE_MATCHING_MSG);
+                throw new NoMatchingGiftCertificateException(Message.NO_GIFT_CERTIFICATE_MATCHING_MSG);
             }
         }
     }
@@ -250,7 +212,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         if (columnNames != null) {
             for (String columnName : columnNames) {
                 if (!giftCertificateValidator.isColumnNameValid(columnName)) {
-                    throw new InvalidColumnNameException(INVALID_COLUMN_NAME_MSG);
+                    throw new InvalidColumnNameException(Message.INVALID_COLUMN_NAME_MSG);
                 }
             }
         }
@@ -259,7 +221,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private void checkSortType(String sortType) {
         if (sortType != null) {
             if (!giftCertificateValidator.isSortTypeValid(sortType)) {
-                throw new InvalidSortTypeException(INVALID_SORT_TYPE_MSG);
+                throw new InvalidSortTypeException(Message.INVALID_SORT_TYPE_MSG);
             }
         }
     }

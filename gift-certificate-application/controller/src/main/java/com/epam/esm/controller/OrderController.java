@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/orders")
+@RequestMapping(value = "/v1/orders")
 public class OrderController {
     private final OrderService orderService;
     private final LinkBuilder<Order> orderLinkBuilder;
@@ -34,6 +34,7 @@ public class OrderController {
     public Order findById(@PathVariable Long id) {
         Order order = orderService.findById(id);
         orderLinkBuilder.setLinks(order);
+
         return order;
     }
 
@@ -42,6 +43,7 @@ public class OrderController {
     public Order create(@RequestBody OrderDto orderDto) {
         Order order = orderService.create(orderDto);
         orderLinkBuilder.setLinks(order);
+
         return order;
     }
 
@@ -56,6 +58,7 @@ public class OrderController {
                                     CustomPagination pagination) {
         List<Order> orderList = orderService.findByAttributes(userId, pagination);
         orderLinkBuilder.setLinks(orderList);
+        
         return orderList;
     }
 }
