@@ -40,6 +40,7 @@ public class TagServiceImplTest {
     private static final int PAGE = 1;
     private static final int SIZE = 10;
     private static final Long ENTITIES_NUMBER = 1L;
+    private static final int LAST_PAGE = 1;
     private Tag tag;
     private TagDao tagDao;
     private GiftCertificateDao giftCertificateDao;
@@ -95,7 +96,8 @@ public class TagServiceImplTest {
     void testFindAll() {
         when(tagDao.findAll(pagination, Tag.class)).thenReturn(tagList);
         when(tagDao.getEntitiesNumber(Tag.class)).thenReturn(ENTITIES_NUMBER);
-        when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
+        when(paginationValidator.isSizeValid(pagination)).thenReturn(true);
+        when(paginationValidator.isPageValid(pagination, LAST_PAGE)).thenReturn(true);
         List<Tag> actualResult = tagService.findAll(pagination);
         assertEquals(tagList, actualResult);
     }

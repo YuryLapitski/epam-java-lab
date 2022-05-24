@@ -14,6 +14,8 @@ import com.epam.esm.service.exception.HasOrderToGiftCertificateException;
 import com.epam.esm.service.exception.InvalidColumnNameException;
 import com.epam.esm.service.exception.InvalidSortTypeException;
 import com.epam.esm.service.exception.NoMatchingGiftCertificateException;
+import com.epam.esm.service.exception.PageNumberValidationException;
+import com.epam.esm.service.exception.PageSizeValidationException;
 import com.epam.esm.service.exception.TagDoesNotExistException;
 import com.epam.esm.service.util.Message;
 import com.epam.esm.service.validator.GiftCertificateValidator;
@@ -104,8 +106,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public List<GiftCertificate> findAll(CustomPagination pagination) {
+        if (!paginationValidator.isSizeValid(pagination)) {
+            throw new PageSizeValidationException(Message.PAGE_SIZE_INVALID_MSG);
+        }
+
         Long giftCertificatesNumber = giftCertificateDao.getEntitiesNumber(GiftCertificate.class);
-        pagination = paginationValidator.validatePagination(pagination, giftCertificatesNumber);
+        int lastPage = (int) Math.ceil((double) giftCertificatesNumber / pagination.getSize());
+        if (!paginationValidator.isPageValid(pagination, lastPage)) {
+            throw new PageNumberValidationException(String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage));
+        }
 
         return giftCertificateDao.findAll(pagination, GiftCertificate.class);
     }
@@ -137,30 +146,33 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     @Override
     public GiftCertificate update(Long giftCertificateId, GiftCertificate giftCertificate) {
-        String name = giftCertificate.getName();
-        String description = giftCertificate.getDescription();
-        BigDecimal price = giftCertificate.getPrice();
-        Short duration = giftCertificate.getDuration();
-
         GiftCertificate updatedGiftCertificate = findByGiftCertificateId(giftCertificateId);
+
+        String name = giftCertificate.getName();
         if (name != null) {
             if (!giftCertificateValidator.isNameValid(name)) {
                 throw new FieldValidationException(Message.INVALID_NAME_MSG);
             }
             updatedGiftCertificate.setName(name);
         }
+
+        String description = giftCertificate.getDescription();
         if (description != null) {
             if (!giftCertificateValidator.isDescriptionValid(description)) {
                 throw new FieldValidationException(Message.INVALID_DESCRIPTION_MSG);
             }
             updatedGiftCertificate.setDescription(description);
         }
+
+        BigDecimal price = giftCertificate.getPrice();
         if (price != null) {
             if (!giftCertificateValidator.isPriceValid(price)) {
                 throw new FieldValidationException(Message.INVALID_PRICE_MSG);
             }
             updatedGiftCertificate.setPrice(price);
         }
+
+        Short duration = giftCertificate.getDuration();
         if (duration != null) {
             if (!giftCertificateValidator.isDurationValid(duration)) {
                 throw new FieldValidationException(Message.INVALID_DURATION_MSG);
@@ -183,8 +195,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         checkColumnNames(columnNames);
         checkSortType(sortType);
 
+        if (!paginationValidator.isSizeValid(pagination)) {
+            throw new PageSizeValidationException(Message.PAGE_SIZE_INVALID_MSG);
+        }
+
         Long giftCertificatesNumber = giftCertificateDao.findByAttributesNumber(name, tagNames);
-        pagination = paginationValidator.validatePagination(pagination, giftCertificatesNumber);
+        int lastPage = (int) Math.ceil((double) giftCertificatesNumber / pagination.getSize());
+        if (!paginationValidator.isPageValid(pagination, lastPage)) {
+            throw new PageNumberValidationException(String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage));
+        }
 
         return giftCertificateDao.findByAttributes(name, tagNames, columnNames, sortType, pagination);
     }

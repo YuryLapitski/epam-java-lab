@@ -49,6 +49,7 @@ public class GiftCertificateServiceImplTest {
     private static final int PAGE = 1;
     private static final int SIZE = 10;
     private static final Long ENTITIES_NUMBER = 1L;
+    private static final int LAST_PAGE = 1;
     private GiftCertificate giftCertificate;
     private GiftCertificateDao giftCertificateDao;
     private Tag tag;
@@ -133,7 +134,8 @@ public class GiftCertificateServiceImplTest {
     void testFindAll() {
         when(giftCertificateDao.findAll(pagination, GiftCertificate.class)).thenReturn(giftCertificateList);
         when(giftCertificateDao.getEntitiesNumber(GiftCertificate.class)).thenReturn(ENTITIES_NUMBER);
-        when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
+        when(paginationValidator.isSizeValid(pagination)).thenReturn(true);
+        when(paginationValidator.isPageValid(pagination, LAST_PAGE)).thenReturn(true);
         List<GiftCertificate> actualResult = giftCertificateService.findAll(pagination);
         assertEquals(giftCertificateList, actualResult);
     }
@@ -159,7 +161,8 @@ public class GiftCertificateServiceImplTest {
     void testFindByAttributes() {
         when(giftCertificateDao.findByPartOfName(NAME)).thenReturn(giftCertificateList);
         when(giftCertificateDao.findByAttributesNumber(NAME, tagNames)).thenReturn(ENTITIES_NUMBER);
-        when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
+        when(paginationValidator.isSizeValid(pagination)).thenReturn(true);
+        when(paginationValidator.isPageValid(pagination, LAST_PAGE)).thenReturn(true);
         when(tagDao.findByName(TAG_NAME)).thenReturn(Optional.of(tag));
         when(giftCertificateDao.findGiftCertificatesByTagNames(tagNames)).thenReturn(giftCertificateList);
         when(giftCertificateValidator.isColumnNameValid(ANY_STRING)).thenReturn(true);

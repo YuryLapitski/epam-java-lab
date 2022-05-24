@@ -1,22 +1,33 @@
 package com.epam.esm.service.validator.impl;
 
 import com.epam.esm.pagination.CustomPagination;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PaginationValidatorImplTest {
+    private static final int LAST_PAGE = 10;
+    private PaginationValidatorImpl paginationValidator;
+    private CustomPagination pagination;
 
-    @Test
-    void testValidatePagination() {
-        PaginationValidatorImpl paginationValidator = new PaginationValidatorImpl();
-        CustomPagination pagination = new CustomPagination();
+    @BeforeEach
+    void beforeEach() {
+        paginationValidator = new PaginationValidatorImpl();
+        pagination = new CustomPagination();
         pagination.setPage(1);
         pagination.setSize(10);
-        Long entitiesNumber = 15L;
-        CustomPagination actualResult = paginationValidator.validatePagination(pagination, entitiesNumber);
-        assertEquals(pagination, actualResult);
+    }
+
+    @Test
+    void testIsSizeValid() {
+        assertTrue(paginationValidator.isSizeValid(pagination));
+    }
+
+    @Test
+    void testIsPageValid() {
+        assertTrue(paginationValidator.isPageValid(pagination, LAST_PAGE));
     }
 }

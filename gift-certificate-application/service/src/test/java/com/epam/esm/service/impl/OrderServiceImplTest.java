@@ -49,6 +49,7 @@ public class OrderServiceImplTest {
     private static final int PAGE = 1;
     private static final int SIZE = 10;
     private static final Long ENTITIES_NUMBER = 1L;
+    private static final int LAST_PAGE = 1;
     private OrderDao orderDao;
     private UserDao userDao;
     private OrderService orderService;
@@ -116,7 +117,8 @@ public class OrderServiceImplTest {
     void testFindAll() {
         when(orderDao.findAll(pagination, Order.class)).thenReturn(orderList);
         when(orderDao.getEntitiesNumber(Order.class)).thenReturn(ENTITIES_NUMBER);
-        when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
+        when(paginationValidator.isSizeValid(pagination)).thenReturn(true);
+        when(paginationValidator.isPageValid(pagination, LAST_PAGE)).thenReturn(true);
         List<Order> actualResult = orderService.findAll(pagination);
         assertEquals(orderList, actualResult);
     }
@@ -139,7 +141,8 @@ public class OrderServiceImplTest {
         when(userDao.findById(USER_ID, User.class)).thenReturn(Optional.ofNullable(user));
         when(orderDao.findByUserId(USER_ID, pagination)).thenReturn(orderList);
         when(orderDao.findUserOrdersNumber(USER_ID)).thenReturn(ENTITIES_NUMBER);
-        when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
+        when(paginationValidator.isSizeValid(pagination)).thenReturn(true);
+        when(paginationValidator.isPageValid(pagination, LAST_PAGE)).thenReturn(true);
         when(orderDao.findByUserId(USER_ID, pagination)).thenReturn(orderList);
         List<Order> actualResult = orderService.findByUserId(USER_ID, pagination);
         assertEquals(orderList, actualResult);
@@ -155,11 +158,12 @@ public class OrderServiceImplTest {
     void testFindByAttributes() {
         when(userDao.findById(USER_ID, User.class)).thenReturn(Optional.ofNullable(user));
         when(orderDao.getEntitiesNumber(Order.class)).thenReturn(ENTITIES_NUMBER);
+        when(paginationValidator.isSizeValid(pagination)).thenReturn(true);
+        when(paginationValidator.isPageValid(pagination, LAST_PAGE)).thenReturn(true);
         when(orderDao.findUserOrdersNumber(USER_ID)).thenReturn(ENTITIES_NUMBER);
         when(orderDao.findByUserId(USER_ID, pagination)).thenReturn(orderList);
         when(orderService.findByUserId(USER_ID, pagination)).thenReturn(orderList);
         when(orderService.findAll(pagination)).thenReturn(orderList);
-        when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
         List<Order> actualResult = orderService.findByAttributes(USER_ID, pagination);
         assertEquals(orderList, actualResult);
     }

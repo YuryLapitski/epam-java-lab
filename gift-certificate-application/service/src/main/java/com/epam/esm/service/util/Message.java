@@ -36,4 +36,9 @@ public class Message {
     public static final String INVALID_LAST_NAME_MSG = "Invalid last name";
     public static final String INVALID_LOGIN_MSG = "Invalid login name";
     public static final String USER_ALREADY_EXIST_MSG = "User with the login '%s' already exists";
+
+    public static final String PAGE_SIZE_INVALID_MSG = "Invalid page size. " +
+            "Elements number on the page should be more than 0.";
+    public static final String PAGE_NUMBER_INVALID_MSG = "Invalid page number. " +
+            "Minimum page number 1, maximum page number %s";
 }

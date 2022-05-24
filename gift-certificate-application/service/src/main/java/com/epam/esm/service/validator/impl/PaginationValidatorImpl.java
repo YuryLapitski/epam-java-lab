@@ -6,27 +6,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PaginationValidatorImpl implements PaginationValidator {
-    private static final int FIRST_PAGE = 1;
-    private static final int DEFAULT_SIZE = 10;
-    private static final int MIN_SIZE = 1;
+    private static final int FIRST_PAGE = 0;
+    private static final int MIN_ELEMENTS_ON_PAGE = 1;
 
     @Override
-    public CustomPagination validatePagination(CustomPagination pagination, Long entitiesNumber) {
+    public boolean isSizeValid(CustomPagination pagination) {
         int pageSize = pagination.getSize();
+
+        return pageSize >= MIN_ELEMENTS_ON_PAGE;
+    }
+
+    @Override
+    public boolean isPageValid(CustomPagination pagination, int lastPage) {
         int page = pagination.getPage();
 
-        if (pageSize < MIN_SIZE) {
-            pagination.setSize(DEFAULT_SIZE);
-        }
-
-        int lastPage = (int) Math.ceil((double) (entitiesNumber / pageSize));
-        if (page < FIRST_PAGE) {
-            pagination.setPage(FIRST_PAGE);
-        }
-        if (page >= lastPage) {
-            pagination.setPage(lastPage);
-        }
-
-        return pagination;
+        return page >= FIRST_PAGE && page < lastPage;
     }
 }

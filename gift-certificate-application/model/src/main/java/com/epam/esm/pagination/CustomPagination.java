@@ -4,17 +4,11 @@ import lombok.Data;
 
 @Data
 public class CustomPagination {
-    private static final int DEFAULT_COUNT_ELEMENTS_ON_PAGE = 10;
-    private static final int DEFAULT_PAGE = 0;
-
-    private int size = DEFAULT_COUNT_ELEMENTS_ON_PAGE;
-    private int page = DEFAULT_PAGE;
-
-    public void setSize(int size) {
-        this.size = size > 0 ? size : DEFAULT_COUNT_ELEMENTS_ON_PAGE;
-    }
+    private static final int SHIFT_NUMBER_BY_ONE = 1;
+    private int size;
+    private int page;
 
     public void setPage(int page) {
-        this.page = page > 0 ? page - 1 : DEFAULT_PAGE;
+        this.page = page - SHIFT_NUMBER_BY_ONE;
     }
 }

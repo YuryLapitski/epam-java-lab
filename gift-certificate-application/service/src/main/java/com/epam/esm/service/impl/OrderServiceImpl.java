@@ -11,6 +11,8 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.OrderNotFoundException;
+import com.epam.esm.service.exception.PageNumberValidationException;
+import com.epam.esm.service.exception.PageSizeValidationException;
 import com.epam.esm.service.exception.UserHasNoOrdersException;
 import com.epam.esm.service.exception.UserNotFoundException;
 import com.epam.esm.service.util.Message;
@@ -59,8 +61,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<Order> findAll(CustomPagination pagination) {
+        if (!paginationValidator.isSizeValid(pagination)) {
+            throw new PageSizeValidationException(Message.PAGE_SIZE_INVALID_MSG);
+        }
+
         Long ordersNumber = orderDao.getEntitiesNumber(Order.class);
-        pagination = paginationValidator.validatePagination(pagination, ordersNumber);
+        int lastPage = (int) Math.ceil((double) ordersNumber / pagination.getSize());
+        if (!paginationValidator.isPageValid(pagination, lastPage)) {
+            throw new PageNumberValidationException(String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage));
+        }
 
         return orderDao.findAll(pagination, Order.class);
     }
@@ -82,8 +91,15 @@ public class OrderServiceImpl implements OrderService {
             throw new UserHasNoOrdersException(msg);
         }
 
+        if (!paginationValidator.isSizeValid(pagination)) {
+            throw new PageSizeValidationException(Message.PAGE_SIZE_INVALID_MSG);
+        }
+
         Long ordersNumber = orderDao.findUserOrdersNumber(userId);
-        pagination = paginationValidator.validatePagination(pagination, ordersNumber);
+        int lastPage = (int) Math.ceil((double) ordersNumber / pagination.getSize());
+        if (!paginationValidator.isPageValid(pagination, lastPage)) {
+            throw new PageNumberValidationException(String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage));
+        }
 
         return orderDao.findByUserId(userId, pagination);
     }

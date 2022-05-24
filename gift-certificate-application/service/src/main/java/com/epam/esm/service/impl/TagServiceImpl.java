@@ -7,6 +7,8 @@ import com.epam.esm.repository.dao.TagDao;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.exception.FieldValidationException;
+import com.epam.esm.service.exception.PageNumberValidationException;
+import com.epam.esm.service.exception.PageSizeValidationException;
 import com.epam.esm.service.exception.TagAlreadyExistException;
 import com.epam.esm.service.exception.TagNotFoundException;
 import com.epam.esm.service.exception.TagToGiftCertificateReferenceException;
@@ -27,7 +29,8 @@ public class TagServiceImpl implements TagService {
     private final PaginationValidator paginationValidator;
 
     @Autowired
-    public TagServiceImpl(TagDao tagDao, GiftCertificateDao giftCertificateDao, TagValidator tagValidator, PaginationValidator paginationValidator) {
+    public TagServiceImpl(TagDao tagDao, GiftCertificateDao giftCertificateDao,
+                          TagValidator tagValidator, PaginationValidator paginationValidator) {
         this.tagDao = tagDao;
         this.giftCertificateDao = giftCertificateDao;
         this.tagValidator = tagValidator;
@@ -52,8 +55,15 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<Tag> findAll(CustomPagination pagination) {
+        if (!paginationValidator.isSizeValid(pagination)) {
+            throw new PageSizeValidationException(Message.PAGE_SIZE_INVALID_MSG);
+        }
+
         Long tagsNumber = tagDao.getEntitiesNumber(Tag.class);
-        pagination = paginationValidator.validatePagination(pagination, tagsNumber);
+        int lastPage = (int) Math.ceil((double) tagsNumber / pagination.getSize());
+        if (!paginationValidator.isPageValid(pagination, lastPage)) {
+            throw new PageNumberValidationException(String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage));
+        }
 
         return tagDao.findAll(pagination, Tag.class);
     }

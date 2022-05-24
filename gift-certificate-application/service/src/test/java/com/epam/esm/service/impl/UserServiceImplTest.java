@@ -31,6 +31,7 @@ public class UserServiceImplTest {
     private static final int PAGE = 1;
     private static final int SIZE = 10;
     private static final Long ENTITIES_NUMBER = 1L;
+    private static final int LAST_PAGE = 1;
     private UserDao userDao;
     private User user;
     private UserValidator userValidator;
@@ -106,7 +107,8 @@ public class UserServiceImplTest {
     void testFindAll() {
         when(userDao.findAll(pagination, User.class)).thenReturn(userList);
         when(userDao.getEntitiesNumber(User.class)).thenReturn(ENTITIES_NUMBER);
-        when(paginationValidator.validatePagination(pagination, ENTITIES_NUMBER)).thenReturn(pagination);
+        when(paginationValidator.isSizeValid(pagination)).thenReturn(true);
+        when(paginationValidator.isPageValid(pagination, LAST_PAGE)).thenReturn(true);
         List<User> actualResult = userService.findAll(pagination);
         assertEquals(userList, actualResult);
     }

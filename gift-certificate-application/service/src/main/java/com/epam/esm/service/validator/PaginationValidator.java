@@ -3,7 +3,7 @@ package com.epam.esm.service.validator;
 import com.epam.esm.pagination.CustomPagination;
 
 /**
- * The PaginationValidator interface provides method for validation of
+ * The PaginationValidator interface provides methods for validation of
  * pagination parameters.
  *
  * @author Yury Lapitski
@@ -12,12 +12,19 @@ import com.epam.esm.pagination.CustomPagination;
 public interface PaginationValidator {
 
     /**
-     * Validates pagination parameters
+     * Validates number of elements on the page.
      *
      * @param pagination pagination parameters
-     * @param entitiesNumber number of found entities
-     * @return CustomPagination object
+     * @return true if number of elements on the page is valid.
      */
-    CustomPagination validatePagination (CustomPagination pagination, Long entitiesNumber);
+    boolean isSizeValid(CustomPagination pagination);
 
+    /**
+     * Validates page number.
+     *
+     * @param pagination pagination parameters
+     * @param lastPage Number of the last page
+     * @return true if page number is valid.
+     */
+    boolean isPageValid(CustomPagination pagination, int lastPage);
 }

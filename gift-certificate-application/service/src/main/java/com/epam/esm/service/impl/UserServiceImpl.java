@@ -4,9 +4,7 @@ import com.epam.esm.entity.User;
 import com.epam.esm.repository.dao.UserDao;
 import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.service.UserService;
-import com.epam.esm.service.exception.FieldValidationException;
-import com.epam.esm.service.exception.UserAlreadyExistException;
-import com.epam.esm.service.exception.UserNotFoundException;
+import com.epam.esm.service.exception.*;
 import com.epam.esm.service.util.Message;
 import com.epam.esm.service.validator.PaginationValidator;
 import com.epam.esm.service.validator.UserValidator;
@@ -53,8 +51,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> findAll(CustomPagination pagination) {
+        if (!paginationValidator.isSizeValid(pagination)) {
+            throw new PageSizeValidationException(Message.PAGE_SIZE_INVALID_MSG);
+        }
+
         Long usersNumber = userDao.getEntitiesNumber(User.class);
-        pagination = paginationValidator.validatePagination(pagination, usersNumber);
+        int lastPage = (int) Math.ceil((double) usersNumber / pagination.getSize());
+        if (!paginationValidator.isPageValid(pagination, lastPage)) {
+            throw new PageNumberValidationException(String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage));
+        }
 
         return userDao.findAll(pagination, User.class);
     }

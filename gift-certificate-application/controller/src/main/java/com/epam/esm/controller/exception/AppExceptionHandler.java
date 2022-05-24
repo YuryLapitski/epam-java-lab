@@ -1,22 +1,6 @@
 package com.epam.esm.controller.exception;
 
-import com.epam.esm.service.exception.CannotUpdateException;
-import com.epam.esm.service.exception.FieldValidationException;
-import com.epam.esm.service.exception.GiftCertificateAlreadyExistException;
-import com.epam.esm.service.exception.GiftCertificateNotFoundException;
-import com.epam.esm.service.exception.GiftCertificatesNotFoundException;
-import com.epam.esm.service.exception.HasOrderToGiftCertificateException;
-import com.epam.esm.service.exception.InvalidColumnNameException;
-import com.epam.esm.service.exception.InvalidSortTypeException;
-import com.epam.esm.service.exception.NoMatchingGiftCertificateException;
-import com.epam.esm.service.exception.OrderNotFoundException;
-import com.epam.esm.service.exception.TagAlreadyExistException;
-import com.epam.esm.service.exception.TagDoesNotExistException;
-import com.epam.esm.service.exception.TagNotFoundException;
-import com.epam.esm.service.exception.TagToGiftCertificateReferenceException;
-import com.epam.esm.service.exception.UserAlreadyExistException;
-import com.epam.esm.service.exception.UserHasNoOrdersException;
-import com.epam.esm.service.exception.UserNotFoundException;
+import com.epam.esm.service.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -28,6 +12,8 @@ public class AppExceptionHandler {
     private static final int FIELD_VALIDATION_ERROR_CODE = 40001;
     private static final int INVALID_COLUMN_NAME_ERROR_CODE = 40002;
     private static final int INVALID_SORT_TYPE_ERROR_CODE = 40003;
+    private static final int INVALID_PAGE_SIZE_ERROR_CODE = 40004;
+    private static final int INVALID_PAGE_NUMBER_ERROR_CODE = 40005;
     private static final int TAG_NOT_FOUND_ERROR_CODE = 40401;
     private static final int GIFT_CERTIFICATE_NOT_FOUND_ERROR_CODE = 40402;
     private static final int GIFT_CERTIFICATES_NOT_FOUND_ERROR_CODE = 40403;
@@ -152,6 +138,22 @@ public class AppExceptionHandler {
             NoMatchingGiftCertificateException noMatchingGiftCertificateException) {
         return handleCommonException(noMatchingGiftCertificateException, HttpStatus.NOT_FOUND,
                 NO_GIFT_CERTIFICATE_MATCHING_ERROR_CODE);
+    }
+
+    @ExceptionHandler(PageSizeValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlePageSizeValidationException(
+            PageSizeValidationException pageSizeValidationException) {
+        return handleCommonException(pageSizeValidationException, HttpStatus.BAD_REQUEST,
+                INVALID_PAGE_SIZE_ERROR_CODE);
+    }
+
+    @ExceptionHandler(PageNumberValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handlePageNumberValidationException(
+            PageNumberValidationException pageNumberValidationException) {
+        return handleCommonException(pageNumberValidationException, HttpStatus.BAD_REQUEST,
+                INVALID_PAGE_NUMBER_ERROR_CODE);
     }
 
     private ErrorResponse handleCommonException(Exception exception, HttpStatus status, int errorCode) {
