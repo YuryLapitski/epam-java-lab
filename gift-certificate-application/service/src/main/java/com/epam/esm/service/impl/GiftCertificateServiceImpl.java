@@ -112,6 +112,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         Long giftCertificatesNumber = giftCertificateDao.getEntitiesNumber(GiftCertificate.class);
         int lastPage = (int) Math.ceil((double) giftCertificatesNumber / pagination.getSize());
+
         if (!paginationValidator.isPageValid(pagination, lastPage)) {
             throw new PageNumberValidationException(String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage));
         }
@@ -153,6 +154,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             if (!giftCertificateValidator.isNameValid(name)) {
                 throw new FieldValidationException(Message.INVALID_NAME_MSG);
             }
+
             updatedGiftCertificate.setName(name);
         }
 
@@ -161,6 +163,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             if (!giftCertificateValidator.isDescriptionValid(description)) {
                 throw new FieldValidationException(Message.INVALID_DESCRIPTION_MSG);
             }
+
             updatedGiftCertificate.setDescription(description);
         }
 
@@ -169,6 +172,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             if (!giftCertificateValidator.isPriceValid(price)) {
                 throw new FieldValidationException(Message.INVALID_PRICE_MSG);
             }
+
             updatedGiftCertificate.setPrice(price);
         }
 
@@ -177,6 +181,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             if (!giftCertificateValidator.isDurationValid(duration)) {
                 throw new FieldValidationException(Message.INVALID_DURATION_MSG);
             }
+
             updatedGiftCertificate.setDuration(duration);
         }
 
@@ -201,6 +206,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
         Long giftCertificatesNumber = giftCertificateDao.findByAttributesNumber(name, tagNames);
         int lastPage = (int) Math.ceil((double) giftCertificatesNumber / pagination.getSize());
+
         if (!paginationValidator.isPageValid(pagination, lastPage)) {
             throw new PageNumberValidationException(String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage));
         }
@@ -221,6 +227,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             tagNames.forEach(tagName -> tagDao.findByName(tagName)
                     .orElseThrow(() -> new TagDoesNotExistException(String
                             .format(Message.TAG_DOES_NOT_EXIST_MSG, tagName))));
+
             if (giftCertificateDao.findGiftCertificatesByTagNames(tagNames).isEmpty()) {
                 throw new NoMatchingGiftCertificateException(Message.NO_GIFT_CERTIFICATE_MATCHING_MSG);
             }

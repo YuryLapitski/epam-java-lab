@@ -13,10 +13,15 @@ public class TagValidatorImpl implements TagValidator {
 
     @Override
     public boolean isNameValid(String name) {
+        boolean validName;
+
         if (name == null) {
-            return false;
+            validName = false;
+        } else {
+            Matcher matcher = NAME_PATTERN.matcher(name.replaceAll(SPACE_REGEX, EMPTY_STRING));
+            validName = matcher.matches();
         }
-        Matcher matcher = NAME_PATTERN.matcher(name.replaceAll(SPACE_REGEX, EMPTY_STRING));
-        return matcher.matches();
+
+        return validName;
     }
 }

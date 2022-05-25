@@ -67,6 +67,7 @@ public class OrderServiceImpl implements OrderService {
 
         Long ordersNumber = orderDao.getEntitiesNumber(Order.class);
         int lastPage = (int) Math.ceil((double) ordersNumber / pagination.getSize());
+
         if (!paginationValidator.isPageValid(pagination, lastPage)) {
             throw new PageNumberValidationException(String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage));
         }
@@ -97,6 +98,7 @@ public class OrderServiceImpl implements OrderService {
 
         Long ordersNumber = orderDao.findUserOrdersNumber(userId);
         int lastPage = (int) Math.ceil((double) ordersNumber / pagination.getSize());
+
         if (!paginationValidator.isPageValid(pagination, lastPage)) {
             throw new PageNumberValidationException(String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage));
         }

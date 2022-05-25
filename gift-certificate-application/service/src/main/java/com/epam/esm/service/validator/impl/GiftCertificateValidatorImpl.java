@@ -62,13 +62,17 @@ public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
 
     @Override
     public boolean isSortTypeValid(String sortType) {
-        return sortType.equalsIgnoreCase(SORT_ASCENDING) || sortType.equalsIgnoreCase(SORT_DESCENDING);
+        return sortType.equalsIgnoreCase(SORT_ASCENDING)
+                || sortType.equalsIgnoreCase(SORT_DESCENDING);
     }
 
     @Override
     public boolean isColumnNameValid(String columnName) {
-        return columnName.equals(COLUMN_NAME) || columnName.equalsIgnoreCase(COLUMN_DESCRIPTION)
-                || columnName.equals(COLUMN_PRICE) || columnName.equalsIgnoreCase(COLUMN_DURATION)
-                || columnName.equals(COLUMN_CREATE_DATE) || columnName.equalsIgnoreCase(COLUMN_LAST_UPDATE_DATE);
+        return columnName.equalsIgnoreCase(COLUMN_NAME)
+                || columnName.equalsIgnoreCase(COLUMN_DESCRIPTION)
+                || columnName.equalsIgnoreCase(COLUMN_PRICE)
+                || columnName.equalsIgnoreCase(COLUMN_DURATION)
+                || columnName.equalsIgnoreCase(COLUMN_CREATE_DATE)
+                || columnName.equalsIgnoreCase(COLUMN_LAST_UPDATE_DATE);
     }
 }

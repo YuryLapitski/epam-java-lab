@@ -15,6 +15,7 @@ import java.util.List;
 public class OrderDaoImpl extends AbstractEntityDao<Order> implements OrderDao {
     private static final String USER_FIELD_NAME = "user";
     private static final String GIFT_CERTIFICATE_FIELD_NAME = "giftCertificate";
+    private static final Long ZERO_ENTITIES_NUMBER = 0L;
 
     public OrderDaoImpl(EntityManager entityManager) {
         super(entityManager);
@@ -44,7 +45,7 @@ public class OrderDaoImpl extends AbstractEntityDao<Order> implements OrderDao {
 
             entitiesNumber = entityManager.createQuery(criteriaQuery).getSingleResult();
         } catch (NoResultException e) {
-            entitiesNumber = 0L;
+            entitiesNumber = ZERO_ENTITIES_NUMBER;
         }
 
         return entitiesNumber;

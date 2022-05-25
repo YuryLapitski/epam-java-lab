@@ -57,6 +57,7 @@ public class UserServiceImpl implements UserService {
 
         Long usersNumber = userDao.getEntitiesNumber(User.class);
         int lastPage = (int) Math.ceil((double) usersNumber / pagination.getSize());
+
         if (!paginationValidator.isPageValid(pagination, lastPage)) {
             throw new PageNumberValidationException(String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage));
         }

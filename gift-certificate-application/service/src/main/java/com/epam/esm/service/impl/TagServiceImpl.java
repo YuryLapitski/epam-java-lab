@@ -61,6 +61,7 @@ public class TagServiceImpl implements TagService {
 
         Long tagsNumber = tagDao.getEntitiesNumber(Tag.class);
         int lastPage = (int) Math.ceil((double) tagsNumber / pagination.getSize());
+
         if (!paginationValidator.isPageValid(pagination, lastPage)) {
             throw new PageNumberValidationException(String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage));
         }

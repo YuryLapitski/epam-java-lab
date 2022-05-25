@@ -38,11 +38,8 @@ public class TagDaoImpl extends AbstractEntityDao<Tag> implements TagDao {
     public Optional<Tag> findMostPopularTagWithHighestOrderCost() {
         Query query = entityManager.createNativeQuery(FIND_MOST_POPULAR_TAG_OF_RICHEST_USER, Tag.class);
         List<Tag> tags = query.getResultList();
-        if (CollectionUtils.isEmpty(tags)) {
-            return Optional.empty();
-        }
 
-        return Optional.of(tags.get(0));
+        return tags.isEmpty() ? Optional.empty() : Optional.of(tags.get(0));
     }
 }
 

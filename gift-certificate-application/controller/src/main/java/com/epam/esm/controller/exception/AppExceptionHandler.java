@@ -1,6 +1,24 @@
 package com.epam.esm.controller.exception;
 
-import com.epam.esm.service.exception.*;
+import com.epam.esm.service.exception.CannotUpdateException;
+import com.epam.esm.service.exception.FieldValidationException;
+import com.epam.esm.service.exception.GiftCertificateAlreadyExistException;
+import com.epam.esm.service.exception.GiftCertificateNotFoundException;
+import com.epam.esm.service.exception.GiftCertificatesNotFoundException;
+import com.epam.esm.service.exception.HasOrderToGiftCertificateException;
+import com.epam.esm.service.exception.InvalidColumnNameException;
+import com.epam.esm.service.exception.InvalidSortTypeException;
+import com.epam.esm.service.exception.NoMatchingGiftCertificateException;
+import com.epam.esm.service.exception.OrderNotFoundException;
+import com.epam.esm.service.exception.PageNumberValidationException;
+import com.epam.esm.service.exception.PageSizeValidationException;
+import com.epam.esm.service.exception.TagAlreadyExistException;
+import com.epam.esm.service.exception.TagDoesNotExistException;
+import com.epam.esm.service.exception.TagNotFoundException;
+import com.epam.esm.service.exception.TagToGiftCertificateReferenceException;
+import com.epam.esm.service.exception.UserAlreadyExistException;
+import com.epam.esm.service.exception.UserHasNoOrdersException;
+import com.epam.esm.service.exception.UserNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;

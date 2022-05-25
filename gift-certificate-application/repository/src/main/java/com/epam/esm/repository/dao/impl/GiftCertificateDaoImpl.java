@@ -27,6 +27,7 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
     private static final String DEFAULT_SORT = "asc";
     private static final String ID = "id";
     private static final String NAME = "name";
+    private static final Long ZERO_ENTITIES_NUMBER = 0L;
 
     public GiftCertificateDaoImpl(EntityManager entityManager) {
         super(entityManager);
@@ -88,7 +89,7 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
 
             entitiesNumber = entityManager.createQuery(criteriaQuery).getSingleResult();
         } catch (NoResultException e) {
-            entitiesNumber = 0L;
+            entitiesNumber = ZERO_ENTITIES_NUMBER;
         }
 
         return entitiesNumber;
@@ -114,13 +115,18 @@ public class GiftCertificateDaoImpl extends AbstractEntityDao<GiftCertificate> i
     }
 
     private Predicate predicateFindByTagNames(Root<GiftCertificate> root, List<String> tagList) {
+        Predicate predicate;
+
         if (CollectionUtils.isEmpty(tagList)) {
-            return criteriaBuilder.conjunction();
+            predicate = criteriaBuilder.conjunction();
+        } else {
+            predicate = tagList.stream().map(tagName -> {
+                Join<GiftCertificate, Tag> tagJoin = root.join(TAG_LIST_FIELD_NAME);
+                return criteriaBuilder.equal(tagJoin.get(NAME), tagName);
+            }).reduce(criteriaBuilder.conjunction(), criteriaBuilder::and);
         }
-        return tagList.stream().map(tagName -> {
-            Join<GiftCertificate, Tag> tagJoin = root.join(TAG_LIST_FIELD_NAME);
-            return criteriaBuilder.equal(tagJoin.get(NAME), tagName);
-        }).reduce(criteriaBuilder.conjunction(), criteriaBuilder::and);
+
+        return predicate;
     }
 
 

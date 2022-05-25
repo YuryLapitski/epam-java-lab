@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class AbstractEntityDao<T> implements EntityDao<T> {
+    private static final Long ZERO_ENTITIES_NUMBER = 0L;
+
     @PersistenceContext
     protected final EntityManager entityManager;
     protected final CriteriaBuilder criteriaBuilder;
@@ -58,7 +60,7 @@ public abstract class AbstractEntityDao<T> implements EntityDao<T> {
 
             entitiesNumber = entityManager.createQuery(criteriaQuery).getSingleResult();
         } catch (NoResultException e) {
-            entitiesNumber = 0L;
+            entitiesNumber = ZERO_ENTITIES_NUMBER;
         }
 
         return entitiesNumber;
