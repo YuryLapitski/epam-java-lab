@@ -9,10 +9,10 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 
 public class AppAccessDeniedHandler implements AccessDeniedHandler {
-    public static final String URI_STRING = "uri";
-    public static final String MSG_STRING = "msg";
-    public static final String TIMESTAMP_STRING = "timestamp";
-    public static final String ACCESS_DENIED_MSG = "Access denied";
+    private static final String URI_STRING = "uri";
+    private static final String MSG_STRING = "msg";
+    private static final String TIMESTAMP_STRING = "timestamp";
+    private static final String ACCESS_DENIED_MSG = "Access denied";
 
     @Override
     public void handle(HttpServletRequest request,
