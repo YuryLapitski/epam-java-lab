@@ -34,4 +34,12 @@ public interface UserService {
      * @return founded user
      */
     User findById(Long id);
+
+    /**
+     * Searches for user by login
+     *
+     * @param login login of the user to find
+     * @return founded user
+     */
+    User findByLogin(String login);
 }

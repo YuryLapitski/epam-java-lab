@@ -32,6 +32,7 @@ public class Message {
     public static final String MOST_POPULAR_TAG_NOT_FOUND_MSG = "Tag not found";
 
     public static final String USER_ID_NOT_FOUND_MSG = "User with id=%d not found.";
+    public static final String USER_LOGIN_NOT_FOUND_MSG = "User with login '%s' not found.";
     public static final String INVALID_FIRST_NAME_MSG = "Invalid first name";
     public static final String INVALID_LAST_NAME_MSG = "Invalid last name";
     public static final String INVALID_LOGIN_MSG = "Invalid login name";

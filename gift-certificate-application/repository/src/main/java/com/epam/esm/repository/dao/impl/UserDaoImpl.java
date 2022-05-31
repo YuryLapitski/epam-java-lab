@@ -4,6 +4,8 @@ import com.epam.esm.entity.User;
 import com.epam.esm.repository.dao.AbstractEntityDao;
 import com.epam.esm.repository.dao.UserDao;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityManager;
 import javax.persistence.criteria.CriteriaQuery;
 import java.util.Optional;
@@ -17,6 +19,7 @@ public class UserDaoImpl extends AbstractEntityDao<User> implements UserDao {
         super(entityManager);
     }
 
+    @Transactional
     @Override
     public Optional<User> findByLogin(String login) {
         CriteriaQuery<User> criteriaQuery = prepareWhereCriteriaQuery(User.class, LOGIN_FIELD_NAME, login);

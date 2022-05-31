@@ -6,6 +6,7 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,6 +38,7 @@ public class TagController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('tags:create')")
     @ResponseStatus(HttpStatus.CREATED)
     public Tag create(@RequestBody Tag tag) {
         Tag createdTag = tagService.create(tag);
@@ -46,6 +48,7 @@ public class TagController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('tags:delete')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTag(@PathVariable Long id) {
         tagService.delete(id);

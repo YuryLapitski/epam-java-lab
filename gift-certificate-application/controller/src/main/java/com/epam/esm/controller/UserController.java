@@ -6,6 +6,7 @@ import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,6 +29,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('users:read')")
     public User findById(@PathVariable Long id) {
         User user = userService.findById(id);
         userLinkBuilder.setLinks(user);
@@ -36,6 +38,7 @@ public class UserController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('users:read')")
     public List<User> findAll(CustomPagination pagination) {
         List<User> userList = userService.findAll(pagination);
         userLinkBuilder.setLinks(userList);
@@ -44,6 +47,7 @@ public class UserController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('users:create')")
     @ResponseStatus(HttpStatus.CREATED)
     public User create(@RequestBody User user) {
         User createdUser = userService.create(user);

@@ -7,6 +7,7 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.service.dto.OrderDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +32,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('orders:read')")
     public Order findById(@PathVariable Long id) {
         Order order = orderService.findById(id);
         orderLinkBuilder.setLinks(order);
@@ -39,6 +41,7 @@ public class OrderController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAuthority('orders:create')")
     @ResponseStatus(HttpStatus.CREATED)
     public Order create(@RequestBody OrderDto orderDto) {
         Order order = orderService.create(orderDto);
@@ -48,12 +51,14 @@ public class OrderController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('orders:delete')")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         orderService.delete(id);
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('orders:read')")
     public List<Order> findByAttributes(@RequestParam(required = false, name = "user-id") Long userId,
                                     CustomPagination pagination) {
         List<Order> orderList = orderService.findByAttributes(userId, pagination);
