@@ -26,7 +26,7 @@ import java.util.List;
 @Service
 public class TagServiceImpl implements TagService {
     private final TagRepository tagRepository;
-    private final GiftCertificateRepository giftCertificateDao;
+    private final GiftCertificateRepository giftCertificateRepository;
     private final TagValidator tagValidator;
     private final PaginationValidator paginationValidator;
     private final PaginationConverter paginationConverter;
@@ -35,7 +35,7 @@ public class TagServiceImpl implements TagService {
     public TagServiceImpl(TagRepository tagRepository, GiftCertificateRepository giftCertificateDao,
                           TagValidator tagValidator, PaginationValidator paginationValidator, PaginationConverter paginationConverter) {
         this.tagRepository = tagRepository;
-        this.giftCertificateDao = giftCertificateDao;
+        this.giftCertificateRepository = giftCertificateDao;
         this.tagValidator = tagValidator;
         this.paginationValidator = paginationValidator;
         this.paginationConverter = paginationConverter;
@@ -85,7 +85,7 @@ public class TagServiceImpl implements TagService {
 
         List<String> tagNames = Collections.singletonList(tag.getName());
 
-        List<GiftCertificate> giftCertificates = giftCertificateDao.findGiftCertificatesByTagNames(tagNames);
+        List<GiftCertificate> giftCertificates = giftCertificateRepository.findGiftCertificatesByTagNames(tagNames);
         if (!giftCertificates.isEmpty()) {
             throw new TagToGiftCertificateReferenceException(Message.CANNOT_BE_DELETED_TAG_MSG);
         }

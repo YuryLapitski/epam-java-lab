@@ -31,8 +31,6 @@ public class PaginationConverter {
             throw new PageSizeValidationException(Message.PAGE_SIZE_INVALID_MSG);
         }
 
-
-
         try {
             return PageRequest.of(page, size);
         } catch (IllegalArgumentException e) {

@@ -2,12 +2,10 @@ package com.epam.esm.repository.dao;
 
 import com.epam.esm.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
 
 /**
- * The UserDao interface provides methods for creating and reading users.
+ * The UserRepository interface provides methods for creating and reading users.
  *
  * @author Yury Lapitski
  * @version 1.0

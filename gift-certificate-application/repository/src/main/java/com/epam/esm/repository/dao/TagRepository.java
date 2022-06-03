@@ -3,12 +3,10 @@ package com.epam.esm.repository.dao;
 import com.epam.esm.entity.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
 
 /**
- * The TagDao interface provides methods for creating, reading,
+ * The TagRepository interface provides methods for creating, reading,
  * and deleting tags.
  *
  * @author Yury Lapitski

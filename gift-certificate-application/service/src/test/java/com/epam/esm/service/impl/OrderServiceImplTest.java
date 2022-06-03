@@ -12,13 +12,16 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.OrderNotFoundException;
-import com.epam.esm.service.exception.UserHasNoOrdersException;
 import com.epam.esm.service.pagination.PaginationConverter;
 import com.epam.esm.service.validator.PaginationValidator;
 import com.epam.esm.service.validator.impl.PaginationValidatorImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -46,10 +49,9 @@ public class OrderServiceImplTest {
     private static final String TAG_NAME = "Tag";
     private static final int PAGE = 1;
     private static final int SIZE = 10;
-    private static final Long ENTITIES_NUMBER = 1L;
     private static final int LAST_PAGE = 1;
-    private OrderRepository orderDao;
-    private UserRepository userDao;
+    private OrderRepository orderRepository;
+    private UserRepository userRepository;
     private OrderService orderService;
     private Order order;
     private User user;
@@ -59,17 +61,20 @@ public class OrderServiceImplTest {
     private UserService userService;
     private GiftCertificateService giftCertificateService;
     private List<Order> orderList;
+    private Page<Order> orderPage;
     private CustomPagination pagination;
     private PaginationConverter paginationConverter;
+    private Pageable pageable;
 
     @BeforeAll
     void beforeAll() {
-//        orderDao = mock(OrderDaoImpl.class);
-//        userDao = mock(UserDaoImpl.class);
+        orderRepository = mock(OrderRepository.class);
+        userRepository = mock(UserRepository.class);
         paginationValidator = mock(PaginationValidatorImpl.class);
         userService = mock(UserServiceImpl.class);
         giftCertificateService = mock(GiftCertificateServiceImpl.class);
         paginationValidator = mock(PaginationValidatorImpl.class);
+        paginationConverter = mock(PaginationConverter.class);
 
         user = new User();
         user.setId(USER_ID);
@@ -105,67 +110,51 @@ public class OrderServiceImplTest {
         orderList = new ArrayList<>();
         orderList.add(order);
 
+        orderPage = new PageImpl<>(orderList);
+
         pagination = new CustomPagination();
         pagination.setPage(PAGE);
         pagination.setSize(SIZE);
 
-        orderService = new OrderServiceImpl(orderDao, userDao, userService, giftCertificateService, paginationValidator, paginationConverter);
+        pageable = PageRequest.of(PAGE, SIZE);
+
+        orderService = new OrderServiceImpl(orderRepository, userRepository, userService, giftCertificateService, paginationValidator, paginationConverter);
     }
 
-//    @Test
-//    void testFindAll() {
-//        when(orderDao.findAll(pagination, Order.class)).thenReturn(orderList);
-//        when(orderDao.getEntitiesNumber(Order.class)).thenReturn(ENTITIES_NUMBER);
-//        when(paginationValidator.isSizeValid(pagination)).thenReturn(true);
-//        when(paginationValidator.isPageValid(pagination, LAST_PAGE)).thenReturn(true);
-//        List<Order> actualResult = orderService.findAll(pagination);
-//        assertEquals(orderList, actualResult);
-//    }
+    @Test
+    void testFindAll() {
+        when(orderRepository.findAll(pageable)).thenReturn(orderPage);
+        when(paginationConverter.convert(pagination)).thenReturn(pageable);
+        when(paginationValidator.isSizeValid(pagination)).thenReturn(true);
+        when(paginationValidator.isPageValid(pagination, LAST_PAGE)).thenReturn(true);
+        List<Order> actualResult = orderService.findAll(pagination);
+        assertEquals(orderList, actualResult);
+    }
 
     @Test
     void testFindById() {
-        when(orderDao.findById(ID)).thenReturn(Optional.ofNullable(order));
+        when(orderRepository.findById(ID)).thenReturn(Optional.ofNullable(order));
         Order actualResult = orderService.findById(ID);
         assertEquals(order, actualResult);
     }
 
     @Test
     void testFindByIdShouldTrowOrderNotFoundException() {
-        when(orderDao.findById(ID)).thenReturn(Optional.empty());
+        when(orderRepository.findById(ID)).thenReturn(Optional.empty());
         assertThrows(OrderNotFoundException.class, () -> orderService.findById(ID));
     }
 
-//    @Test
-//    void testFindByUserId() {
-//        when(userDao.findById(USER_ID)).thenReturn(Optional.ofNullable(user));
-//        when(orderDao.findByUserId(USER_ID, pagination)).thenReturn(orderList);
-//        when(orderDao.findUserOrdersNumber(USER_ID)).thenReturn(ENTITIES_NUMBER);
-//        when(paginationValidator.isSizeValid(pagination)).thenReturn(true);
-//        when(paginationValidator.isPageValid(pagination, LAST_PAGE)).thenReturn(true);
-//        when(orderDao.findByUserId(USER_ID, pagination)).thenReturn(orderList);
-//        List<Order> actualResult = orderService.findByUserId(USER_ID, pagination);
-//        assertEquals(orderList, actualResult);
-//    }
-
     @Test
-    void testFindByUserIdShouldTrowUserHasNoOrdersException() {
-        when(userDao.findById(USER_ID)).thenReturn(Optional.ofNullable(user));
-        assertThrows(UserHasNoOrdersException.class, () -> orderService.findByUserId(USER_ID, pagination));
+    void testFindByUserId() {
+        when(userRepository.findById(USER_ID)).thenReturn(Optional.ofNullable(user));
+        when(orderRepository.findByUserId(USER_ID, pageable)).thenReturn(orderPage);
+        when(paginationConverter.convert(pagination)).thenReturn(pageable);
+        when(paginationValidator.isSizeValid(pagination)).thenReturn(true);
+        when(paginationValidator.isPageValid(pagination, LAST_PAGE)).thenReturn(true);
+        when(orderRepository.findByUserId(USER_ID, pageable)).thenReturn(orderPage);
+        List<Order> actualResult = orderService.findByUserId(USER_ID, pagination);
+        assertEquals(orderList, actualResult);
     }
-
-//    @Test
-//    void testFindByAttributes() {
-//        when(userDao.findById(USER_ID)).thenReturn(Optional.ofNullable(user));
-//        when(orderDao.getEntitiesNumber(Order.class)).thenReturn(ENTITIES_NUMBER);
-//        when(paginationValidator.isSizeValid(pagination)).thenReturn(true);
-//        when(paginationValidator.isPageValid(pagination, LAST_PAGE)).thenReturn(true);
-//        when(orderDao.findUserOrdersNumber(USER_ID)).thenReturn(ENTITIES_NUMBER);
-//        when(orderDao.findByUserId(USER_ID, pagination)).thenReturn(orderList);
-//        when(orderService.findByUserId(USER_ID, pagination)).thenReturn(orderList);
-//        when(orderService.findAll(pagination)).thenReturn(orderList);
-//        List<Order> actualResult = orderService.findByAttributes(USER_ID, pagination);
-//        assertEquals(orderList, actualResult);
-//    }
 
     @Test
     void testCreate() {

@@ -18,10 +18,13 @@ public class AppAuthenticationEntryPoint implements AuthenticationEntryPoint {
                          HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
 
+        String requestUri = request.getRequestURI();
+        String localDateTimeNow = LocalDateTime.now().toString();
+
         HashMap<String, String> map = new HashMap<>();
-        map.put(URI_STRING, request.getRequestURI());
+        map.put(URI_STRING, requestUri);
         map.put(MSG_STRING, UNAUTHORIZED_MSG);
-        map.put(TIMESTAMP_STRING, String.valueOf(LocalDateTime.now()));
+        map.put(TIMESTAMP_STRING, localDateTimeNow);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         ResponseBodyPreparator.prepare(response, map);
     }

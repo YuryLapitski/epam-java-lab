@@ -28,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService {
+    private static final int ZERO = 0;
     private final GiftCertificateRepository giftCertificateRepository;
     private final TagRepository tagRepository;
     private final OrderRepository orderRepository;
@@ -195,7 +197,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return giftCertificateRepository.save(updatedGiftCertificate);
     }
 
-    @Transactional
+    @Transactional //todo: read about @Transactional
     @Override
     public List<GiftCertificate> findByAttributes(String name, List<String> tagNames, List<String> columnNames,
                                                   String sortType, CustomPagination pagination) {
@@ -204,7 +206,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         checkColumnNames(columnNames);
         checkSortType(sortType);
 
-        if (pagination.getPage() == 0 && pagination.getSize() == 0) {
+        if (pagination.getPage() == ZERO && pagination.getSize() == ZERO) {
             throw new PaginationException(Message.CHOOSE_PAGINATION_MSG);
         }
 
@@ -250,13 +252,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private Sort createSort (List<String> columnNames, String sortType) {
         List<Sort.Order> orderList = columnNames.stream().map(Sort.Order::by).collect(Collectors.toList());
 
-        Sort sort = null;
-        if (sortType == null || sortType.equalsIgnoreCase("asc")) {
+        checkSortType(sortType);
+        Sort sort;
+        if (sortType == null || sortType.equalsIgnoreCase(Direction.ASC.toString())) {
             sort = Sort.by(orderList).ascending();
         } else {
-            if (sortType.equalsIgnoreCase("desc")) {
-                sort = Sort.by(orderList).descending();
-            }
+            sort = Sort.by(orderList).descending();
         }
 
         return sort;

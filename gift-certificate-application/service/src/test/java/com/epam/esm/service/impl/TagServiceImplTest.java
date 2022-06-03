@@ -16,6 +16,10 @@ import com.epam.esm.service.validator.impl.TagValidatorImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,17 +43,18 @@ public class TagServiceImplTest {
     private static final Long GIFT_CERTIFICATE_ID = 1L;
     private static final int PAGE = 1;
     private static final int SIZE = 10;
-    private static final Long ENTITIES_NUMBER = 1L;
     private static final int LAST_PAGE = 1;
     private Tag tag;
-    private TagRepository tagDao;
+    private TagRepository tagRepository;
     private GiftCertificateRepository giftCertificateDao;
     private TagValidator tagValidator;
     private PaginationValidator paginationValidator;
     private TagServiceImpl tagService;
     private List<Tag> tagList;
+    private Page<Tag> tagPage;
     private List<GiftCertificate> giftCertificateList;
     private CustomPagination pagination;
+    private Pageable pageable;
     private List<String> tagNames;
     private PaginationConverter paginationConverter;
 
@@ -64,25 +69,28 @@ public class TagServiceImplTest {
         giftCertificate.setDescription(DESCRIPTION);
         giftCertificate.setPrice(PRICE);
         giftCertificate.setDuration(DURATION);
-//        tagDao = mock(TagDaoImpl.class);
+        tagRepository = mock(TagRepository.class);
         giftCertificateDao = mock(GiftCertificateRepository.class);
         tagValidator = mock(TagValidatorImpl.class);
         paginationValidator = mock(PaginationValidatorImpl.class);
-        tagService = new TagServiceImpl(tagDao, giftCertificateDao, tagValidator, paginationValidator, paginationConverter);
+        paginationConverter = mock(PaginationConverter.class);
+        tagService = new TagServiceImpl(tagRepository, giftCertificateDao, tagValidator, paginationValidator, paginationConverter);
         tagList = new ArrayList<>();
         tagList.add(tag);
+        tagPage = new PageImpl<>(tagList);
         giftCertificateList = new ArrayList<>();
         giftCertificateList.add(giftCertificate);
         pagination = new CustomPagination();
         pagination.setPage(PAGE);
         pagination.setSize(SIZE);
+        pageable = PageRequest.of(PAGE, SIZE);
         tagNames = tagList.stream().map(name -> tag.getName()).collect(Collectors.toList());
     }
 
     @Test
     void testCreate() {
         when(tagValidator.isNameValid(any())).thenReturn(true);
-        when(tagDao.save(any())).thenReturn(tag);
+        when(tagRepository.save(any())).thenReturn(tag);
         Tag actualResult = tagService.create(tag);
         assertEquals(tag, actualResult);
     }
@@ -93,38 +101,38 @@ public class TagServiceImplTest {
         assertThrows(FieldValidationException.class, () -> tagService.create(tag));
     }
 
-//    @Test
-//    void testFindAll() {
-//        when(tagDao.findAll(pagination, Tag.class)).thenReturn(tagList);
-//        when(tagDao.getEntitiesNumber(Tag.class)).thenReturn(ENTITIES_NUMBER);
-//        when(paginationValidator.isSizeValid(pagination)).thenReturn(true);
-//        when(paginationValidator.isPageValid(pagination, LAST_PAGE)).thenReturn(true);
-//        List<Tag> actualResult = tagService.findAll(pagination);
-//        assertEquals(tagList, actualResult);
-//    }
+    @Test
+    void testFindAll() {
+        when(tagRepository.findAll(pageable)).thenReturn(tagPage);
+        when(paginationConverter.convert(pagination)).thenReturn(pageable);
+        when(paginationValidator.isSizeValid(pagination)).thenReturn(true);
+        when(paginationValidator.isPageValid(pagination, LAST_PAGE)).thenReturn(true);
+        List<Tag> actualResult = tagService.findAll(pagination);
+        assertEquals(tagList, actualResult);
+    }
 
     @Test
     void testFindById() {
-        when(tagDao.findById(ID)).thenReturn(Optional.ofNullable(tag));
+        when(tagRepository.findById(ID)).thenReturn(Optional.ofNullable(tag));
         Tag actualResult = tagService.findById(tag.getId());
         assertEquals(tag, actualResult);
     }
 
     @Test
     void testFindByIdShouldThrowException() {
-        when(tagDao.findById(ID)).thenReturn(Optional.empty());
+        when(tagRepository.findById(ID)).thenReturn(Optional.empty());
         assertThrows(TagNotFoundException.class, () -> tagService.findById(tag.getId()));
     }
 
     @Test
     void testDeleteShouldThrowTagNotFoundException() {
-        when(tagDao.findById(ID)).thenReturn(Optional.empty());
+        when(tagRepository.findById(ID)).thenReturn(Optional.empty());
         assertThrows(TagNotFoundException.class, () -> tagService.delete(tag.getId()));
     }
 
     @Test
     void testDeleteShouldThrowTagToGiftCertificateReferenceException() {
-        when(tagDao.findById(ID)).thenReturn(Optional.ofNullable(tag));
+        when(tagRepository.findById(ID)).thenReturn(Optional.ofNullable(tag));
         when(giftCertificateDao.findGiftCertificatesByTagNames(tagNames))
                 .thenReturn(giftCertificateList);
         assertThrows(TagToGiftCertificateReferenceException.class, () -> tagService.delete(tag.getId()));

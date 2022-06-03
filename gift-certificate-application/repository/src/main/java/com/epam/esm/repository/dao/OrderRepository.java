@@ -4,11 +4,10 @@ import com.epam.esm.entity.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 
 /**
- * The OrderDao interface provides methods for creating, reading,
+ * The OrderRepository interface provides methods for creating, reading,
  * and deleting orders.
  *
  * @author Yury Lapitski
