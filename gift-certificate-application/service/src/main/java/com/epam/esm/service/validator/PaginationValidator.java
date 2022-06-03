@@ -1,6 +1,6 @@
 package com.epam.esm.service.validator;
 
-import com.epam.esm.pagination.CustomPagination;
+import com.epam.esm.service.pagination.CustomPagination;
 
 /**
  * The PaginationValidator interface provides methods for validation of

@@ -1,7 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.entity.User;
-import com.epam.esm.pagination.CustomPagination;
+import com.epam.esm.service.pagination.CustomPagination;
 import java.util.List;
 
 /**

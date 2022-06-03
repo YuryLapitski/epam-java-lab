@@ -1,6 +1,6 @@
 package com.epam.esm.service.validator.impl;
 
-import com.epam.esm.pagination.CustomPagination;
+import com.epam.esm.service.pagination.CustomPagination;
 import com.epam.esm.service.validator.PaginationValidator;
 import org.springframework.stereotype.Component;
 

@@ -1,29 +1,40 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.entity.User;
-import com.epam.esm.repository.dao.UserDao;
-import com.epam.esm.pagination.CustomPagination;
+import com.epam.esm.repository.dao.UserRepository;
+import com.epam.esm.service.exception.FieldValidationException;
+import com.epam.esm.service.exception.PageNumberValidationException;
+import com.epam.esm.service.exception.UserAlreadyExistException;
+import com.epam.esm.service.exception.UserNotFoundException;
+import com.epam.esm.service.pagination.CustomPagination;
 import com.epam.esm.service.UserService;
-import com.epam.esm.service.exception.*;
+import com.epam.esm.service.pagination.PaginationConverter;
 import com.epam.esm.service.util.Message;
 import com.epam.esm.service.validator.PaginationValidator;
 import com.epam.esm.service.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserDao userDao;
+    private final UserRepository userRepository;
     private final UserValidator userValidator;
     private final PaginationValidator paginationValidator;
+    private final PaginationConverter paginationConverter;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, UserValidator userValidator, PaginationValidator paginationValidator) {
-        this.userDao = userDao;
+    public UserServiceImpl(UserRepository userDao,
+                           UserValidator userValidator,
+                           PaginationValidator paginationValidator,
+                           PaginationConverter paginationConverter) {
+        this.userRepository = userDao;
         this.userValidator = userValidator;
         this.paginationValidator = paginationValidator;
+        this.paginationConverter = paginationConverter;
     }
 
     @Transactional
@@ -41,39 +52,37 @@ public class UserServiceImpl implements UserService {
             throw new FieldValidationException(Message.INVALID_LOGIN_MSG);
         }
 
-        if (userDao.findByLogin(user.getLogin()).isPresent()) {
+        if (userRepository.findByLogin(user.getLogin()).isPresent()) {
             String msg = String.format(Message.USER_ALREADY_EXIST_MSG, user.getLogin());
             throw new UserAlreadyExistException(msg);
         }
 
-        return userDao.create(user);
+        return userRepository.save(user);
     }
 
     @Override
     public List<User> findAll(CustomPagination pagination) {
-        if (!paginationValidator.isSizeValid(pagination)) {
-            throw new PageSizeValidationException(Message.PAGE_SIZE_INVALID_MSG);
+        Pageable pageable = paginationConverter.convert(pagination);
+        Page<User> userPage = userRepository.findAll(pageable);
+
+        int lastPage = userPage.getTotalPages();
+        if(!paginationValidator.isPageValid(pagination, lastPage)) {
+            String message = String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage);
+            throw new PageNumberValidationException(message);
         }
 
-        Long usersNumber = userDao.getEntitiesNumber(User.class);
-        int lastPage = (int) Math.ceil((double) usersNumber / pagination.getSize());
-
-        if (!paginationValidator.isPageValid(pagination, lastPage)) {
-            throw new PageNumberValidationException(String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage));
-        }
-
-        return userDao.findAll(pagination, User.class);
+        return userPage.getContent();
     }
 
     @Override
     public User findById(Long id) {
-        return userDao.findById(id, User.class).orElseThrow(() ->
+        return userRepository.findById(id).orElseThrow(() ->
                 new UserNotFoundException(String.format(Message.USER_ID_NOT_FOUND_MSG, id)));
     }
 
     @Override
     public User findByLogin(String login) {
-        return userDao.findByLogin(login).orElseThrow(() ->
+        return userRepository.findByLogin(login).orElseThrow(() ->
                 new UserNotFoundException(String.format(Message.USER_LOGIN_NOT_FOUND_MSG, login)));
     }
 }

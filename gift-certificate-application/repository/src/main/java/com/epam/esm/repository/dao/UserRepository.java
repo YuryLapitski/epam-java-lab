@@ -1,6 +1,9 @@
 package com.epam.esm.repository.dao;
 
 import com.epam.esm.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
 import java.util.Optional;
 
 /**
@@ -9,7 +12,7 @@ import java.util.Optional;
  * @author Yury Lapitski
  * @version 1.0
  */
-public interface UserDao extends EntityDao<User> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
      * Searches for user by login

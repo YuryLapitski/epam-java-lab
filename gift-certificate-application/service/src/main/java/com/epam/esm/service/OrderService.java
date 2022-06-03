@@ -1,6 +1,6 @@
 package com.epam.esm.service;
 
-import com.epam.esm.pagination.CustomPagination;
+import com.epam.esm.service.pagination.CustomPagination;
 import com.epam.esm.entity.Order;
 import com.epam.esm.service.dto.OrderDto;
 import java.util.List;
@@ -45,15 +45,6 @@ public interface OrderService {
      * @return founded list of orders
      */
     List<Order> findByUserId(Long userId, CustomPagination pagination);
-
-    /**
-     * Searches for orders by attributes
-     *
-     * @param userId user id to find orders
-     * @param pagination pagination parameters
-     * @return founded list of orders
-     */
-    List<Order> findByAttributes(Long userId, CustomPagination pagination);
 
     /**
      * Deletes order

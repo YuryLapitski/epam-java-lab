@@ -2,7 +2,7 @@ package com.epam.esm.controller;
 
 import com.epam.esm.controller.hateoas.LinkBuilder;
 import com.epam.esm.entity.User;
-import com.epam.esm.pagination.CustomPagination;
+import com.epam.esm.service.pagination.CustomPagination;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,7 +29,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('users:read')")
+    @PreAuthorize("hasAuthority('users:read') || #id.equals(authentication.principal.userId)")
     public User findById(@PathVariable Long id) {
         User user = userService.findById(id);
         userLinkBuilder.setLinks(user);

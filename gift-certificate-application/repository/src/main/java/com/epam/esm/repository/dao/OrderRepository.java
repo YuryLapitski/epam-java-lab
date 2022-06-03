@@ -1,7 +1,10 @@
 package com.epam.esm.repository.dao;
 
-import com.epam.esm.pagination.CustomPagination;
 import com.epam.esm.entity.Order;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import java.util.List;
 
 /**
@@ -11,16 +14,15 @@ import java.util.List;
  * @author Yury Lapitski
  * @version 1.0
  */
-public interface OrderDao extends EntityDao<Order> {
+public interface OrderRepository extends JpaRepository<Order, Long> {
 
     /**
      * Searches for order by user ID
      *
      * @param userId id of the user to find orders
-     * @param pagination pagination parameters
      * @return founded list of orders
      */
-    List<Order> findByUserId(Long userId, CustomPagination pagination);
+    Page<Order> findByUserId(Long userId, Pageable pageable);
 
     /**
      * Searches for order by gift certificate ID
@@ -29,12 +31,4 @@ public interface OrderDao extends EntityDao<Order> {
      * @return founded list of orders
      */
     List<Order> findByGiftCertificateId(Long giftCertificateId);
-
-    /**
-     * Searches number of found orders
-     *
-     * @param userId user ID
-     * @return number of found orders
-     */
-    Long findUserOrdersNumber(Long userId);
 }

@@ -42,4 +42,6 @@ public class Message {
             "Elements number on the page should be more than 0.";
     public static final String PAGE_NUMBER_INVALID_MSG = "Invalid page number. " +
             "Minimum page number 1, maximum page number %s";
+    public static final String NEGATIVE_PAGE_NUMBER = "Page number must not be less than 1";
+    public static final String CHOOSE_PAGINATION_MSG = "Please select the page number and number of items per page";
 }

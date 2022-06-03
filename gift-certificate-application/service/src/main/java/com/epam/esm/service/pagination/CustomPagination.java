@@ -1,4 +1,4 @@
-package com.epam.esm.pagination;
+package com.epam.esm.service.pagination;
 
 import lombok.Data;
 

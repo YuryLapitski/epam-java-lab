@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Data
 public class SecurityUser implements UserDetails {
+    private final Long userId;
     private final String username;
     private final String password;
     private final Set<SimpleGrantedAuthority> authorities;

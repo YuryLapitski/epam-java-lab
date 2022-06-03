@@ -1,12 +1,13 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.controller.hateoas.LinkBuilder;
-import com.epam.esm.pagination.CustomPagination;
+import com.epam.esm.service.pagination.CustomPagination;
 import com.epam.esm.entity.Order;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.dto.OrderDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
@@ -32,7 +32,7 @@ public class OrderController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('orders:read')")
+    @PostAuthorize("hasAuthority('orders:read') || returnObject.user.id.equals(authentication.principal.userId)")
     public Order findById(@PathVariable Long id) {
         Order order = orderService.findById(id);
         orderLinkBuilder.setLinks(order);
@@ -41,7 +41,7 @@ public class OrderController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('orders:create')")
+    @PreAuthorize("hasAuthority('orders:create') || #orderDto.userId.equals(authentication.principal.userId)")
     @ResponseStatus(HttpStatus.CREATED)
     public Order create(@RequestBody OrderDto orderDto) {
         Order order = orderService.create(orderDto);
@@ -57,11 +57,10 @@ public class OrderController {
         orderService.delete(id);
     }
 
-    @GetMapping
-    @PreAuthorize("hasAuthority('orders:read')")
-    public List<Order> findByAttributes(@RequestParam(required = false, name = "user-id") Long userId,
-                                    CustomPagination pagination) {
-        List<Order> orderList = orderService.findByAttributes(userId, pagination);
+    @GetMapping("/user-id/{userId}")
+    @PreAuthorize("hasAuthority('orders:read') || #userId.equals(authentication.principal.userId)")
+    public List<Order> findAll(@PathVariable Long userId, CustomPagination pagination) {
+        List<Order> orderList = orderService.findByUserId(userId, pagination);
         orderLinkBuilder.setLinks(orderList);
         
         return orderList;

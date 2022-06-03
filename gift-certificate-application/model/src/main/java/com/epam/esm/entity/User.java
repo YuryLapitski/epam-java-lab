@@ -90,10 +90,10 @@ public class User extends RepresentationModel<User> {
     }
 
     public enum Role {
-        USER(new HashSet<>(Arrays.asList(USERS_CREATE, ORDERS_CREATE, ORDERS_READ, ORDERS_DELETE, AUTH_SIGN_UP))),
+        USER(new HashSet<>(Arrays.asList(USERS_CREATE, AUTH_SIGN_UP))),
         ADMIN(new HashSet<>(Arrays.asList(GIFT_CERTIFICATES_CREATE, GIFT_CERTIFICATES_UPDATE,
                 GIFT_CERTIFICATES_DELETE, TAGS_CREATE, TAGS_DELETE, USERS_CREATE, USERS_READ,
-                ORDERS_DELETE, AUTH_SIGN_UP)));
+                ORDERS_CREATE, ORDERS_READ, ORDERS_DELETE, AUTH_SIGN_UP)));
 
         private final Set<Permission> permissions;
 
