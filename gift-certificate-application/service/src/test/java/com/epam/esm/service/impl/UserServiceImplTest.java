@@ -17,10 +17,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static com.epam.esm.entity.User.Role.USER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -32,9 +35,12 @@ public class UserServiceImplTest {
     private static final String FIST_NAME = "Ivan";
     private static final String LAST_NAME = "Ivanov";
     private static final String LOGIN = "I-Ivan";
+    private static final String PASSWORD = "1111";
+    private static final User.Role USER_ROLE = USER;
     private static final int PAGE = 1;
     private static final int SIZE = 10;
     private static final int LAST_PAGE = 1;
+    private static final int ENCODER_STRENGTH = 12;
     private UserRepository userRepository;
     private User user;
     private UserValidator userValidator;
@@ -54,6 +60,11 @@ public class UserServiceImplTest {
         user.setFirstName(FIST_NAME);
         user.setLastName(LAST_NAME);
         user.setLogin(LOGIN);
+        user.setRole(USER_ROLE);
+        user.setPassword(PASSWORD);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(ENCODER_STRENGTH);
+        String encodedPassword = encoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
         userValidator = mock(UserValidator.class);
         paginationConverter = mock(PaginationConverter.class);
         pagination = new CustomPagination();

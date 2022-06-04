@@ -15,12 +15,14 @@ import com.epam.esm.service.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
+    private static final int ENCODER_STRENGTH = 12;
     private final UserRepository userRepository;
     private final UserValidator userValidator;
     private final PaginationValidator paginationValidator;
@@ -51,6 +53,12 @@ public class UserServiceImpl implements UserService {
         if (!userValidator.isLoginValid(user.getLogin())) {
             throw new FieldValidationException(Message.INVALID_LOGIN_MSG);
         }
+
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(ENCODER_STRENGTH);
+        String encodedPassword = encoder.encode(user.getPassword());
+
+        user.setPassword(encodedPassword);
+        user.setRole(User.Role.USER);
 
         if (userRepository.findByLogin(user.getLogin()).isPresent()) {
             String msg = String.format(Message.USER_ALREADY_EXIST_MSG, user.getLogin());

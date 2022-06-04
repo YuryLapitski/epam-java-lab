@@ -12,6 +12,7 @@ public class UserValidatorImpl implements UserValidator {
     private static final Pattern LOGIN_PATTERN = Pattern.compile("[A-za-z0-9._-]{2,50}");
     private static final String SPACE_REGEX = "\\s+";
     private static final String EMPTY_STRING = "";
+    private static final String ROLE = "USER";
 
     @Override
     public boolean isFirstNameValid(String firstName) {

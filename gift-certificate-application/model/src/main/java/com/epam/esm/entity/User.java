@@ -1,9 +1,7 @@
 package com.epam.esm.entity;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -32,11 +30,14 @@ import static com.epam.esm.entity.Permission.TAGS_CREATE;
 import static com.epam.esm.entity.Permission.TAGS_DELETE;
 import static com.epam.esm.entity.Permission.USERS_CREATE;
 import static com.epam.esm.entity.Permission.USERS_READ;
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 
 @Getter
 @Setter
 @RequiredArgsConstructor
+//@NoArgsConstructor
 @ToString
+//@Builder
 @Entity
 @Table(name = "users")
 public class User extends RepresentationModel<User> {
@@ -55,6 +56,7 @@ public class User extends RepresentationModel<User> {
     private String login;
 
     @Column(nullable = false)
+    @JsonProperty(access = WRITE_ONLY)
     private String password;
 
     @Column(nullable = false)

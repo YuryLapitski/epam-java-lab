@@ -15,7 +15,7 @@ public interface UserService {
      * Creates new user
      *
      * @param user user to create
-     * @return Tag
+     * @return User
      */
     User create(User user);
 
