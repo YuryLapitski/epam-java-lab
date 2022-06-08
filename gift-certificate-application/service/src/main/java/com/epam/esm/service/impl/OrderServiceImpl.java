@@ -71,7 +71,7 @@ public class OrderServiceImpl implements OrderService {
         Page<Order> orderPage = orderRepository.findAll(pageable);
 
         int lastPage = orderPage.getTotalPages();
-        if(!paginationValidator.isPageValid(pagination, lastPage)) {
+        if (!paginationValidator.isPageValid(pagination, lastPage)) {
             String message = String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage);
             throw new PageNumberValidationException(message);
         }
@@ -101,7 +101,7 @@ public class OrderServiceImpl implements OrderService {
             throw new UserHasNoOrdersException(msg);
         }
 
-        if(!paginationValidator.isPageValid(pagination, lastPage)) {
+        if (!paginationValidator.isPageValid(pagination, lastPage)) {
             String message = String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage);
             throw new PageNumberValidationException(message);
         }

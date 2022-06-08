@@ -36,7 +36,7 @@ public class Message {
     public static final String INVALID_FIRST_NAME_MSG = "Invalid first name";
     public static final String INVALID_LAST_NAME_MSG = "Invalid last name";
     public static final String INVALID_LOGIN_MSG = "Invalid login name";
-    public static final String INVALID_ROLE_MSG = "Invalid role. You can choose only USER role";
+    public static final String INVALID_PASSWORD_MSG = "Invalid password";
     public static final String USER_ALREADY_EXIST_MSG = "User with the login '%s' already exists";
 
     public static final String PAGE_SIZE_INVALID_MSG = "Invalid page size. " +

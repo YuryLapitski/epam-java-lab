@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Map;
 
 public class AppAccessDeniedHandler implements AccessDeniedHandler {
     private static final String URI_STRING = "uri";
@@ -18,12 +19,19 @@ public class AppAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request,
                        HttpServletResponse response,
                        AccessDeniedException accessDeniedException) throws IOException {
-
-        HashMap<String, String> map = new HashMap<>();
-        map.put(URI_STRING, request.getRequestURI());
-        map.put(MSG_STRING, ACCESS_DENIED_MSG);
-        map.put(TIMESTAMP_STRING, String.valueOf(LocalDateTime.now()));
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        ResponseBodyPreparator.prepare(response, map);
+        ResponseFiller.fill(response, createResponseBody(request));
+    }
+
+    private Map<String, String> createResponseBody(HttpServletRequest request) {
+        String requestUri = request.getRequestURI();
+        String localDateTimeNow = LocalDateTime.now().toString();
+
+        Map<String, String> map = new HashMap<>();
+        map.put(URI_STRING, requestUri);
+        map.put(MSG_STRING, ACCESS_DENIED_MSG);
+        map.put(TIMESTAMP_STRING, localDateTimeNow);
+
+        return map;
     }
 }

@@ -54,6 +54,10 @@ public class UserServiceImpl implements UserService {
             throw new FieldValidationException(Message.INVALID_LOGIN_MSG);
         }
 
+        if (!userValidator.isPasswordValid(user.getPassword())) {
+            throw new FieldValidationException(Message.INVALID_PASSWORD_MSG);
+        }
+
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(ENCODER_STRENGTH);
         String encodedPassword = encoder.encode(user.getPassword());
 
@@ -74,7 +78,7 @@ public class UserServiceImpl implements UserService {
         Page<User> userPage = userRepository.findAll(pageable);
 
         int lastPage = userPage.getTotalPages();
-        if(!paginationValidator.isPageValid(pagination, lastPage)) {
+        if (!paginationValidator.isPageValid(pagination, lastPage)) {
             String message = String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage);
             throw new PageNumberValidationException(message);
         }

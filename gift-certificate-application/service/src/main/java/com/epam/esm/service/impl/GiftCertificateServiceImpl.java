@@ -197,7 +197,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return giftCertificateRepository.save(updatedGiftCertificate);
     }
 
-    @Transactional //todo: read about @Transactional
+    @Transactional
     @Override
     public List<GiftCertificate> findByAttributes(String name, List<String> tagNames, List<String> columnNames,
                                                   String sortType, CustomPagination pagination) {
@@ -205,7 +205,22 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         checkTagsByName(tagNames);
         checkColumnNames(columnNames);
         checkSortType(sortType);
+        Pageable pageable = preparePageable(columnNames, sortType, pagination);
+        Page<GiftCertificate> giftCertificatePage = prepareGiftCertificatePage(name, tagNames, pageable);
+        validatePageNumber(giftCertificatePage, pagination);
 
+        return giftCertificatePage.getContent();
+    }
+    
+    private void validatePageNumber(Page<GiftCertificate> giftCertificatePage, CustomPagination pagination) {
+        int lastPage = giftCertificatePage.getTotalPages();
+        if(!paginationValidator.isPageValid(pagination, lastPage)) {
+            String message = String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage);
+            throw new PageNumberValidationException(message);
+        }
+    }
+
+    private Pageable preparePageable(List<String> columnNames, String sortType, CustomPagination pagination) {
         if (pagination.getPage() == ZERO && pagination.getSize() == ZERO) {
             throw new PaginationException(Message.CHOOSE_PAGINATION_MSG);
         }
@@ -218,6 +233,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             pageable = paginationConverter.convert(pagination);
         }
 
+        return pageable;
+    }
+
+    private Page<GiftCertificate> prepareGiftCertificatePage(String name,
+                                                             List<String> tagNames,
+                                                             Pageable pageable) {
         Page<GiftCertificate> giftCertificatePage;
         if (name == null && tagNames ==null) {
             giftCertificatePage = giftCertificateRepository.findAll(pageable);
@@ -225,13 +246,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             giftCertificatePage = giftCertificateRepository.findByAttributes(name, tagNames, pageable);
         }
 
-        int lastPage = giftCertificatePage.getTotalPages();
-        if(!paginationValidator.isPageValid(pagination, lastPage)) {
-            String message = String.format(Message.PAGE_NUMBER_INVALID_MSG, lastPage);
-            throw new PageNumberValidationException(message);
-        }
-
-        return giftCertificatePage.getContent();
+        return giftCertificatePage;
     }
 
     private Pageable createPageableWithSort(CustomPagination pagination, Sort sort) {

@@ -54,6 +54,6 @@ public interface GiftCertificateRepository extends JpaRepository<GiftCertificate
      */
     @Query("SELECT gc FROM GiftCertificate gc JOIN gc.tagList tl WHERE tl.name IN :tagNames " +
             "OR gc.name LIKE %:name%")
-    Page<GiftCertificate> findByAttributes (@Param("name")String name, @Param("tagNames") List<String> tagNames,
+    Page<GiftCertificate> findByAttributes(@Param("name")String name, @Param("tagNames") List<String> tagNames,
                                             Pageable pageable);
 }

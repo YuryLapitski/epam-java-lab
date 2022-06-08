@@ -31,6 +31,15 @@ public class OrderController {
         this.orderLinkBuilder = orderLinkBuilder;
     }
 
+    @GetMapping
+    @PostAuthorize("hasAuthority('orders:read')")
+    public List<Order> findAll(CustomPagination pagination) {
+        List<Order> orderList = orderService.findAll(pagination);
+        orderLinkBuilder.setLinks(orderList);
+
+        return orderList;
+    }
+
     @GetMapping("/{id}")
     @PostAuthorize("hasAuthority('orders:read') || returnObject.user.id.equals(authentication.principal.userId)")
     public Order findById(@PathVariable Long id) {
@@ -55,14 +64,5 @@ public class OrderController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
         orderService.delete(id);
-    }
-
-    @GetMapping("/user-id/{userId}")
-    @PreAuthorize("hasAuthority('orders:read') || #userId.equals(authentication.principal.userId)")
-    public List<Order> findAll(@PathVariable Long userId, CustomPagination pagination) {
-        List<Order> orderList = orderService.findByUserId(userId, pagination);
-        orderLinkBuilder.setLinks(orderList);
-        
-        return orderList;
     }
 }

@@ -8,10 +8,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 
-public class ResponseBodyPreparator {
+public final class ResponseFiller {
     private static final String CHARACTER_ENCODING = "utf-8";
 
-    public static void prepare(HttpServletResponse response, Map<String, String> map) throws IOException {
+    private ResponseFiller() {
+    }
+
+    public static void fill(HttpServletResponse response, Map<String, String> map) throws IOException {
         response.setCharacterEncoding(CHARACTER_ENCODING);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         ObjectMapper objectMapper = new ObjectMapper();

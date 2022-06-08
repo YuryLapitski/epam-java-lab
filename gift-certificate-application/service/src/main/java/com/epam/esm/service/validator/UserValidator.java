@@ -31,4 +31,6 @@ public interface UserValidator {
      * @return true if the user login is valid
      */
     boolean isLoginValid(String login);
+
+    boolean isPasswordValid(String password);
 }

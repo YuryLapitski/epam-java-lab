@@ -1,10 +1,12 @@
 package com.epam.esm.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -35,9 +37,7 @@ import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 @Getter
 @Setter
 @RequiredArgsConstructor
-//@NoArgsConstructor
 @ToString
-//@Builder
 @Entity
 @Table(name = "users")
 public class User extends RepresentationModel<User> {

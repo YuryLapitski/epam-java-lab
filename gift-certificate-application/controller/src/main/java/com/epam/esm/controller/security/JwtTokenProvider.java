@@ -19,6 +19,7 @@ import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
+    private static final String EMPTY_STRING = "";
     private final UserDetailsService userDetailsService;
     @Value("${jwt.secret}")
     private String secretKey;
@@ -63,7 +64,7 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(getUserName(token));
 
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, EMPTY_STRING, userDetails.getAuthorities());
     }
 
     public String getUserName(String token) {
