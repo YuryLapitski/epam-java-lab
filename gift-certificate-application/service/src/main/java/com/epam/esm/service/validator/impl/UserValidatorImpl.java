@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
 public class UserValidatorImpl implements UserValidator {
     private static final Pattern FIRST_NAME_PATTERN = Pattern.compile("[a-zA-Z]{2,50}");
     private static final Pattern LAST_NAME_PATTERN = Pattern.compile("[a-zA-Z]{2,50}");
-    private static final Pattern LOGIN_PATTERN = Pattern.compile("[A-za-z0-9._-]{2,50}");
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("[A-za-z0-9._-]{2,50}");
+    private static final Pattern LOGIN_PATTERN = Pattern.compile("[A-Za-z0-9._-]{2,50}");
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("[A-Za-z0-9._-]{2,50}");
     private static final String SPACE_REGEX = "\\s+";
     private static final String EMPTY_STRING = "";
 

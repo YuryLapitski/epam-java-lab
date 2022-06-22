@@ -83,6 +83,7 @@ public class UserServiceImplTest {
         when(userValidator.isFirstNameValid(FIST_NAME)).thenReturn(true);
         when(userValidator.isLastNameValid(LAST_NAME)).thenReturn(true);
         when(userValidator.isLoginValid(LOGIN)).thenReturn(true);
+        when(userValidator.isPasswordValid(user.getPassword())).thenReturn(true);
         when(userRepository.findByLogin(LOGIN)).thenReturn(Optional.empty());
         when(userRepository.save(user)).thenReturn(user);
         User actualResult = userService.create(user);
@@ -118,6 +119,7 @@ public class UserServiceImplTest {
         when(userValidator.isFirstNameValid(FIST_NAME)).thenReturn(true);
         when(userValidator.isLastNameValid(LAST_NAME)).thenReturn(true);
         when(userValidator.isLoginValid(LOGIN)).thenReturn(true);
+        when(userValidator.isPasswordValid(user.getPassword())).thenReturn(true);
         when(userRepository.findByLogin(LOGIN)).thenReturn(Optional.of(user));
         when(userRepository.save(user)).thenReturn(user);
         assertThrows(UserAlreadyExistException.class, () -> userService.create(user));
