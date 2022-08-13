@@ -39,6 +39,15 @@ public class UserController {
         return user;
     }
 
+    @GetMapping("/login")
+    @PreAuthorize("hasAuthority('users:read') || #login.equals(authentication.principal.username)")
+    public User findByLogin(@RequestParam(required = true, name = "login") String login) {
+        User user = userService.findByLogin(login);
+        userLinkBuilder.setLinks(user);
+
+        return user;
+    }
+
     @GetMapping
     @PreAuthorize("hasAuthority('users:read')")
     public List<User> findAll(CustomPagination pagination) {
