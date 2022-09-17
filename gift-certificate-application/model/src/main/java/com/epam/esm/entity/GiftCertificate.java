@@ -21,6 +21,7 @@ import javax.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,6 +51,8 @@ public class GiftCertificate extends RepresentationModel<GiftCertificate> {
     @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private LocalDateTime lastUpdateDate;
+    @Column
+    private String image;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "tag_gift_certificate",
@@ -59,16 +62,10 @@ public class GiftCertificate extends RepresentationModel<GiftCertificate> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
         GiftCertificate that = (GiftCertificate) o;
-
         return Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(description, that.description) &&
@@ -76,11 +73,12 @@ public class GiftCertificate extends RepresentationModel<GiftCertificate> {
                 Objects.equals(duration, that.duration) &&
                 Objects.equals(createDate, that.createDate) &&
                 Objects.equals(lastUpdateDate, that.lastUpdateDate) &&
+                Objects.equals(image, that.image) &&
                 Objects.equals(tagList, that.tagList);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, description, price, duration, createDate, lastUpdateDate, tagList);
+        return Objects.hash(super.hashCode(), id, name, description, price, duration, createDate, lastUpdateDate, image, tagList);
     }
 }

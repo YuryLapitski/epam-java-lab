@@ -72,6 +72,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         String description = giftCertificate.getDescription();
         BigDecimal price = giftCertificate.getPrice();
         Short duration = giftCertificate.getDuration();
+        String image = giftCertificate.getImage();
 
         if (giftCertificateValidator.isEmptyFields(name, description, price, duration)) {
             throw new FieldValidationException(Message.CANNOT_BE_EMPTY_FIELDS_MSG);
@@ -189,6 +190,11 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             }
 
             updatedGiftCertificate.setDuration(duration);
+        }
+
+        String image = giftCertificate.getImage();
+        if (image != null) {
+            updatedGiftCertificate.setImage(image);
         }
 
         List<Tag> createdTagList = createTagsList(giftCertificate);
